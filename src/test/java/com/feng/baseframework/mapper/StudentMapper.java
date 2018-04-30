@@ -12,14 +12,14 @@ public interface StudentMapper {
     public int addStudent(Student student);
 
     @Update("update students set name=#{name},age=#{age} where id=#{id}")
-    public Student updateStudent(Student student);
+    public void updateStudent(Student student);
 
     @SelectProvider(type = ProviderMethod.class,method = "studentsLikeName")
     public List<Student> getStudentsLikeName(String name);
 
     @Delete("delete from students where id in(#{ids})")
     @Lang(SimpleLangDriver.class)
-    public void deleteStudents(List<Integer> ids);
+    public void deleteStudents(@Param("ids") List<Integer> ids);
 
     @Select("SELECT id, name, age FROM students WHERE id = #{id}")
     @Results(id = "userMap", value = { @Result(column = "id", property = "id", javaType = Integer.class),
