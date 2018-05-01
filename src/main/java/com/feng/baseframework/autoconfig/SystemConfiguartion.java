@@ -17,6 +17,6 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @MapperScan(basePackages = {"com.feng.baseframework.**"})
-@Import({MybatisConfiguration.class,RedisConfiguration.class})
+@Import({MybatisConfiguration.class,RedisConfiguration.class,RestTemplateConfiguration.class})
 public class SystemConfiguartion {
 }
