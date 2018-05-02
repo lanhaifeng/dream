@@ -1,5 +1,6 @@
 package com.feng.baseframework.autoconfig;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -14,5 +15,6 @@ import org.springframework.context.annotation.Configuration;
  * @Version:        1.0
  */
 @Configuration
+@MapperScan(basePackages = {"com.feng.baseframework.**"})
 public class MybatisConfiguration {
 }

@@ -1,0 +1,37 @@
+package com.feng.baseframework.exception;
+
+/**
+ * @ProjectName: svc-search-biz
+ * @description: 业务异常类
+ * @author: lanhaifeng
+ * @create: 2018-05-02 18:45
+ * @UpdateUser:
+ * @UpdateDate: 2018/5/2 18:45
+ * @UpdateRemark:
+ **/
+public class BusinessException extends RuntimeException {
+    /**  错误码 **/
+    private Integer code;
+    /**  原始异常 **/
+    private Exception sourceException;
+
+    public BusinessException(String message){
+        super(message);
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public Exception getSourceException() {
+        return sourceException;
+    }
+
+    public void setSourceException(Exception sourceException) {
+        this.sourceException = sourceException;
+    }
+}
