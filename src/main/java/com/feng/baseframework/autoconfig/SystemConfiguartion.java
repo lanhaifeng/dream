@@ -1,5 +1,6 @@
 package com.feng.baseframework.autoconfig;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -16,5 +17,6 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({MybatisConfiguration.class,RedisConfiguration.class,RestTemplateConfiguration.class})
+@ComponentScan("com.feng.baseframework")
 public class SystemConfiguartion {
 }
