@@ -1,0 +1,14 @@
+package com.feng.baseframework.jdk8.util;
+
+/**
+ * @ProjectName: baseframework
+ * @Description: Nashorn js引擎测试
+ * @Author: lanhaifeng
+ * @CreateDate: 2018/5/14 22:55
+ * @UpdateUser:
+ * @UpdateDate: 2018/5/14 22:55
+ * @UpdateRemark:
+ * @Version: 1.0
+ */
+public class NashornTest {
+}
