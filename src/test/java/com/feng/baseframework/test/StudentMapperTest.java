@@ -31,24 +31,18 @@ public class StudentMapperTest extends BaseFrameworkApplicationTest {
 
     @Test
     public void addStudentTest(){
-        student = new Student(){
-            {
-                setName("tom");
-                setAge(11);
-            }
-        };
+        student = new Student();
+        student.setName("tom");
+        student.setAge(11);
         studentMapper.addStudent(student);
         Assert.assertNotNull("新增学生记录失败,主键为空",student.getId());
     }
 
     @Test
     public void getStudentByIdTest(){
-        student = new Student(){
-            {
-                setName("jack");
-                setAge(12);
-            }
-        };
+        student = new Student();
+        student.setName("jack");
+        student.setAge(12);
         studentMapper.addStudent(student);
         Student temp = studentMapper.getStudentById(student.getId());
         Assert.assertEquals("根据id查询失败,姓名不相同",student.getName(),temp.getName());
@@ -56,12 +50,9 @@ public class StudentMapperTest extends BaseFrameworkApplicationTest {
 
     @Test
     public void updateStudentTest(){
-        student = new Student(){
-            {
-                setName("lucy");
-                setAge(13);
-            }
-        };
+        student = new Student();
+        student.setName("lucy");
+        student.setAge(13);
         studentMapper.addStudent(student);
         Integer id = student.getId();
         student.setName("lucyTest");
@@ -82,12 +73,9 @@ public class StudentMapperTest extends BaseFrameworkApplicationTest {
 
     @Test
     public void deleteStudentsTest(){
-        student = new Student(){
-            {
-                setName("lucy");
-                setAge(13);
-            }
-        };
+        student = new Student();
+        student.setName("lucy");
+        student.setAge(13);
         studentMapper.addStudent(student);
         int id1 = student.getId();
         student.setId(null);
