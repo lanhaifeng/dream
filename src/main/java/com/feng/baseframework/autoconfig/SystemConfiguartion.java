@@ -1,5 +1,7 @@
 package com.feng.baseframework.autoconfig;
 
+import com.feng.baseframework.util.SpringUtil;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -17,4 +19,9 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import({MybatisConfiguration.class,RedisConfiguration.class,RestTemplateConfiguration.class})
 public class SystemConfiguartion {
+
+    @Bean
+    public SpringUtil getSpringUtil(){
+        return new SpringUtil();
+    }
 }
