@@ -29,10 +29,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public DataResult handler(Exception e){
-        if( e instanceof RedisException){
-            RedisException redisException = (RedisException) e;
-            logger.info("[" + redisException.getMessage() + "] {}" , getStackTrace(e));
-            return DataResultUtil.error( redisException.getCode(), redisException.getMessage());
+        if( e instanceof BusinessException){
+            BusinessException businessException = (BusinessException) e;
+            logger.info("[" + businessException.getMessage() + "] {}" , getStackTrace(e));
+            return DataResultUtil.error( businessException.getCode(), businessException.getMessage());
         }else {
             logger.info("[系统异常] {}",getStackTrace(e));
             return DataResultUtil.error( -1, "未知错误");
