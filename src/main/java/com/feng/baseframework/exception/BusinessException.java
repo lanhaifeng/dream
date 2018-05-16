@@ -1,5 +1,7 @@
 package com.feng.baseframework.exception;
 
+import com.feng.baseframework.constant.ResultEnum;
+
 /**
  * @ProjectName: svc-search-biz
  * @description: 业务异常类
@@ -17,6 +19,12 @@ public class BusinessException extends RuntimeException {
 
     public BusinessException(String message){
         super(message);
+    }
+
+    public BusinessException(ResultEnum resultEnum, Exception sourceException) {
+        super(resultEnum.getMessage());
+        this.code = resultEnum.getCode();
+        this.sourceException = sourceException;
     }
 
     public Integer getCode() {
