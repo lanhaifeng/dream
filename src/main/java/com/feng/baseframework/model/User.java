@@ -20,10 +20,12 @@ public class User implements Serializable {
         this.userName = user.getUserName();
         this.password = user.getPassword();
         this.id = user.getId();
+        this.name = user.getName();
     }
     private Long id;
 
     private String userName;
+    private String name;
     private String password;
 
     public Long getId() {
@@ -32,6 +34,14 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUserName() {

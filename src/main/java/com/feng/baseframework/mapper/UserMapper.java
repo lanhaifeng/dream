@@ -1,6 +1,8 @@
 package com.feng.baseframework.mapper;
 
+import com.feng.baseframework.SQLDriver.SimpleLangDriver;
 import com.feng.baseframework.model.User;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -16,15 +18,30 @@ import java.util.List;
  */
 public interface UserMapper {
 
+    @Insert("insert into users(id,name,userName,password) values(#{id},#{name},#{userName},#{password})")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     public void addUser(User user);
 
+    @Update("update users set name=#{name},password=#{password} where id=#{id}")
     public void updateUser(User user);
 
+    @Delete("delete from users where id in(#{ids})")
+    @Lang(SimpleLangDriver.class)
     public void deleteUsers(List<Integer> ids);
 
+    @Delete("delete from users where id in(#{id})")
     public void deleteUser(Integer id);
 
+    @Select("SELECT id, name, userName, password FROM users WHERE id = #{id}")
+    @Results(value = { @Result(column = "id", property = "id", javaType = Integer.class),
+            @Result(column = "name", property = "name", javaType = String.class),
+            @Result(column = "password", property = "password", javaType = String.class) })
     public User getUserById(Integer id);
 
+    @Select("SELECT id, name, userName, password FROM users WHERE userName = #{userName}")
+    @Results(value = { @Result(column = "id", property = "id", javaType = Integer.class),
+            @Result(column = "name", property = "name", javaType = String.class),
+            @Result(column = "userName", property = "userName", javaType = String.class),
+            @Result(column = "password", property = "password", javaType = String.class) })
     public User getUserByName(String userName);
 }
