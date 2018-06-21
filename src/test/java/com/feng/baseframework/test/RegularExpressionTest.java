@@ -38,4 +38,29 @@ public class RegularExpressionTest {
             System.out.println(matcher.group(7));//'
         }
     }
+
+    @Test
+    public void testAppend(){
+        String REGEX = "a*b";
+        String INPUT = "caabfooaabfooabfoobkkk";
+        String REPLACE = "-";
+        Pattern p = Pattern.compile(REGEX);
+        // 获取 matcher 对象
+        Matcher m = p.matcher(INPUT);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()) {
+            m.appendReplacement(sb, REPLACE);
+            System.out.println(sb.toString());
+        }
+        System.out.println(sb.toString());
+        System.out.println(Matcher.quoteReplacement("adasdf\\ds$sdf$saf\\sd"));
+        System.out.println(Matcher.quoteReplacement("$"));
+        System.out.println("adasdf\\ds$sdf$saf\\sd".charAt(6));
+        System.out.println("adasdf\\ds$sdf$saf\\sd".charAt(9)=='$');
+        sb = new StringBuffer();
+        m.appendTail(sb);
+        System.out.println(sb.toString());
+
+        System.getProperties().list(System.out);
+    }
 }
