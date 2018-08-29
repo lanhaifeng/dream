@@ -1,14 +1,13 @@
 package com.feng.baseframework.service;
 
 import com.feng.baseframework.test.BaseFrameworkApplicationTest;
+import com.feng.baseframework.util.StringUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import java.util.*;
 
 public class RedisServiceTest extends BaseFrameworkApplicationTest {
 
@@ -72,5 +71,44 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
         for (Object obj : data){
             System.out.println(obj);
         }
+    }
+
+    @Test
+    public void getHashMultValue() {
+        String hashName = "hashTest";
+        Set<String> keys = new HashSet<>();
+        for(int i=0;i<100;i++){
+            keys.add(String.valueOf(i));
+            if(i==97){
+                keys.add(String.valueOf(10001));
+            }
+        }
+        keys.add(String.valueOf(10000));
+        List<Object> data =redisService.getHashMultValue(hashName,keys,false);
+        for(Object obj : data){
+            if(obj instanceof Map){
+                System.out.println("data is map!");
+            }
+            if(obj instanceof String){
+                System.out.println(obj);
+            }
+        }
+    }
+
+    @Test
+    public void setHashMultValue() throws JSONException {
+        String hashName = "hashTest";
+        Map<String,String> data = new HashMap<>();
+        JSONObject jsonObject = null;
+        for(int i=0;i<1000;i++){
+            jsonObject = new JSONObject();
+            jsonObject.put("id",StringUtil.generateUUID());
+            jsonObject.put("name","name"+i);
+            jsonObject.put("age","age"+i);
+            jsonObject.put("sex","sex"+i);
+            data.put(String.valueOf(i),jsonObject.toString());
+        }
+
+        redisService.setHashMultValue(hashName,data);
     }
 }

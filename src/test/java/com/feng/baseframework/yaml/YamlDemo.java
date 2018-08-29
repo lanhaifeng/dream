@@ -21,6 +21,15 @@ public class YamlDemo implements Serializable{
     private String name;
     private String desc;
     private List<YamlDemo> items;
+    private String[] hobbys;
+
+    public String[] getHobbys() {
+        return hobbys;
+    }
+
+    public void setHobbys(String[] hobbys) {
+        this.hobbys = hobbys;
+    }
 
     public String getName() {
         return name;
@@ -61,10 +70,15 @@ public class YamlDemo implements Serializable{
         if(this.items != null && this.items.size() > 0){
             items = ", items=" + this.items.toString();
         }
+        String hobby = "";
+        if(this.hobbys != null && this.hobbys.length > 0){
+            hobby = ", hobby=" + Arrays.toString(this.hobbys);
+        }
         return "YamlDemo{" +
                 "name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
-                items +
+                items + '\'' +
+                hobby+
                 '}';
     }
 }

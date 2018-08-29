@@ -2,6 +2,8 @@ package com.feng.baseframework.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * capaa-parent
@@ -93,4 +95,27 @@ public interface RedisService {
      * @return void
      */
     public void changeDb(int index);
+
+    /**
+     * 2018/8/22 13:59
+     * 批量从hash中取值
+     *
+     * @param hashName     hash表的名字
+     * @param keys        需要取值的key集合
+     * @param isDelete    是否在取值同时删除
+     * @author lanhaifeng
+     * @return java.util.List<java.lang.Object>
+     */
+    public List<Object> getHashMultValue(String hashName, Set<String> keys, boolean isDelete);
+
+    /**
+     * 2018/8/22 14:07
+     * 批量从hash中存值
+     *
+     * @param hashName    hash表的名字
+     * @param data       需要存值的集合
+     * @author lanhaifeng
+     * @return void
+     */
+    public void setHashMultValue(String hashName, Map<String,String> data);
 }

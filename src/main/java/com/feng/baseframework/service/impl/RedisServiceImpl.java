@@ -4,20 +4,16 @@ import com.feng.baseframework.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisPipelineException;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,7 +97,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<Object> getLeftListMultValueAfterDel(final String key, final long count) {
-        final RedisSerializer<String> serializer = stringRedisTemplate.getStringSerializer();
         final Long allCount = stringRedisTemplate.opsForList().size(key);
         if(allCount == 0){
             return null;
@@ -118,5 +113,49 @@ public class RedisServiceImpl implements RedisService {
         });
         removeNullObject(leftList);
         return leftList;
+    }
+
+    @Override
+    public List<Object> getHashMultValue(String hashName, Set<String> keys, boolean isDelete) {
+        if(keys == null || keys.size() < 1 || StringUtils.isEmpty(hashName)){
+            return null;
+        }
+        List<Object> dataList = stringRedisTemplate.executePipelined(new SessionCallback<String>() {
+            @Override
+            public String execute(RedisOperations redisOperations) throws DataAccessException {
+                Long allCount = redisOperations.opsForHash().size(hashName);
+                if(allCount == null || allCount < 1){
+                    return null;
+                }
+                for (String key : keys) {
+                    if(StringUtils.isEmpty(key)){
+                        continue;
+                    }
+                    redisOperations.opsForHash().get(hashName,key);
+                    if(isDelete){
+                        redisOperations.opsForHash().delete(hashName,key);
+                    }
+                }
+                return null;
+            }
+        });
+
+        return dataList;
+    }
+
+    @Override
+    public void setHashMultValue(String hashName, Map<String, String> data) {
+        if(data == null || data.size() < 1 || StringUtils.isEmpty(hashName)){
+            return;
+        }
+        stringRedisTemplate.executePipelined(new SessionCallback<String>() {
+            @Override
+            public String execute(RedisOperations redisOperations) throws DataAccessException {
+                for (String key : data.keySet()) {
+                    redisOperations.opsForHash().put(hashName,key,data.get(key));
+                }
+                return null;
+            }
+        });
     }
 }
