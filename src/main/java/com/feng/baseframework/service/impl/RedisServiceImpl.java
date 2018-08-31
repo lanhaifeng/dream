@@ -1,6 +1,7 @@
 package com.feng.baseframework.service.impl;
 
 import com.feng.baseframework.service.RedisService;
+import com.feng.baseframework.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -120,13 +121,13 @@ public class RedisServiceImpl implements RedisService {
         if(keys == null || keys.size() < 1 || StringUtils.isEmpty(hashName)){
             return null;
         }
+        Long allCount = stringRedisTemplate.opsForHash().size(hashName);
+        if(allCount == null || allCount < 1){
+            return null;
+        }
         List<Object> dataList = stringRedisTemplate.executePipelined(new SessionCallback<String>() {
             @Override
             public String execute(RedisOperations redisOperations) throws DataAccessException {
-                Long allCount = redisOperations.opsForHash().size(hashName);
-                if(allCount == null || allCount < 1){
-                    return null;
-                }
                 for (String key : keys) {
                     if(StringUtils.isEmpty(key)){
                         continue;
@@ -153,6 +154,30 @@ public class RedisServiceImpl implements RedisService {
             public String execute(RedisOperations redisOperations) throws DataAccessException {
                 for (String key : data.keySet()) {
                     redisOperations.opsForHash().put(hashName,key,data.get(key));
+                }
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public void convertAndSend(String channel, String message) {
+        if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(message) ){
+            return;
+        }
+        stringRedisTemplate.convertAndSend(channel, message);
+    }
+
+    @Override
+    public void convertAndSend(String channel, List<String> messages) {
+        if(StringUtils.isEmpty(channel) || messages == null || messages.size() < 1 ){
+            return;
+        }
+        stringRedisTemplate.executePipelined(new SessionCallback<String>() {
+            @Override
+            public String execute(RedisOperations redisOperations) throws DataAccessException {
+                for (String message : messages) {
+                    redisOperations.convertAndSend(channel, message);
                 }
                 return null;
             }

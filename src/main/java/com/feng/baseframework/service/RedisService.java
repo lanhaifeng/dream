@@ -118,4 +118,26 @@ public interface RedisService {
      * @return void
      */
     public void setHashMultValue(String hashName, Map<String,String> data);
+
+    /**
+     * 2018/8/30 14:55
+     * 发布redis订阅
+     *
+     * @param channel   发布的通道
+     * @param message   发布的消息
+     * @author lanhaifeng
+     * @return void
+     */
+    public void convertAndSend(String channel,String message);
+
+    /**
+     * 2018/8/30 14:55
+     * pipe批量发布redis订阅
+     *
+     * @param channel   发布的通道
+     * @param message   发布的消息
+     * @author lanhaifeng
+     * @return void
+     */
+    public void convertAndSend(String channel,List<String> messages);
 }
