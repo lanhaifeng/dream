@@ -204,7 +204,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"dbWorkMode\":\"1\",\n" +
                 "    \"content\":{\n" +
                 "      \"accessControl\":{\n" +
-                "        \"ruleName\":\"SPS_IPADDRESS_LOGON\",\n" +
+                "        \"ruleName\":\"SPS_IPADDRESS_LOGON1\",\n" +
                 "        \"actionLevel\":\"1\",\n" +
                 "        \"auditLevel\":\"1\",\n" +
                 "        \"objectOwner\":\"asset\",\n" +
