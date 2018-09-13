@@ -26,5 +26,9 @@ public class StringTest {
         System.out.println(StringUtils.join(list,","));
 
         System.out.println("ROLE_ADMIN,ROLE_AUDIT,ROLE_SECURITY,ROLE_SUPER_ADMIN".length());
+        String ip = "192.168.230.23";
+        String[] ips = ip.split("\\.");
+        System.out.println(ips.length);
+        System.out.println(ips[3]);
     }
 }
