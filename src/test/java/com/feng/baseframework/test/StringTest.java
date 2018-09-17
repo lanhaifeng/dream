@@ -30,5 +30,9 @@ public class StringTest {
         String[] ips = ip.split("\\.");
         System.out.println(ips.length);
         System.out.println(ips[3]);
+        StringBuffer jsonStr = new StringBuffer("[qweqw],");
+        jsonStr.substring(0,jsonStr.length()-1);
+        System.out.println(jsonStr.toString());//[qweqw],
+        System.out.println(jsonStr.substring(0,jsonStr.length()-1));//[qweqw]
     }
 }

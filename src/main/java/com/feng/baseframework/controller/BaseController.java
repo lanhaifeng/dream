@@ -1,6 +1,8 @@
 package com.feng.baseframework.controller;
 
+import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,12 +21,21 @@ import java.util.Map;
 @RestController
 public class BaseController {
 
+    @Autowired
+    private RedisService redisService;
+
     @RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
     public String baseMethod(){
         Map<String,String> data = new HashMap<>();
         data.put("name","tom");
         data.put("age","12");
+        String str = JacksonUtil.mapToJson(data);
+        redisService.set("testAop",str);
+        test();
+        return str;
+    }
 
-        return JacksonUtil.mapToJson(data);
+    public void test(){
+        System.out.println("测试同类内是否会aop");
     }
 }
