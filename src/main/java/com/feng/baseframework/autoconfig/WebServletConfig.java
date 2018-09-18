@@ -1,6 +1,7 @@
 package com.feng.baseframework.autoconfig;
 
 import com.feng.baseframework.interceptor.SimpleHandlerInterceptor;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -8,13 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 /**
  * baseframework
  * 2018/9/13 17:27
- * 拦截器配置
+ * servlet配置
+ * 配置Servlet、Filter、Listener、interceptor
  *
  * @author lanhaifeng
  * @since
  **/
 @Configuration
-public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
+@ServletComponentScan("com.feng.baseframework")
+public class WebServletConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

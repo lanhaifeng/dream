@@ -1,6 +1,6 @@
 package com.feng.baseframework.filter;
 
-import org.springframework.stereotype.Component;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -16,11 +16,13 @@ import java.io.IOException;
  * @UpdateDate: 2018/5/16 18:49
  * @UpdateRemark:
  **/
-@Component
-@WebFilter(urlPatterns = { "/**" }, filterName = "simpleCORSFilter")
+@WebFilter(urlPatterns = { "/*" }, filterName = "simpleCORSFilter")
 public class SimpleCORSFilter implements Filter {
 
+    private Logger logger = Logger.getLogger(getClass());
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        logger.info("我是过滤器simpleCORSFilter");
         HttpServletResponse response = (HttpServletResponse) res;
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
@@ -29,7 +31,7 @@ public class SimpleCORSFilter implements Filter {
         chain.doFilter(req, res);
     }
 
-    public void init(FilterConfig filterConfig) {}
+    public void init(FilterConfig filterConfig) {logger.info("过滤器simpleCORSFilter初始化");}
 
     public void destroy() {}
 
