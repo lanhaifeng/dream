@@ -39,14 +39,16 @@ public class MethodTimeAspect {
 
     @Pointcut("execution(* com.feng.baseframework..*.*(..))")
     public void webLog(){}
+    @Pointcut("@annotation(com.feng.baseframework.annotation.MethodTimeAop)")
+    public void webLogAnnotation(){}
 
-    @Before("webLog()")
+    @Before("webLog() && webLogAnnotation()")
     public void beforMethod(JoinPoint joinPoint) {
         logger.info("开始切入方法：" + joinPoint.getSignature().getName());
         startTime.set(System.currentTimeMillis());
     }
 
-    @Around("webLog()")
+    @Around("webLog() && webLogAnnotation()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         //初始化 一次
         if(invokeMap.get() ==null ){
@@ -113,7 +115,7 @@ public class MethodTimeAspect {
         }
     }
 
-    @AfterReturning("webLog()")
+    @AfterReturning("webLog() && webLogAnnotation()")
     public void afterMethod(JoinPoint joinPoint){
         long end = System.currentTimeMillis();
         long total =  end - startTime.get();

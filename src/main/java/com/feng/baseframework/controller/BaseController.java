@@ -2,6 +2,7 @@ package com.feng.baseframework.controller;
 
 import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,8 @@ import java.util.Map;
 @RestController
 public class BaseController {
 
+    private Logger logger = Logger.getLogger(getClass());
+
     @Autowired
     private RedisService redisService;
 
@@ -36,6 +39,6 @@ public class BaseController {
     }
 
     public void test(){
-        System.out.println("测试同类内是否会aop");
+        logger.info("测试同类内是否会aop");
     }
 }
