@@ -1,5 +1,6 @@
 package com.feng.baseframework.controller;
 
+import com.feng.baseframework.annotation.MethodTimeAop;
 import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
@@ -28,6 +29,7 @@ public class BaseController {
     private RedisService redisService;
 
     @RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
+    @MethodTimeAop
     public String baseMethod(){
         Map<String,String> data = new HashMap<>();
         data.put("name","tom");
