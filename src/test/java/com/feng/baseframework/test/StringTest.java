@@ -1,5 +1,6 @@
 package com.feng.baseframework.test;
 
+import com.feng.baseframework.util.IPUtil;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
@@ -34,5 +35,10 @@ public class StringTest {
         jsonStr.substring(0,jsonStr.length()-1);
         System.out.println(jsonStr.toString());//[qweqw],
         System.out.println(jsonStr.substring(0,jsonStr.length()-1));//[qweqw]
+
+        String startIp = "192.168.60.1";
+        String endIp = "192.168.60.255";
+        String ipStr = "192.168.60.14";
+        System.out.println(IPUtil.ipExistsInRange(ipStr,startIp,endIp));
     }
 }

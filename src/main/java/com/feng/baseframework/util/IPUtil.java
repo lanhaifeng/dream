@@ -47,4 +47,31 @@ public class IPUtil {
         }
         return ipAddress;
     }
+
+    /**
+     *  将字符串形式IP地址转换long类型
+     * @param ip
+     * @return
+     */
+    public static long getIpToLong(String ip) {
+        ip = ip.trim();
+        String[] ips = ip.split("\\.");
+        long ip1 = Integer.parseInt(ips[0]);
+        long ip2 = Integer.parseInt(ips[1]);
+        long ip3 = Integer.parseInt(ips[2]);
+        long ip4 = Integer.parseInt(ips[3]);
+        long ip2long =1L* ip1 * 256 * 256 * 256 + ip2 * 256 * 256 + ip3 * 256 + ip4;
+        return ip2long;
+    }
+
+    /**
+     * 判断一个ip地址是否在某个ip段范围内
+     * @param ip
+     * @param startIP
+     * @param endIP
+     * @return
+     */
+    public static boolean ipExistsInRange(String ip, String startIP, String endIP) {
+        return (getIpToLong(startIP)<=getIpToLong(ip)) && (getIpToLong(ip)<=getIpToLong(endIP));
+    }
 }
