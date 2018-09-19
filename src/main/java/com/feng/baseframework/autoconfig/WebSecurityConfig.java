@@ -1,5 +1,7 @@
 package com.feng.baseframework.autoconfig;
 
+import com.feng.baseframework.constant.GlobalPropertyConfig;
+import com.feng.baseframework.constant.SecurityModeEnum;
 import com.feng.baseframework.security.MyAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -22,33 +24,59 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyAuthenticationProvider myAuthenticationProvider;
+    @Autowired
+    private GlobalPropertyConfig globalPropertyConfig;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(myAuthenticationProvider);
+        //自定义认证
+        if (SecurityModeEnum.CUSTOM_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
+            auth.authenticationProvider(myAuthenticationProvider);
+        }
+        //默认认证
+        if (SecurityModeEnum.DEFAULT_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
+            auth.inMemoryAuthentication().withUser("admin").password("admin").
+                    roles("ADMIN").and().withUser("user").password("user").roles("USER").
+                    and().withUser("test").password("test").roles("TEST");
+        }
+        //无认证
+        if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode()));
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-            .antMatchers("/","/index").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin()
-            .loginPage("/login")
-            .permitAll()
-            .and()
-            .logout()
-            .logoutSuccessUrl("/login")
-            .permitAll()
-            .invalidateHttpSession(true)
-            .and()
-            .rememberMe()
-            .tokenValiditySeconds(1209600);
+        //自定义认证
+        if (SecurityModeEnum.CUSTOM_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
+            http
+                    .authorizeRequests()
+                    .antMatchers("/", "/index").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .logoutSuccessUrl("/login")
+                    .permitAll()
+                    .invalidateHttpSession(true)
+                    .and()
+                    .rememberMe()
+                    .tokenValiditySeconds(1209600);
+        }
+        //默认认证
+        if (SecurityModeEnum.DEFAULT_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
+            http.formLogin()          // 定义当需要用户登录时候，转到的登录页面。
+                    .and()
+                    .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
+                    .anyRequest()        // 任何请求,登录后可以访问
+                    .authenticated();
+        }
+        //无认证
+        if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode()));
     }
 
 }

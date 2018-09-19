@@ -10,6 +10,8 @@ import java.io.IOException;
 /**
  * @ProjectName: baseframework
  * @description: 拦截器处理跨域
+ * 单例，由容器负责初始化、销毁
+ *
  * @author: lanhaifeng
  * @create: 2018-05-16 18:49
  * @UpdateUser:

@@ -5,6 +5,7 @@ import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,7 @@ public class BaseController {
 
     @RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
     @MethodTimeAop
+    @PreAuthorize("hasAnyRole('ADMIN','TEST')")
     public String baseMethod(){
         Map<String,String> data = new HashMap<>();
         data.put("name","tom");
