@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +35,23 @@ public class BaseController {
     @MethodTimeAop
     @PreAuthorize("hasAnyRole('ADMIN','TEST')")
     public String baseMethod(){
+        logger.info("测试基于内存的简单认证");
         Map<String,String> data = new HashMap<>();
         data.put("name","tom");
         data.put("age","12");
         String str = JacksonUtil.mapToJson(data);
         redisService.set("testAop",str);
         test();
+        return str;
+    }
+
+    @RequestMapping(value = "/anonymous/redirectMethod",method= RequestMethod.GET)
+    public String anonymousMethod(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("测试匿名认证");
+        Map<String,String> data = new HashMap<>();
+        data.put("name","tom");
+        data.put("age","12");
+        String str = JacksonUtil.mapToJson(data);
         return str;
     }
 

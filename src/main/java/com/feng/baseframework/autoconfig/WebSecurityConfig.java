@@ -72,6 +72,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
             http.formLogin()          // 定义当需要用户登录时候，转到的登录页面。
                     .and()
                     .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
+                    .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证
                     .anyRequest()        // 任何请求,登录后可以访问
                     .authenticated();
         }
