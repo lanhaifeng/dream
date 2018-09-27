@@ -129,8 +129,8 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"dbStatus\": \"1\",\n" +
                 "    \"serverHostName\": \"os\",\n" +
                 "    \"dbServerName\": \"orcl\",\n" +
-                "    \"serverIP\": \"172.19.1.7\",\n" +
-                "    \"serverPort\": 1511,\n" +
+                "    \"serverIP\": \"192.168.202.3\",\n" +
+                "    \"serverPort\": 1521,\n" +
                 "    \"dataType\": \"1\",\n" +
                 "    \"fromAddress\": \"172.19.1.7\",\n" +
                 "    \"fromType\": \"1\",\n" +
@@ -216,19 +216,17 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "      },\n" +
                 "      \"riskEngine\":[\n" +
                 "        {\n" +
-                "          \"riskRuleName\":\"riskRuleName1\",\n" +
-                "          \"riskRuleId\":\"1\",\n" +
+                "          \"ruleName\":\"riskRuleName1\",\n" +
                 "          \"actionLevel\":\"2\",\n" +
-                "          \"riskLevel\":\"2\",\n" +
+                "          \"auditLevel\":\"1\",\n" +
                 "          \"riskClass\":202,\n" +
                 "          \"tag\":[\"q\",\"b\"],\n" +
                 "          \"matched\":[\"dsfsd\",\"dsgdsf\"]\n" +
                 "        },\n" +
                 "        {\n" +
-                "          \"riskRuleName\":\"riskRuleName2\",\n" +
-                "          \"riskRuleId\":\"2\",\n" +
+                "          \"ruleName\":\"riskRuleName2\",\n" +
                 "          \"actionLevel\":\"3\",\n" +
-                "          \"riskLevel\":\"3\",\n" +
+                "          \"auditLevel\":\"2\",\n" +
                 "          \"riskClass\":203,\n" +
                 "          \"tag\":[\"q2\",\"b2\"],\n" +
                 "          \"matched\":[\"dsfsd2\",\"dsgdsf2\"]\n" +
@@ -267,19 +265,16 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "      },\n" +
                 "      \"riskEngine\":[\n" +
                 "        {\n" +
-                "          \"riskRuleName\":\"riskRuleName1\",\n" +
-                "          \"riskRuleId\":\"1\",\n" +
+                "          \"ruleName\":\"riskRuleName1\",\n" +
                 "          \"actionLevel\":\"2\",\n" +
-                "          \"riskLevel\":\"2\",\n" +
-                "          \"riskClass\":202,\n" +
+                "          \"auditLevel\":\"1\",\n" +
                 "          \"tag\":[\"q\",\"b\"],\n" +
                 "          \"matched\":[\"dsfsd\",\"dsgdsf\"]\n" +
                 "        },\n" +
                 "        {\n" +
-                "          \"riskRuleName\":\"riskRuleName2\",\n" +
-                "          \"riskRuleId\":\"2\",\n" +
+                "          \"ruleName\":\"riskRuleName2\",\n" +
                 "          \"actionLevel\":\"3\",\n" +
-                "          \"riskLevel\":\"3\",\n" +
+                "          \"auditLevel\":\"2\",\n" +
                 "          \"riskClass\":203,\n" +
                 "          \"tag\":[\"q2\",\"b2\"],\n" +
                 "          \"matched\":[\"dsfsd2\",\"dsgdsf2\"]\n" +
