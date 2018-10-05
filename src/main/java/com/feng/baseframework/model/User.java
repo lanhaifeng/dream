@@ -22,6 +22,7 @@ public class User implements Serializable {
         this.id = user.getId();
         this.name = user.getName();
     }
+    public User(){}
     private Long id;
 
     private String userName;

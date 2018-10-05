@@ -1,0 +1,12 @@
+package com.feng.baseframework.mydrools
+
+import com.feng.baseframework.model.User;
+
+//drl文件的rule不能重复
+rule "user rule1"
+
+    when
+        matd : User(userName != null, userName == "admin");
+    then
+        System.out.println("admin用户!");
+end

@@ -1,15 +1,19 @@
 package com.feng.baseframework.controller;
 
 import com.feng.baseframework.annotation.MethodTimeAop;
+import com.feng.baseframework.model.User;
 import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
+import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -30,6 +34,9 @@ public class BaseController {
 
     @Autowired
     private RedisService redisService;
+    @Resource
+    private KieSession kieSession;
+
 
     @RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
     @MethodTimeAop
@@ -57,5 +64,15 @@ public class BaseController {
 
     public void test(){
         logger.info("测试同类内是否会aop");
+    }
+
+
+    @RequestMapping(value = "/drools/student",method={RequestMethod.GET, RequestMethod.POST})
+    public String droolsTest(@RequestBody User user){
+        kieSession.insert(user);
+        int ruleFiredCount = kieSession.fireAllRules();
+
+        String response = user == null || user.getUserName() == null ? "" : user.getUserName() + "触发了" + ruleFiredCount + "条规则";
+        return  response;
     }
 }
