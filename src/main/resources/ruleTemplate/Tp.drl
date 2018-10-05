@@ -1,0 +1,23 @@
+template header
+seq
+condition
+content
+
+package com.feng.baseframework.mydrools
+import com.feng.baseframework.model.User;
+global java.util.List users;
+
+template "tp"
+
+rule "@{row.rowNumber}"
+salience @{seq}
+
+	when
+		@{condition}
+	then
+		@{content}
+
+end
+
+
+end template
