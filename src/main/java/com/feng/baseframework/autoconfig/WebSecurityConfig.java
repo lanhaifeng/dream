@@ -77,7 +77,9 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .authenticated();
         }
         //无认证
-        if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode()));
+        if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())){
+            http.csrf().disable();
+        }
     }
 
 }
