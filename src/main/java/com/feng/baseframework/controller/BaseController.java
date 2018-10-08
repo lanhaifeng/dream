@@ -8,6 +8,7 @@ import com.feng.baseframework.util.DroolsUtil;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * baseframework
@@ -81,12 +79,28 @@ public class BaseController {
     }
 
     @RequestMapping(value = "/drools/dynamicStudent",method={RequestMethod.GET, RequestMethod.POST})
-    public String dynamicLoadRule(@RequestBody User user){
+    public String dynamicLoadRule(@RequestBody User user) throws CloneNotSupportedException {
+    	Long start = new Date().getTime();
         KieSession kieSession = DroolsUtil.getInstance().dynamicLoadRule(loadRuleTps());
-        kieSession.insert(user);
+        List<User> users = new ArrayList<>();
+        for(int i=0;i<1000;i++){
+        	User domain = user.clone();
+			kieSession.insert(domain);
+			users.add(domain);
+		}
         int ruleFiredCount = kieSession.fireAllRules();
 
-        String response = user == null || user.getUserName() == null ? "" : user.getUserName() + "触发了" + ruleFiredCount + "条动态加载规则";
+        //释放资源
+        for(User temp : users){
+			kieSession.delete(kieSession.getFactHandle(temp));
+		}
+		kieSession.dispose();
+		users.clear();
+
+		Long end = new Date().getTime();
+		Long time = end - start;
+        String response = "总共触发了" + ruleFiredCount + "次动态加载规则,"+"耗时：" + time + "ms";
+
         return  response;
     }
 
@@ -94,6 +108,17 @@ public class BaseController {
         List<RuleTp> ruleTps = new ArrayList<>();
         ruleTps.add(new RuleTp("matd : User(userName != null, userName == \"admin\");","System.out.println(\"动态加载rule，admin用户!\");",0));
         ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
         return  ruleTps;
     }
 }
