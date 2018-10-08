@@ -100,9 +100,13 @@ public class BaseController {
 		Long end = new Date().getTime();
 		Long time = end - start;
         String response = "总共触发了" + ruleFiredCount + "次动态加载规则,"+"耗时：" + time + "ms";
-
         return  response;
     }
+
+	@RequestMapping(value = "/baseManage/getWebRootPath",method=RequestMethod.GET)
+	public String getWebRootPath() {
+    	return System.getProperty("projectRootPath") == null ? "" : System.getProperty("projectRootPath");
+	}
 
     private List<RuleTp> loadRuleTps(){
         List<RuleTp> ruleTps = new ArrayList<>();
