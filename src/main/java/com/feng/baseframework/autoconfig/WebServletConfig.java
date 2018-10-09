@@ -1,7 +1,9 @@
 package com.feng.baseframework.autoconfig;
 
 import com.feng.baseframework.interceptor.SimpleHandlerInterceptor;
+import com.feng.baseframework.listener.OnlineUserListener;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -26,4 +28,10 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login", "/user/login");
     }
+
+    @Bean
+    public OnlineUserListener onlineUserListener(){
+        return new OnlineUserListener();
+    }
+
 }
