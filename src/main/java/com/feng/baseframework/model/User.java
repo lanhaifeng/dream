@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @UpdateRemark:
  * @Version: 1.0
  */
-public class User implements Serializable {
+public class User implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 8031504569994478937L;
 
@@ -59,5 +59,10 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public User clone() throws CloneNotSupportedException {
+        return (User)super.clone();
     }
 }
