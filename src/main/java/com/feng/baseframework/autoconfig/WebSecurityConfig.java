@@ -58,6 +58,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .formLogin()
                     .loginPage("/login")
                     .permitAll()
+                    .defaultSuccessUrl("/static/hello.html")
                     .and()
                     .logout()
                     .logoutSuccessUrl("/login")
@@ -69,7 +70,9 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         }
         //默认认证
         if (SecurityModeEnum.DEFAULT_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
-            http.formLogin()          // 定义当需要用户登录时候，转到的登录页面。
+            http.csrf().disable()
+                    .formLogin()          // 定义当需要用户登录时候，转到的登录页面。
+                    .defaultSuccessUrl("/baseManage/getInfo", true)
                     .and()
                     .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证

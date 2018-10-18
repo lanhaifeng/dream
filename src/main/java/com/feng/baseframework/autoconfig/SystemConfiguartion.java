@@ -1,5 +1,6 @@
 package com.feng.baseframework.autoconfig;
 
+import com.feng.baseframework.listener.ApplicationEventListener;
 import com.feng.baseframework.util.SpringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,5 +27,10 @@ public class SystemConfiguartion {
     @Bean
     public SpringUtil getSpringUtil(){
         return new SpringUtil();
+    }
+
+    @Bean
+    public ApplicationEventListener applicationEventListener(){
+        return new ApplicationEventListener();
     }
 }

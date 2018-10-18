@@ -1,18 +1,17 @@
 package com.feng.baseframework.autoconfig;
 
 import com.feng.baseframework.interceptor.SimpleHandlerInterceptor;
+import com.feng.baseframework.listener.OnlineUserListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.WebAppRootListener;
 
-import javax.jws.WebParam;
 import javax.servlet.ServletContext;
-import javax.servlet.annotation.WebInitParam;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * baseframework
@@ -46,4 +45,10 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
         servletContext.setInitParameter("webAppRootKey","projectRootPath");
         return new WebAppRootListener();
     }
+
+    @Bean
+    public OnlineUserListener onlineUserListener(){
+        return new OnlineUserListener();
+    }
+
 }
