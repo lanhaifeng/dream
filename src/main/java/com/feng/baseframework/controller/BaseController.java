@@ -7,8 +7,12 @@ import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.DroolsUtil;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.client.solrj.response.CoreAdminResponse;
+import org.apache.solr.common.SolrDocument;
 import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -38,9 +43,11 @@ public class BaseController {
     private RedisService redisService;
     @Resource
     private KieSession kieSession;
+	@Autowired
+	private SolrClient solrClient;
 
 
-    @RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
+	@RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
     @MethodTimeAop
     @PreAuthorize("hasAnyRole('ADMIN','TEST')")
     public String baseMethod(){
@@ -125,4 +132,27 @@ public class BaseController {
 		ruleTps.add(new RuleTp("matd : User(userName != null, userName != \"admin\");","System.out.println(\"动态加载rule，非admin用户!\");",1));
         return  ruleTps;
     }
+
+
+	@RequestMapping(value = "/baseManage/solrSearch",method=RequestMethod.GET)
+	public String solrSearch() {
+		SolrDocument solrDocument = null;
+		try {
+			CoreAdminResponse coreAdminResponse = CoreAdminRequest.getStatus("2",solrClient);
+			logger.info(coreAdminResponse.toString());
+			if(coreAdminResponse == null || coreAdminResponse.getCoreStatus("2") == null || coreAdminResponse.getCoreStatus("2").size() < 1){
+				CoreAdminRequest.createCore("2","2",solrClient);
+			}
+
+			logger.info(coreAdminResponse.toString());
+
+			solrDocument = solrClient.getById("2","1");
+		} catch (SolrServerException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+
+		return solrDocument == null ? "" : solrDocument.toString();
+	}
 }
