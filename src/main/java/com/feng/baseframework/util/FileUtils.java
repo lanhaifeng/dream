@@ -1,5 +1,7 @@
 package com.feng.baseframework.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
@@ -13,6 +15,9 @@ import java.io.*;
  * @since
  **/
 public class FileUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+
 	/**
 	 * 将文本文件中的内容读入到buffer中
 	 * @param buffer buffer
@@ -63,7 +68,12 @@ public class FileUtils {
 	 * @return
 	 */
 	public static String getWebRootPath() {
-		return getFilePathByRelativePath("");
+		try {
+			return ResourceUtils.getFile("classpath:").getPath();
+		} catch (FileNotFoundException e) {
+			logger.error(ExceptionUtil.getStackTrace(e));
+			return null;
+		}
 	}
 
 	/**
@@ -76,32 +86,31 @@ public class FileUtils {
 	 */
 	public static File getFileByRelativePath(String relativePath) {
 		try {
-			File pathFile = new File(ResourceUtils.getURL("classpath:" + relativePath).getPath());
+			String path = getWebRootPath() + relativePath;
+			int index = path.lastIndexOf("/") == -1 ? path.lastIndexOf("\\") : path.lastIndexOf("/");
+
+			File dir = new File(path.substring(0,index));
+			if(!dir.exists()){
+				dir.mkdirs();
+			}
+			File pathFile = new File(path);
 			if(!pathFile.exists()){
-				pathFile = new File(relativePath);
+				pathFile.createNewFile();
 			}
 			return pathFile;
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e1) {
+			logger.error(ExceptionUtil.getStackTrace(e1));
+			return null;
+		}catch (IOException e2) {
+			logger.error(ExceptionUtil.getStackTrace(e2));
 			return null;
 		}
 	}
 
-	/**
-	 * 2018/9/30 17:23
-	 * 根据相对路径获取文件绝对路径
-	 *
-	 * @param relativePath
-	 * @author lanhaifeng
-	 * @return
-	 */
-	public static String getFilePathByRelativePath(String relativePath){
-		File pathFile = getFileByRelativePath(relativePath);
-		return pathFile == null ? null : pathFile.getPath();
-	}
-
 	public static void main(String[] args) throws IOException {
 		System.out.println(getWebRootPath());
-		File file = ResourceUtils.getFile("classpath:rules/Tp.drl");
+		System.out.println(ResourceUtils.getFile("classpath:").getPath());
+		File file = ResourceUtils.getFile("classpath:ruleTemplate/Tp.drl");
 
 		if(file != null && file.exists() && file.isFile()){
 			System.out.println(file.getPath());

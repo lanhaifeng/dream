@@ -19,7 +19,20 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
     }
 
     @Test
-    public void set() {
+    public void setTimeOut() {
+        redisService.set("test","test",1*60*1000l);
+        try {
+            Thread.sleep(30*1000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        redisService.set("test","test",1*60*1000l);
+        try {
+            Thread.sleep(40*1000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(redisService.get("test"));
     }
 
     @Test
