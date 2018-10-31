@@ -161,9 +161,21 @@ public class DateUtil {
 		return instant.toEpochMilli();
 	}
 
+    public static String instantToString(Instant instant){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dtf.format(LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId()));
+    }
+
 	public static void main(String[] args) {
 		Date date = new Date();
 		String[] times = getTimeToken(new Date(date.getTime()/1000));
 		System.out.println(times[6]);
+        System.out.println(stampToDate(getCurrentInstant().toEpochMilli()));
+
+        System.out.println(getCurrentInstant().toEpochMilli());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println(dtf.format(LocalDateTime.ofInstant(getCurrentInstant(), TimeZone.getDefault().toZoneId())));
+        System.out.println(stampToDate(getCurrentInstant().toEpochMilli()));
+        System.out.println(instantToString(getCurrentInstant()));
 	}
 }

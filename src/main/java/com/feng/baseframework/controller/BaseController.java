@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
@@ -59,6 +60,16 @@ public class BaseController {
         redisService.set("testAop",str);
         test();
         return str;
+    }
+
+    @RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+    @MethodTimeAop
+    @PreAuthorize("hasAnyRole('ADMIN','TEST')")
+    public void testSession(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session != null){
+            session.invalidate();
+        }
     }
 
     @RequestMapping(value = "/anonymous/redirectMethod",method= RequestMethod.GET)
