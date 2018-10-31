@@ -173,7 +173,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"appHash\": \"\",\n" +
                 "    \"appPath\": \"\",\n" +
                 "    \"appUser\": \"\",\n" +
-                "    \"logInTimeStamp\": 139674484032992,\n" +
+                "    \"logInTimeStamp\": 139674484032992000,\n" +
                 "    \"isLogInSuccess\": true,\n" +
                 "    \"logOutTimeStamp_\": 0\n" +
                 "  },\n" +
@@ -181,9 +181,9 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"linkSessionID\":\"10776909922302503157\",\n" +
                 "    \"SQLSessionID\":\"1534149565350659\",\n" +
                 "    \"SQLID\":\"155553235\",\n" +
-                "    \"bindVarList\":[\"a\",\"b\",\"c\"],\n" +
-                "    \"reqTimeStamp\":139674484032992,\n" +
-                "    \"resTimeStamp\":139674484062992,\n" +
+                "    \"SQLBind\":[\"a\",\"b\",\"c\"],\n" +
+                "    \"reqTimeStamp\":139674484032992000,\n" +
+                "    \"resTimeStamp\":139674484062992000,\n" +
                 "    \"resRow\":10,\n" +
                 "    \"errorCode\":\"0\"\n" +
                 "  },\n" +
