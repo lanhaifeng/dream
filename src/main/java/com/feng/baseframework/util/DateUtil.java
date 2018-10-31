@@ -26,7 +26,7 @@ public class DateUtil {
 	static DateFormat format;
 	static{
 		format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		TimeZone timeZone = TimeZone.getTimeZone("Asia/shanghai");
+		TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");
 		format.setTimeZone(timeZone);
 	}
 
@@ -44,6 +44,7 @@ public class DateUtil {
 	 * @return 日期各部分数组
 	 */
 	public static String[] getTimeToken(Date date) {
+//		format.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 		String dateStr = format.format(date);
 		System.out.println(dateStr);
 
