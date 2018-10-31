@@ -1,5 +1,7 @@
 package com.feng.baseframework.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +14,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * baseframework
@@ -44,7 +48,6 @@ public class DateUtil {
 	 * @return 日期各部分数组
 	 */
 	public static String[] getTimeToken(Date date) {
-//		format.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 		String dateStr = format.format(date);
 		System.out.println(dateStr);
 
@@ -92,7 +95,6 @@ public class DateUtil {
 	 */
 	public static String stampToDate(String s){
 		String res;
-		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		long lt = new Long(s);
 		Date date = new Date(lt);
 		res = format.format(date);
@@ -106,6 +108,25 @@ public class DateUtil {
 		Date date = new Date(s);
 		res = format.format(date);
 		return res;
+	}
+
+	/*
+	 * 从字符串中提取时间
+	 * 格式为yyyyMMddHHmmss
+	 */
+	public static String getDateByPattern(String time){
+		String targetTime = "";
+		String reg = "([2]\\d{3}(((0[13578]|1[02])([0-2]\\d|3[01]))|((0[469]|11)([0-2]\\d|30))|(02([01]\\d|2[0-8])))([01][0-9]|2[0-3])([0-5]\\d)([0-5]\\d))";
+		Pattern pattern = Pattern.compile (reg);
+		Matcher matcher = pattern.matcher (time);
+		while (matcher.find ()) {
+			String timeTemp = matcher.group();
+			if(StringUtils.isNotBlank(timeTemp)){
+				targetTime = timeTemp;
+				break;
+			}
+		}
+		return targetTime;
 	}
 
 	public static String dateToString(Date date){

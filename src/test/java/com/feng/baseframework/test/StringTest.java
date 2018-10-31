@@ -1,5 +1,6 @@
 package com.feng.baseframework.test;
 
+import com.feng.baseframework.util.DateUtil;
 import com.feng.baseframework.util.IPUtil;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -55,13 +56,7 @@ public class StringTest {
             System.out.println (matcher.group ());
         }
 
-        String auditId = "90013168773888_1540992369138806";
-        int index = auditId.indexOf("_");
-        if(index != -1) {
-            Long time = Long.valueOf(auditId.substring(index+1)) / 1000;
-            System.out.println(time);
-        }
-
+		System.out.println(DateUtil.getDateByPattern(str));
     }
 
 }
