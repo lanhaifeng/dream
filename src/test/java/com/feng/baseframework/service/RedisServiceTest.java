@@ -173,7 +173,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"appHash\": \"\",\n" +
                 "    \"appPath\": \"\",\n" +
                 "    \"appUser\": \"\",\n" +
-                "    \"logInTimeStamp\": 139674484032992,\n" +
+                "    \"logInTimeStamp\": 139674484032992000,\n" +
                 "    \"isLogInSuccess\": true,\n" +
                 "    \"logOutTimeStamp_\": 0\n" +
                 "  },\n" +
@@ -181,9 +181,9 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    \"linkSessionID\":\"10776909922302503157\",\n" +
                 "    \"SQLSessionID\":\"1534149565350659\",\n" +
                 "    \"SQLID\":\"155553235\",\n" +
-                "    \"bindVarList\":[\"a\",\"b\",\"c\"],\n" +
-                "    \"reqTimeStamp\":139674484032992,\n" +
-                "    \"resTimeStamp\":139674484062992,\n" +
+                "    \"SQLBind\":[\"a\",\"b\",\"c\"],\n" +
+                "    \"reqTimeStamp\":139674484032992000,\n" +
+                "    \"resTimeStamp\":139674484062992000,\n" +
                 "    \"resRow\":10,\n" +
                 "    \"errorCode\":\"0\"\n" +
                 "  },\n" +
@@ -206,7 +206,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "      \"column\":\"\"\n" +
                 "    }]\n" +
                 "  },\n" +
-                "  \"BizzLog\":{\n" +
+                "  \"BizzAccessLog\":{\n" +
                 "    \"linkSessionID\":\"\",\n" +
                 "    \"SQLSessionID\":\"1534149565350659\",\n" +
                 "    \"token\":\"\",\n" +
@@ -220,6 +220,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "        \"ruleName\":\"SPS_IPADDRESS_LOGON1\",\n" +
                 "        \"actionLevel\":\"1\",\n" +
                 "        \"auditLevel\":\"1\",\n" +
+                "        \"riskLevel\":\"1\",\n" +
                 "        \"objectOwner\":\"asset\",\n" +
                 "        \"objectName\":\"EMPTY_COLUMN\",\n" +
                 "        \"objectType\":\"TABLE\"\n" +
@@ -232,6 +233,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "          \"ruleName\":\"riskRuleName1\",\n" +
                 "          \"actionLevel\":\"2\",\n" +
                 "          \"auditLevel\":\"1\",\n" +
+                "          \"riskLevel\":\"2\",\n" +
                 "          \"riskClass\":202,\n" +
                 "          \"tag\":[\"q\",\"b\"],\n" +
                 "          \"matched\":[\"dsfsd\",\"dsgdsf\"]\n" +
@@ -240,6 +242,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "          \"ruleName\":\"riskRuleName2\",\n" +
                 "          \"actionLevel\":\"3\",\n" +
                 "          \"auditLevel\":\"2\",\n" +
+                "          \"riskLevel\":\"3\",\n" +
                 "          \"riskClass\":203,\n" +
                 "          \"tag\":[\"q2\",\"b2\"],\n" +
                 "          \"matched\":[\"dsfsd2\",\"dsgdsf2\"]\n" +
@@ -247,7 +250,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "      ]\n" +
                 "    }\n" +
                 "  },\n" +
-                "  \"BizzLogInLog\":{\n" +
+                "  \"BizzLinkLog\":{\n" +
                 "    \"linkSessionID\":\"10776909922302503157\",\n" +
                 "    \"SQLSessionID\":\"\",\n" +
                 "    \"token\":\"\",\n" +
@@ -261,6 +264,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "        \"ruleName\":\"SPS_IPADDRESS_LOGON\",\n" +
                 "        \"actionLevel\":\"1\",\n" +
                 "        \"auditLevel\":\"1\",\n" +
+                "        \"riskLevel\":\"3\",\n" +
                 "        \"objectOwner\":\"\",\n" +
                 "        \"objectName\":\"\",\n" +
                 "        \"objectType\":\"\",\n" +
@@ -281,6 +285,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "          \"ruleName\":\"riskRuleName1\",\n" +
                 "          \"actionLevel\":\"2\",\n" +
                 "          \"auditLevel\":\"1\",\n" +
+                "          \"riskLevel\":\"2\",\n" +
                 "          \"tag\":[\"q\",\"b\"],\n" +
                 "          \"matched\":[\"dsfsd\",\"dsgdsf\"]\n" +
                 "        },\n" +
@@ -288,6 +293,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "          \"ruleName\":\"riskRuleName2\",\n" +
                 "          \"actionLevel\":\"3\",\n" +
                 "          \"auditLevel\":\"2\",\n" +
+                "          \"riskLevel\":\"1\",\n" +
                 "          \"riskClass\":203,\n" +
                 "          \"tag\":[\"q2\",\"b2\"],\n" +
                 "          \"matched\":[\"dsfsd2\",\"dsgdsf2\"]\n" +
@@ -301,13 +307,13 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
         String sqlSessionId = StringUtil.generateUUID();
         String sqlId = StringUtil.generateUUID();
         JSONObject linkSession = data.getJSONObject("LinkSession");
-        JSONObject bizzLogInLog = data.getJSONObject("BizzLogInLog");
+        JSONObject bizzLogInLog = data.getJSONObject("BizzLinkLog");
         linkSession.put("linkSessionID",linkSessionId);
         bizzLogInLog.put("linkSessionID",linkSessionId);
 
         JSONObject sqlSession = data.getJSONObject("SQLSession");
         JSONObject sqlResource = data.getJSONObject("SQLResource");
-        JSONObject bizzLog = data.getJSONObject("BizzLog");
+        JSONObject bizzLog = data.getJSONObject("BizzAccessLog");
         sqlSession.put("SQLSessionID",sqlSessionId);
         sqlSession.put("SQLID",sqlId);
         sqlSession.put("linkSessionID",linkSessionId);
@@ -316,18 +322,18 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
 
         System.out.println(data.toString());
         System.out.println("linkSession:"+linkSession.toString());
-        System.out.println("bizzLogInLog:"+bizzLogInLog.toString());
+        System.out.println("BizzLinkLog:"+bizzLogInLog.toString());
         System.out.println("sqlSession:"+sqlSession.toString());
         System.out.println("sqlResource:"+sqlResource.toString());
-        System.out.println("bizzLog:"+bizzLog.toString());
+        System.out.println("BizzAccessLog:"+bizzLog.toString());
 
         String logonHashKey = "LinkSession";
-        String logonBizlogHashKey = "BizzLogInLog";
+        String logonBizlogHashKey = "BizzLinkLog";
         String logonTopic = "LinkSession";
 
         String accessListKey = "SQLSession";
         String accessReourceKey = "SQLResource";
-        String accessBizlogHashKey = "BizzLog";
+        String accessBizlogHashKey = "BizzAccessLog";
         String accessTopic = "SQLSession";
 
         //发送登陆审计

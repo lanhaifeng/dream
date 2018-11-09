@@ -107,7 +107,7 @@ public class JacksonUtil {
      * @param jsonString
      * @return java.util.Map<java.lang.String,java.lang.Object>
      */
-    public static <T> Map<String, Object> json2map(String jsonString) {
+    public static <T> Map<String, T> json2map(String jsonString) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

@@ -11,6 +11,17 @@ public class Student implements Serializable, Cloneable {
     private Integer age;
     private Teacher teacher;
 
+    public  String getPrivateName(String name) {
+        if (check()){
+            return "private 被mock 了";
+        }
+        return name;
+    }
+
+    private Boolean check(){
+        return false;
+    }
+
     public Student() {
     }
 
