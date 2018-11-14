@@ -22,7 +22,46 @@ public class User implements Serializable, Cloneable {
         this.id = user.getId();
         this.name = user.getName();
     }
+    public User(Builder builder) {
+        this.userName = builder.userName;
+        this.password = builder.password;
+        this.id = builder.id;
+        this.name = builder.name;
+    }
     public User(){}
+
+    static class Builder{
+        private Long id;
+
+        private String userName;
+        private String name;
+        private String password;
+
+        public Builder() {
+        }
+
+        public Builder withId(Long id){
+            this.id = id;
+            return this;
+        }
+        public Builder withUserName(String userName){
+            this.userName = userName;
+            return this;
+        }
+        public Builder withName(String name){
+            this.name = name;
+            return this;
+        }
+        public Builder withPassword(String password){
+            this.password = password;
+            return this;
+        }
+        public User build(){
+            return new User(this);
+        }
+
+    }
+
     private Long id;
 
     private String userName;
@@ -64,5 +103,15 @@ public class User implements Serializable, Cloneable {
     @Override
     public User clone() throws CloneNotSupportedException {
         return (User)super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + ( id == null ? "" : id) +
+                ", userName='" + ( userName == null ? "" : userName ) + '\'' +
+                ", name='" + ( name == null ? ""  : name ) + '\'' +
+                ", password='" + ( password == null ? ""  : password ) + '\'' +
+                '}';
     }
 }
