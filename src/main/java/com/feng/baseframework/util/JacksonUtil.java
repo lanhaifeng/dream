@@ -1,5 +1,6 @@
 package com.feng.baseframework.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.feng.baseframework.constant.ResultEnum;
 import com.feng.baseframework.exception.BusinessException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -284,5 +286,15 @@ public class JacksonUtil {
      */
     public static <T> T obj2pojo(Object obj, Class<T> clazz) {
         return objectMapper.convertValue(obj, clazz);
+    }
+
+    /**
+     * 读取json文件数据
+     * @param path
+     * @return
+     */
+    public static String getJsonFromFile(String path) throws IOException {
+        File file = FileUtils.getFileByRelativePath(path);
+        return org.apache.commons.io.FileUtils.readFileToString(file, "UTF-8");
     }
 }
