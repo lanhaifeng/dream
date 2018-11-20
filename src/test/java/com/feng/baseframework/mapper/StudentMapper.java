@@ -2,11 +2,11 @@ package com.feng.baseframework.mapper;
 
 import com.feng.baseframework.model.Student;
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Repository
+@Component
 public interface StudentMapper {
 
     @Insert("insert into students(id,name,age) values(#{id},#{name},#{age})")

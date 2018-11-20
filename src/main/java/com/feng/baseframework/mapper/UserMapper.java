@@ -3,6 +3,7 @@ package com.feng.baseframework.mapper;
 import com.feng.baseframework.SQLDriver.SimpleLangDriver;
 import com.feng.baseframework.model.User;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @UpdateRemark:
  * @Version: 1.0
  */
+@Component
 public interface UserMapper {
 
     @Insert("insert into users(id,name,userName,password) values(#{id},#{name},#{userName},#{password})")

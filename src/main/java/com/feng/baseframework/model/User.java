@@ -31,7 +31,7 @@ public class User implements Serializable, Cloneable {
     public User(){}
 
     static class Builder{
-        private Long id;
+        private Integer id;
 
         private String userName;
         private String name;
@@ -40,7 +40,7 @@ public class User implements Serializable, Cloneable {
         public Builder() {
         }
 
-        public Builder withId(Long id){
+        public Builder withId(Integer id){
             this.id = id;
             return this;
         }
@@ -62,17 +62,17 @@ public class User implements Serializable, Cloneable {
 
     }
 
-    private Long id;
+    private Integer id;
 
     private String userName;
     private String name;
     private String password;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
