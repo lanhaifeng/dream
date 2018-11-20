@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({MybatisConfiguration.class, RedisConfiguration.class, RestTemplateConfiguration.class, WebSecurityConfig.class, WebServletConfig.class,
-        DroolsConfig.class})
+        DroolsConfig.class, DatasourceConfiguration.class})
 @ComponentScan("com.feng.baseframework")
 public class SystemConfiguartion {
 

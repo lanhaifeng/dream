@@ -126,10 +126,10 @@
 		</dependency>
 		<!-- drools -->
 		<dependency>
-		<groupId>org.drools</groupId>
-		<artifactId>drools-core</artifactId>
-		<version>${drools.version}</version>
-	</dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-core</artifactId>
+			<version>${drools.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-compiler</artifactId>
@@ -174,6 +174,12 @@
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>6.6.2</version>
+		</dependency>
+		<!-- fastjson -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.51</version>
 		</dependency>
         <!-- test -->
 		<dependency>

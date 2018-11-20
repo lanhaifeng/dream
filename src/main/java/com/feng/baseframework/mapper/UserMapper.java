@@ -33,15 +33,13 @@ public interface UserMapper {
     public void deleteUser(Integer id);
 
     @Select("SELECT id, name, userName, password FROM users WHERE id = #{id}")
-    @Results(value = { @Result(column = "id", property = "id", javaType = Integer.class),
+    @Results(id="userMap" , value = { @Result(column = "id", property = "id", javaType = Integer.class),
             @Result(column = "name", property = "name", javaType = String.class),
+            @Result(column = "userName", property = "userName", javaType = String.class),
             @Result(column = "password", property = "password", javaType = String.class) })
     public User getUserById(Integer id);
 
     @Select("SELECT id, name, userName, password FROM users WHERE userName = #{userName}")
-    @Results(value = { @Result(column = "id", property = "id", javaType = Integer.class),
-            @Result(column = "name", property = "name", javaType = String.class),
-            @Result(column = "userName", property = "userName", javaType = String.class),
-            @Result(column = "password", property = "password", javaType = String.class) })
+    @ResultMap(value = "userMap")
     public User getUserByName(String userName);
 }
