@@ -161,6 +161,16 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
+    public Long getHashCount(String hashName) {
+        return stringRedisTemplate.opsForHash().size(hashName);
+    }
+
+    @Override
+    public void deleteHashKey(String hashName, String dataKey) {
+        stringRedisTemplate.opsForHash().delete(hashName, dataKey);
+    }
+
+    @Override
     public void convertAndSend(String channel, String message) {
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(message) ){
             return;

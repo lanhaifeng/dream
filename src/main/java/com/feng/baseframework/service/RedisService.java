@@ -120,6 +120,27 @@ public interface RedisService {
     public void setHashMultValue(String hashName, Map<String,String> data);
 
     /**
+     * 2018/11/21 15:02
+     * 获取hash名为hashName表长度
+     *
+     * @param hashName
+     * @author lanhaifeng
+     * @return java.lang.Long
+     */
+    public Long getHashCount(String hashName);
+
+    /**
+     * 2018/11/21 16:40
+     * 删除hash表为hashName，数据key为dataKey的数据
+     *
+     * @param hashName
+     * @param dataKey
+     * @author lanhaifeng
+     * @return void
+     */
+    public void deleteHashKey(String hashName, String dataKey);
+
+    /**
      * 2018/8/30 14:55
      * 发布redis订阅
      *

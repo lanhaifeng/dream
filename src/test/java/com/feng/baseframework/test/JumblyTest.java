@@ -25,4 +25,19 @@ public class JumblyTest {
 		System.out.println(typeList.get(0));
 		System.out.println(typeList.get(typeList.size() -1));
 	}
+
+	@Test
+	public void testException(){
+		try {
+			Integer b = null;
+			int i = 1/b;
+		} catch (NullPointerException e) {
+			System.out.println(1);
+			e.printStackTrace();
+		} catch (Exception e2){
+			System.out.println(2);
+		}
+		System.out.println(3);
+	}
+
 }

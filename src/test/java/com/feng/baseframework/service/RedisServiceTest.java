@@ -378,4 +378,11 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
 
         redisService.convertAndSend(logonHashKey,messages);
     }
+
+	@Test
+	public void getHashCount() {
+        String logonHashKey = "LinkSession1";
+        Long count = redisService.getHashCount(logonHashKey);
+        System.out.println(count);
+	}
 }
