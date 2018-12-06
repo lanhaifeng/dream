@@ -50,4 +50,10 @@ public class StringTest {
     public void testJson() throws IOException {
         System.out.println(JacksonUtil.getJsonFromFile("/json/data.json"));
     }
+
+    @Test
+    public void testStringSize(){
+        String auditId = "13060358572871200550";
+        System.out.println(auditId.getBytes().length*10000/1024);
+    }
 }

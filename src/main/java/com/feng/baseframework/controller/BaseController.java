@@ -15,16 +15,13 @@ import org.apache.solr.common.SolrDocument;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -72,8 +69,8 @@ public class BaseController {
         }
     }
 
-    @RequestMapping(value = "/anonymous/redirectMethod",method= RequestMethod.GET)
-    public String anonymousMethod(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = {"/anonymous/redirectMethod","/anonymous/redirectMethod/{id}"},method= RequestMethod.GET)
+    public String anonymousMethod(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "id", required = false)String id) throws Exception {
         logger.info("测试匿名认证");
         Map<String,String> data = new HashMap<>();
         data.put("name","tom");

@@ -1,5 +1,6 @@
 package com.feng.baseframework.test;
 
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -38,6 +39,14 @@ public class JumblyTest {
 			System.out.println(2);
 		}
 		System.out.println(3);
+	}
+
+	@Test
+	public void test(){
+		SolrInputDocument doc = new SolrInputDocument();
+		doc.addField("test1","test");
+		doc.addField("test2","test");
+		System.out.println(doc.toString());
 	}
 
 }
