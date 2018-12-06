@@ -193,4 +193,17 @@ public class RedisServiceImpl implements RedisService {
             }
         });
     }
+
+    @Override
+    public Set<String> getHashKeys(String hashName) {
+        Set<Object> keys = stringRedisTemplate.opsForHash().keys(hashName);
+        Set<String> result = new HashSet<>();
+        if(keys != null && !keys.isEmpty()){
+            for(Object obj : keys){
+                result.add(obj.toString());
+            }
+        }
+
+        return result;
+    }
 }

@@ -1,13 +1,15 @@
 package com.feng.baseframework.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.feng.baseframework.test.BaseFrameworkApplicationTest;
 import com.feng.baseframework.util.StringUtil;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class RedisServiceTest extends BaseFrameworkApplicationTest {
 
@@ -302,7 +304,7 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 "    }\n" +
                 "  }\n" +
                 "}";
-        JSONObject data = new JSONObject(jsonObject);
+        JSONObject data = JSONObject.parseObject(jsonObject);
         String linkSessionId = StringUtil.generateUUID();
         String sqlSessionId = StringUtil.generateUUID();
         String sqlId = StringUtil.generateUUID();
@@ -385,4 +387,67 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
         Long count = redisService.getHashCount(logonHashKey);
         System.out.println(count);
 	}
+
+    @Test
+    public void getHashKeys() {
+        String logonHashKey = "LinkSession";
+        Set<String> keys = redisService.getHashKeys(logonHashKey);
+        System.out.println((keys == null || keys.isEmpty()) ? "LinkSession表为空" : ("键:" + StringUtils.collectionToCommaDelimitedString(keys)));
+    }
+
+    @Test
+    public void mutlGetHash(){
+        String logonHashKey = "LinkSession";
+        AtomicLong onlineClientCount = new AtomicLong(0);
+        int limitSize = 10;
+        Set<String> keys = redisService.getHashKeys(logonHashKey);
+        Set<String> logonKeys = new HashSet<>();
+        List<Object> linkSessionStrs = null;
+
+        //LinkSession为空，在线客户端为0
+        if(keys == null || keys.isEmpty()){
+            System.out.println(onlineClientCount.toString());
+            return;
+        }
+
+        //LinkSession不为空，并不大于1000条
+        if(keys.size() <= limitSize){
+            linkSessionStrs = redisService.getHashMultValue(logonHashKey,keys,false);
+            if(linkSessionStrs != null && !linkSessionStrs.isEmpty()){
+                for(Object data : linkSessionStrs){
+                    JSONObject linkSession = JSONObject.parseObject(data.toString());
+                    if(!(linkSession.getLong("logOutTimeStamp_") > 0)){
+                        onlineClientCount.incrementAndGet();
+                    }
+                }
+            }
+        }
+
+        //LinkSession不为空，并大于1000条
+        if(keys.size() > limitSize){
+            int sum = 0, count = 0;
+            Iterator<String> iterator = keys.iterator();
+            while (iterator.hasNext()){
+                if(count == limitSize || sum == keys.size()){
+                    linkSessionStrs = redisService.getHashMultValue(logonHashKey,logonKeys,false);
+                    if(linkSessionStrs != null && !linkSessionStrs.isEmpty()){
+                        for(Object data : linkSessionStrs){
+                            JSONObject linkSession = JSONObject.parseObject(data.toString());
+                            if(!(linkSession.getLong("logOutTimeStamp_") > 0)){
+                                onlineClientCount.incrementAndGet();
+                            }
+                        }
+                    }
+
+                    logonKeys.clear();
+                    count = 0;
+                }
+                logonKeys.add(iterator.next());
+                count++;
+                sum++;
+            }
+        }
+        System.out.println(onlineClientCount.toString());
+    }
+
 }

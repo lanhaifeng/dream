@@ -161,4 +161,14 @@ public interface RedisService {
      * @return void
      */
     public void convertAndSend(String channel,List<String> messages);
+
+    /**
+     * 2018/11/29 19:02
+     * 获取hash名为hashName表全部键
+     *
+     * @param hashName
+     * @author lanhaifeng
+     * @return java.util.Set
+     */
+    public Set<String> getHashKeys(String hashName);
 }
