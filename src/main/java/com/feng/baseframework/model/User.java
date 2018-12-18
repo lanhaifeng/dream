@@ -12,9 +12,20 @@ import java.io.Serializable;
  * @UpdateRemark:
  * @Version: 1.0
  */
-public class User implements Serializable, Cloneable {
+public class User implements Serializable, Cloneable,Comparable<User> {
 
     private static final long serialVersionUID = 8031504569994478937L;
+
+    @Override
+    public int compareTo(User o) {
+        if(id == null){
+            return -1;
+        }
+        if(o == null || o.getId() == null){
+            return 1;
+        }
+        return Integer.valueOf(id) - Integer.valueOf(o.getId());
+    }
 
     public User(User user) {
         this.userName = user.getUserName();
