@@ -41,7 +41,9 @@ public class OptionalTest {
 	public void testGet(){
 		Integer id = null;
 		id = Optional.ofNullable(id).orElse(1);
-
 		Assert.assertTrue("Optional赋值失败",id == 1);
+		id = 2;
+		id = Optional.ofNullable(id).orElse(1);
+		Assert.assertTrue("Optional赋值失败",id == 2);
 	}
 }
