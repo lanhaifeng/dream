@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,5 +56,16 @@ public class StringTest {
     public void testStringSize(){
         String auditId = "13060358572871200550";
         System.out.println(auditId.getBytes().length*10000/1024);
+
+    }
+
+    @Test
+    public void testDecimalFormat(){
+        String auditId = "13060358572871200550";
+        System.out.println(auditId.getBytes().length*10000/1024);
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        System.out.println(decimalFormat.format(1*0.101));
+        System.out.println(decimalFormat.format(1*1110.111));
     }
 }
