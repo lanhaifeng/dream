@@ -1,5 +1,7 @@
 package com.feng.baseframework.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import java.io.Serializable;
 
 /**
@@ -74,7 +76,7 @@ public class User implements Serializable, Cloneable,Comparable<User> {
     }
 
     private Integer id;
-
+    @NotEmpty(message = "用户名为空")
     private String userName;
     private String name;
     private String password;

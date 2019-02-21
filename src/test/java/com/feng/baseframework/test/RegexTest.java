@@ -21,9 +21,14 @@ public class RegexTest {
 		boolean isMatch = Pattern.matches(pattern, content);
 		System.out.println(isMatch);
 
-		pattern = "([^<^>]+|(\\s)?)";
-		content = " ";
+		pattern = "([^<>]+|(\\s)?)";
+		content = "^";
 		isMatch = Pattern.matches(pattern, content);
 		System.out.println(isMatch);
+
+        pattern = "\\S\\^";
+        content = "b^";
+        isMatch = Pattern.matches(pattern, content);
+        System.out.println(isMatch);
 	}
 }

@@ -12,15 +12,20 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.common.SolrDocument;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
@@ -33,6 +38,7 @@ import java.util.*;
  * @since
  **/
 @RestController
+@Validated
 public class BaseController {
 
     private Logger logger = Logger.getLogger(getClass());
@@ -163,4 +169,36 @@ public class BaseController {
 
 		return solrDocument == null ? "" : solrDocument.toString();
 	}
+
+    //BindingResult只能用于@RequestPart @RequestBody，并和@Validated成对出现
+    @RequestMapping(value = "/baseManage/validate1",method=RequestMethod.POST)
+    public String validateTest1(@RequestBody @Validated User user, BindingResult result){
+        String response = "true";
+        if(result.hasErrors()){
+            List<ObjectError> allErrors = result.getAllErrors();
+            for (ObjectError allError : allErrors) {
+                System.out.println(allError.getDefaultMessage());
+            }
+        }
+        return  response;
+    }
+
+    @RequestMapping(value = "/baseManage/validate2",method=RequestMethod.POST)
+    public String validateTest2(@RequestBody @Valid User user){
+        String response = "true";
+        return  response;
+    }
+
+    @RequestMapping(value = "/baseManage/validate3",method=RequestMethod.GET)
+    public String validateTest3(@Valid @NotEmpty String auditId){
+        String response = "true";
+        return  response;
+    }
+
+    @RequestMapping(value = "/baseManage/validate4",method=RequestMethod.GET)
+    public String validateTest4(@Validated @NotEmpty String auditId){
+        String response = "true";
+        System.out.println(auditId);
+        return  response;
+    }
 }
