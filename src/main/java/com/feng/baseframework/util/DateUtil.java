@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 public class DateUtil {
 
 	static DateFormat format;
+	public static String DEFAULT_FORMATE = "yyyy-MM-dd HH:mm:ss";
 	static{
 		format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");
@@ -131,6 +132,17 @@ public class DateUtil {
 
 	public static String dateToString(Date date){
 		return format.format(date);
+	}
+
+	public static String dateToString(Date date, String format, TimeZone timeZone){
+		if(StringUtils.isBlank(format)){
+			format = DEFAULT_FORMATE;
+		}
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		if(timeZone != null){
+			dateFormat.setTimeZone(timeZone);
+		}
+		return dateFormat.format(date);
 	}
 
 	public static String now(){
