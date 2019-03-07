@@ -3,7 +3,11 @@ package com.feng.baseframework.jdk8.concurrent;
 import com.feng.baseframework.util.JacksonUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * baseframework
@@ -46,5 +50,45 @@ public class QueueTest {
 				"  \"<\": \"<\"\n" +
 				"}";
 		System.out.println(JacksonUtil.json2map(json));
+	}
+
+
+
+	@Test
+	public void testDrainTo() throws InterruptedException {
+		Integer count = 100000;
+		LinkedBlockingQueue<String>	auditStrs = new LinkedBlockingQueue<String>(count);
+		String str = "{\"linkSessionID\":7651832137224081835,\"SQLSessionID\":\"\",\"SQLAccessID\":\"\",\"token\":\"\",\"eUser\":\"\",\"eUserID\":\"\",\"eUserName\":\"\",\"certName\":\"\",\"dbWorkMode\":5,\"content\":{\"dbdwAccessControl\":{\"ruleName\":\"JAVA\",\"cmdType\":\"\",\"actionLevel\":\"0\",\"auditLevel\":\"1\",\"riskLevel\":\"0\",\"objectOwner\":\"\",\"objectName\":\"\",\"objectType\":\"\"}}}";
+		for (int i = 0; i < count; i++) {
+			auditStrs.put(str);
+		}
+
+		Long startTime = new Date().getTime();
+		List<String> datas = new ArrayList<>();
+		while (auditStrs.remainingCapacity() < count){
+			auditStrs.drainTo(datas, 1000);
+		}
+		Long endTime = new Date().getTime();
+
+		System.out.println(endTime - startTime);
+	}
+
+	@Test
+	public void testPoll() throws InterruptedException {
+		Integer count = 100000;
+		LinkedBlockingQueue<String>	auditStrs = new LinkedBlockingQueue<String>(count);
+		String str = "{\"linkSessionID\":7651832137224081835,\"SQLSessionID\":\"\",\"SQLAccessID\":\"\",\"token\":\"\",\"eUser\":\"\",\"eUserID\":\"\",\"eUserName\":\"\",\"certName\":\"\",\"dbWorkMode\":5,\"content\":{\"dbdwAccessControl\":{\"ruleName\":\"JAVA\",\"cmdType\":\"\",\"actionLevel\":\"0\",\"auditLevel\":\"1\",\"riskLevel\":\"0\",\"objectOwner\":\"\",\"objectName\":\"\",\"objectType\":\"\"}}}";
+		for (int i = 0; i < count; i++) {
+			auditStrs.put(str);
+		}
+
+		Long startTime = new Date().getTime();
+		List<String> datas = new ArrayList<>();
+		while (auditStrs.remainingCapacity() < count){
+			auditStrs.poll(100, TimeUnit.MILLISECONDS);
+		}
+		Long endTime = new Date().getTime();
+
+		System.out.println(endTime - startTime);
 	}
 }

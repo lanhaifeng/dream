@@ -3,7 +3,10 @@ package com.feng.baseframework.jdk8.util;
 import com.feng.baseframework.util.DateUtil;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,5 +48,16 @@ public class TimeTest {
 		}
 
 		System.out.println(DateUtil.getDateByPattern(str));
+	}
+
+	@Test
+	public void testCalendar(){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+		c.setTime(new Date());
+		c.add(Calendar.DATE, -30);
+		Date m = c.getTime();
+
+		System.out.println(format.format(m));
 	}
 }
