@@ -29,6 +29,10 @@ import java.util.Map;
 public class JacksonUtil {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
+    static {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     private JacksonUtil() {
     }
 
