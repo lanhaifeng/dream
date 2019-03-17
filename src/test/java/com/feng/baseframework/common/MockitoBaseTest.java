@@ -1,14 +1,8 @@
 package com.feng.baseframework.common;
 
-import com.feng.baseframework.model.Student;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -23,14 +17,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockitoBaseTest {
-    @Mock
-    private Student student;
 
     @Test
     public void mockitoTest(){
-        when(student.getName()).thenReturn("tom");
-        Assert.assertEquals("tom", student.getName());
-        verify(student).getName();
     }
 
 }
