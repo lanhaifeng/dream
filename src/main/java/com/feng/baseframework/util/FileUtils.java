@@ -86,6 +86,9 @@ public class FileUtils {
 	 */
 	public static File getFileByRelativePath(String relativePath) {
 		try {
+			if(relativePath != null && (!relativePath.startsWith("/") || !relativePath.startsWith("\\"))){
+				relativePath = File.separator + relativePath;
+			}
 			String path = getWebRootPath() + relativePath;
 			int index = path.lastIndexOf("/") == -1 ? path.lastIndexOf("\\") : path.lastIndexOf("/");
 

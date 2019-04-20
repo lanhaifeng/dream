@@ -30,13 +30,24 @@ public class PropertyUtil {
             logger.debug("开始加载system.properties文件内容.......");
         }
         props = new Properties();
-        InputStream in = null;
 
+        loadPropertiesFile(props, "system.properties");
+        if(logger.isDebugEnabled()) {
+            logger.debug("加载system.properties文件内容完成...........");
+            logger.debug("system.properties文件内容：" + props);
+        }
+    }
+
+    private static void loadPropertiesFile(Properties props, String propertiesFile) {
+        InputStream in = null;
+        if(props == null){
+            props = new Properties();
+        }
         try {
-            in = PropertyUtil.class.getClassLoader().getResourceAsStream("system.properties");
+            in = PropertyUtil.class.getClassLoader().getResourceAsStream(propertiesFile);
             props.load(in);
         } catch (FileNotFoundException e) {
-            logger.error("system.properties文件未找到");
+            logger.error(propertiesFile + "文件未找到");
         } catch (IOException e) {
             logger.error("出现IOException");
         } finally {
@@ -45,12 +56,8 @@ public class PropertyUtil {
                     in.close();
                 }
             } catch (IOException e) {
-                logger.error("system.properties文件流关闭出现异常");
+                logger.error(propertiesFile + "文件流关闭出现异常");
             }
-        }
-        if(logger.isDebugEnabled()) {
-            logger.debug("加载system.properties文件内容完成...........");
-            logger.debug("system.properties文件内容：" + props);
         }
     }
 
@@ -66,5 +73,20 @@ public class PropertyUtil {
             loadProps();
         }
         return props.getProperty(key, defaultValue);
+    }
+
+    public static String getPropertyFromFile(String propertiesFile, String key){
+        if(logger.isDebugEnabled()) {
+            logger.debug("开始加载"+ propertiesFile +"文件内容.......");
+        }
+        Properties properties = new Properties();
+
+        loadPropertiesFile(properties, propertiesFile);
+        if(logger.isDebugEnabled()) {
+            logger.debug("加载"+propertiesFile+"文件内容完成...........");
+            logger.debug(propertiesFile+"文件内容：" + props);
+        }
+
+        return properties.getProperty(key);
     }
 }

@@ -171,4 +171,15 @@ public interface RedisService {
      * @return java.util.Set
      */
     public Set<String> getHashKeys(String hashName);
+
+    /**
+     * 2018/12/24 17:40
+     * 验证hash表为hashName，数据key为dataKey的数据是否存在
+     *
+     * @param hashName
+     * @param dataKey
+     * @author lanhaifeng
+     * @return java.lang.Boolean
+     */
+    public Boolean hexists(String hashName , String dataKey);
 }

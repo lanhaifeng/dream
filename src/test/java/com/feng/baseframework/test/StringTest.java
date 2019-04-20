@@ -1,5 +1,6 @@
 package com.feng.baseframework.test;
 
+import com.alibaba.fastjson.JSON;
 import com.feng.baseframework.util.IPUtil;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.commons.lang.StringUtils;
@@ -67,5 +68,40 @@ public class StringTest {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         System.out.println(decimalFormat.format(1*0.101));
         System.out.println(decimalFormat.format(1*1110.111));
+
+        String a = "1";
+        Integer b = 1;
+        System.out.println(b.toString().equals(a));
+
+        Integer c = 1;
+        System.out.println(b.equals(c));
+
+        String test = "block_action ";
+        System.out.println(test.split(" ").length);
     }
+
+    @Test
+    public void jsonStr(){
+        List<String> datas = Arrays.asList(new String[]{"\"acb\"","'a'","'cb'"});
+        System.out.println(toJSONArrayString(datas));
+        System.out.println(JSON.toJSONString(datas));
+    }
+
+    public static String toJSONArrayString(List<String> objects) {
+        if(objects == null || objects.size() < 1){
+            return null;
+        }
+        StringBuilder jsonStr = new StringBuilder("[");
+        Object obj = null;
+        int count = objects.size();
+        for(int i=0; i<count; i++){
+            jsonStr.append("\"").append(objects.get(i).replaceAll("\"", "\\\\\"")).append("\"").append(",");
+        }
+        if(jsonStr.length() == 1){
+            return "";
+        }else {
+            return jsonStr.substring(0,jsonStr.length()-1)+"]";
+        }
+    }
+
 }

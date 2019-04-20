@@ -1,5 +1,6 @@
 package com.feng.baseframework.test;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
@@ -30,5 +31,24 @@ public class RegexTest {
         content = "b^";
         isMatch = Pattern.matches(pattern, content);
         System.out.println(isMatch);
+
+		pattern = "^(//s&;&;[^//f//n//r//t//v])*|([A-Za-z-_.0-9\\u4E00-\\u9FA5]+)$";
+		content = " !";
+		isMatch = Pattern.matches(pattern, content);
+		System.out.println(isMatch);
+	}
+
+	@Test
+	public void replaceAll(){
+		String value = "<script>alert(1)</script>";
+		System.out.println(StringEscapeUtils.escapeHtml(value));
+		value = value.replaceAll("eval\\((.*)\\)", "");
+		value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+		value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
+		value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
+		value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
+		value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
+		System.out.println(value);
+		System.out.println("review:*".replace("review:*", "review:y"));
 	}
 }

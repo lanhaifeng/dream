@@ -206,4 +206,9 @@ public class RedisServiceImpl implements RedisService {
 
         return result;
     }
+
+    @Override
+    public Boolean hexists(String hashName, String dataKey) {
+        return stringRedisTemplate.opsForHash().hasKey(hashName, dataKey);
+    }
 }
