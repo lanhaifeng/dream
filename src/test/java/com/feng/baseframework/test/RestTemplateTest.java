@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
-    @Resource(name = "sshRestTemplate")
+    @Resource(name = "sshIgnoreVerificationRestTemplate2")
     private RestTemplate restTemplate;
 
     @Test

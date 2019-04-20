@@ -1,7 +1,9 @@
 package com.feng.baseframework.util;
 
+import com.feng.memory.util.MemoryCalculationTool;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.util.RamUsageEstimator;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -50,5 +52,30 @@ public class MemoryUtil {
 
 	public static void consoleMemoryInfo(){
 		consoleMemoryInfo(null);
+	}
+
+	//计算指定对象本身在堆空间的大小，单位字节
+	public static long getObjecShallowSizeByInstrumentation(Object obj){
+		return MemoryCalculationTool.getObjectSize(obj);
+	}
+
+	//计算指定对象本身在堆空间的大小，单位字节
+	public static long getObjecShallowSizeByRamUsageEstimator(Object obj){
+		return RamUsageEstimator.shallowSizeOf(obj);
+	}
+
+	//计算指定对象及其引用树上的所有对象的综合大小，单位字节
+	public static long getObjecSizeByRamUsageEstimator(Object obj){
+		return RamUsageEstimator.sizeOf(obj);
+	}
+
+	//计算指定对象及其引用树上的所有对象的综合大小，返回可读的结果，如：2KB
+	public static String getObjecHumanSizeByRamUsageEstimator(Object obj){
+		return RamUsageEstimator.humanSizeOf(obj);
+	}
+
+	//计算指定对象本身在堆空间的大小，单位字节
+	public static long getObjecShallowSizeByUnsafe(Object obj){
+		return RamUsageEstimator.shallowSizeOf(obj);
 	}
 }

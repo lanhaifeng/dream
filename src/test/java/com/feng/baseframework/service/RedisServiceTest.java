@@ -2,9 +2,9 @@ package com.feng.baseframework.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.feng.baseframework.test.BaseFrameworkApplicationTest;
-import com.feng.baseframework.util.JacksonUtil;
 import com.feng.baseframework.util.StringUtil;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -474,5 +474,36 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
         }
 
         System.out.println(stringBuilder.toString());
+    }
+
+    @Test
+    public void changeDbIndex(){
+        redisService.changeDb(1);
+        redisService.set("db1", "db1");
+
+        redisService.changeDb(2);
+        redisService.set("db2", "db2");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 100000; i++) {
+                    redisService.changeDb(1);
+                    String val = redisService.get("db1");
+                    Assert.assertTrue("线程不安全", org.apache.commons.lang.StringUtils.isBlank(val));
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 100000; i++) {
+                    redisService.changeDb(2);
+                    String val = redisService.get("db2");
+                    Assert.assertTrue("线程不安全", org.apache.commons.lang.StringUtils.isBlank(val));
+                }
+            }
+        }).start();
     }
 }

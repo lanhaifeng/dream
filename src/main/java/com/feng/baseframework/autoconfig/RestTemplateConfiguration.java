@@ -8,7 +8,9 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -76,6 +78,11 @@ public class RestTemplateConfiguration {
         return buildRestTemplate(sshIgnoreVerificationClientHttpRequestFactory());
     }
 
+    @Bean("sshIgnoreVerificationRestTemplate2")
+    public RestTemplate sshIgnoreVerificationRestTemplate2() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        return buildRestTemplate(sshIgnoreVerificationClientHttpRequestFactory2());
+    }
+
     @Bean("sshRestTemplate")
     public RestTemplate sshRestTemplate() throws Exception {
         return buildRestTemplate(sshClientHttpRequestFactory());
@@ -131,6 +138,22 @@ public class RestTemplateConfiguration {
         phccm.setMaxTotal(200);
         CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).setConnectionManager(phccm).setConnectionManagerShared(true).build();
         factory.setHttpClient(httpClient);
+
+        return factory;
+    }
+
+    public ClientHttpRequestFactory sshIgnoreVerificationClientHttpRequestFactory2() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        TrustStrategy acceptingTrustStrategy = (x509Certificates, authType) -> true;
+        SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+        SSLConnectionSocketFactory connectionSocketFactory = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+        httpClientBuilder.setSSLSocketFactory(connectionSocketFactory);
+        CloseableHttpClient httpClient = httpClientBuilder.build();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setHttpClient(httpClient);
+        factory.setConnectTimeout(3000);
+        factory.setReadTimeout(180000);
 
         return factory;
     }
