@@ -61,11 +61,19 @@ public class RestTemplateConfiguration {
     @Value("${spring.https.key-password}")
     private String keyPassword;
     @Value("${spring.https.key-file}")
-    private String keyfile;
+    private String keyFile;
+    @Value("${spring.https.trust-password}")
+    private String trustPassword;
+    @Value("${spring.https.trust-file}")
+    private String trustFile;
     @Value("${spring.https.ssl-protocols}")
     private String sslProtocols;
     @Value("${spring.https.ciphers}")
     private String ciphers;
+    @Value("${spring.https.trust-server}")
+    private Boolean trustServer;
+    @Value("${spring.https.mutual-authentication}")
+    private Boolean mutualAuthentication;
 
     @Bean("restTemplate")
     @ConditionalOnMissingBean({ RestOperations.class, RestTemplate.class })
@@ -176,8 +184,8 @@ public class RestTemplateConfiguration {
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
         //构建SSL-Socket链接工厂
         SSLConnectionSocketFactory ssLSocketFactory = buildSSLSocketFactory(KeyStore.getDefaultType(),
-                keyfile,keyPassword,
-                Arrays.asList(StringUtils.split(sslProtocols)), true);
+                keyFile,keyPassword,
+                Arrays.asList(StringUtils.split(sslProtocols)), trustServer, trustFile, trustPassword, mutualAuthentication);
         //Spring提供HttpComponentsClientHttpRequestFactory指定使用HttpClient作为底层实现创建 HTTP请求
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
                 HttpClients.custom().setSSLSocketFactory(ssLSocketFactory).build()
@@ -204,19 +212,28 @@ public class RestTemplateConfiguration {
      * @throws Exception
      */
     private SSLConnectionSocketFactory buildSSLSocketFactory(String keyStoreType, String keyFilePath,
-                                                             String keyPassword, List<String> sslProtocols, boolean auth) throws Exception {
+                                                             String keyPassword, List<String> sslProtocols, boolean auth, String trustFilePath, String trustPassword, boolean mutualAuthentication) throws Exception {
         //证书管理器，指定证书及证书类型
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        KeyManagerFactory keyManagerFactory = null;
+        //信任证书管理器
+        TrustManagerFactory trustManagerFactory = null;
         //KeyStore用于存放证书，创建对象时 指定交换数字证书的加密标准
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        InputStream inputStream = new FileInputStream(FileUtils.getFileByRelativePath(keyFilePath));
-        try {
-            //添加证书
-            keyStore.load(inputStream, keyPassword.toCharArray());
-        } finally {
-            inputStream.close();
+        KeyStore keyStore = null;
+        KeyStore trustKeyStore = null;
+
+        if (mutualAuthentication) {
+            keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+            //KeyStore用于存放证书，创建对象时 指定交换数字证书的加密标准
+            keyStore = KeyStore.getInstance(keyStoreType);
+            InputStream inputStream = new FileInputStream(FileUtils.getFileByRelativePath(keyFilePath));
+            try {
+                //添加证书
+                keyStore.load(inputStream, keyPassword.toCharArray());
+            } finally {
+                inputStream.close();
+            }
+            keyManagerFactory.init(keyStore, keyPassword.toCharArray());
         }
-        keyManagerFactory.init(keyStore, keyPassword.toCharArray());
 
         SSLContext sslContext = SSLContext.getInstance("SSL");
         if (auth) {
@@ -224,11 +241,21 @@ public class RestTemplateConfiguration {
             TrustManager[] trustAllCerts = new TrustManager[1];
             TrustManager trustManager = new AuthX509TrustManager();
             trustAllCerts[0] = trustManager;
-            sslContext.init(keyManagerFactory.getKeyManagers(), trustAllCerts, null);
+            sslContext.init(keyManagerFactory == null ? null : keyManagerFactory.getKeyManagers(), trustAllCerts, null);
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
         } else {
             //加载证书材料，构建sslContext
-            sslContext = SSLContexts.custom().loadKeyMaterial(keyStore, keyPassword.toCharArray()).build();
+            trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+            trustKeyStore = KeyStore.getInstance(keyStoreType);
+            InputStream inputStream = new FileInputStream(FileUtils.getFileByRelativePath(trustFilePath));
+            try {
+                //添加证书
+                trustKeyStore.load(inputStream, trustPassword.toCharArray());
+            } finally {
+                inputStream.close();
+            }
+            trustManagerFactory.init(trustKeyStore);
+            sslContext.init(keyManagerFactory == null ? null : keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
         }
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =
@@ -253,7 +280,6 @@ public class RestTemplateConfiguration {
             }
         };
     }
-
 }
 
 

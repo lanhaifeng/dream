@@ -1,10 +1,21 @@
 package com.feng.baseframework.test;
 
+import com.feng.baseframework.util.FileUtils;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
-import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.net.ssl.*;
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +33,8 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
     @Resource(name = "sshIgnoreVerificationRestTemplate2")
     private RestTemplate restTemplate;
+    @Resource(name = "sshRestTemplate")
+    private RestTemplate sshRestTemplate;
 
     @Test
     public void testRestTemplateGet(){
@@ -30,29 +43,58 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
     }
 
     @Test
-    public void testRestTemplateHttps() {
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        String sessionId = "2462CE3D190389EF832184310C61E377";
-        List<String> cookies = new ArrayList<>();
-        cookies.add("JSESSIONID=" + sessionId);
+    public void testRestTemplateHttpsGet() {
+        String html = sshRestTemplate.getForObject("https://127.0.0.1:8088/anonymous/redirectMethod/",String.class);
+        System.out.println(html);
+    }
 
-        requestHeaders.put(HttpHeaders.COOKIE,cookies);
+    @Test
+    public void testRestTemplateCapaa() throws Exception {
+        RestTemplate restTemplate = getSslRestTemplate();
+        String html = sshRestTemplate.getForObject("https://127.0.0.1:8088/anonymous/redirectMethod/",String.class);
 
-        HttpEntity<String> requestEntity = null;
-        String targetUrl = "https://192.168.230.206/capaa/searchBiz/ruleFactor/0/9003139968276064000_1551344443850201";
-        HttpMethod httpMethod = HttpMethod.GET;
-        String body = "{}";
-        switch (httpMethod){
-            case GET:
-                requestEntity = new HttpEntity<String>(requestHeaders);
-                break;
-            case POST:
-                requestEntity = new HttpEntity<String>(body, requestHeaders);
-                break;
-        }
+        System.out.println(html);
+    }
 
-        ResponseEntity<String> response = restTemplate.exchange(targetUrl, httpMethod,requestEntity,String.class);
-        System.out.println(response.getBody());
+    public static RestTemplate getSslRestTemplate() throws Exception {
+        SSLContext ctx = SSLContext.getInstance("SSL");
+        String password = "hzmcadminefg";
+        TrustManagerFactory trustFactory = TrustManagerFactory.getInstance("SunX509");
+        KeyStore tsstore = KeyStore.getInstance("JKS");
+        tsstore.load(new FileInputStream(FileUtils.getFileByRelativePath("ssl/trust_certs.keystore")), password.toCharArray());
+        trustFactory.init(tsstore);
+        TrustManager[] trustManagers = trustFactory.getTrustManagers();
+
+        ctx.init(null, trustManagers, null);
+
+        SSLConnectionSocketFactory sslConnectionSocketFactory =
+                new SSLConnectionSocketFactory(ctx,
+                        new HostnameVerifier() {
+                            // 这里不校验hostname
+                            @Override
+                            public boolean verify(String urlHostName, SSLSession session) {
+                                return true;
+                            }
+                        });
+
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
+                HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build()
+        );
+
+        RestTemplate restTemplate = new RestTemplate(factory);
+        List<HttpMessageConverter<?>> converterList=restTemplate.getMessageConverters();
+
+        FormHttpMessageConverter fc = new FormHttpMessageConverter();
+        StringHttpMessageConverter s = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+        List<HttpMessageConverter<?>> partConverters = new ArrayList<HttpMessageConverter<?>>();
+        partConverters.add(s);
+        partConverters.add(new ResourceHttpMessageConverter());
+        fc.setPartConverters(partConverters);
+
+        converterList.add(fc);
+
+        HttpMessageConverter<?> converter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+        converterList.add(converter);
+        return restTemplate;
     }
 }
