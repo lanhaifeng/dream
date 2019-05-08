@@ -258,6 +258,8 @@ public class RestTemplateConfiguration {
             sslContext.init(keyManagerFactory == null ? null : keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
         }
 
+        //忽略主机认证
+        //方法1
         SSLConnectionSocketFactory sslConnectionSocketFactory =
                 new SSLConnectionSocketFactory(sslContext, sslProtocols.toArray(new String[sslProtocols.size()]),
                         null,
@@ -268,6 +270,9 @@ public class RestTemplateConfiguration {
                                 return true;
                             }
                         });
+
+        //方法2
+        //sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
         return sslConnectionSocketFactory;
     }

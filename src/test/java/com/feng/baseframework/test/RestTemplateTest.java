@@ -1,6 +1,7 @@
 package com.feng.baseframework.test;
 
 import com.feng.baseframework.util.FileUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
@@ -13,7 +14,9 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -51,6 +54,7 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
     @Test
     public void testRestTemplateCapaa() throws Exception {
+    	//capaa https走nginx会报错，直接访问https能够正常访问，怀疑nginx证书有问题
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		String sessionId = "8D15933104694293AFE5D0E3704E9BD7";
@@ -92,13 +96,7 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =
                 new SSLConnectionSocketFactory(ctx,
-                        new HostnameVerifier() {
-                            // 这里不校验hostname
-                            @Override
-                            public boolean verify(String urlHostName, SSLSession session) {
-                                return true;
-                            }
-                        });
+						NoopHostnameVerifier.INSTANCE);
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
                 HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build()

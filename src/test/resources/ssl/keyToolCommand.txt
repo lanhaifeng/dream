@@ -1,0 +1,18 @@
+keytool -genkeypair -alias "serverKey" -dname "CN=hzmc.com,OU=hzmc,O=hzmc2,L=hz,ST=zj,C=zg" -keyalg "RSA" -keystore "keyServer.keystore"
+hzmcadmin123
+
+keytool -export -alias serverKey -file server.crt -keystore keyServer.keystore
+
+keytool -genkeypair -alias "clientKey" -dname "CN=hzmc.com,OU=hzmc,O=hzmc2,L=hz,ST=zj,C=zg" -keyalg "RSA" -keystore "keyClient.keystore"
+hzmcadmin123
+
+keytool -export -alias clientKey -file client.crt -keystore keyClient.keystore
+
+
+keytool -export -alias tomcat -file capaa.crt -keystore capaa.keystore
+
+keytool -import -alias servercert -keystore trust_certs.keystore -file server.crt
+keytool -import -alias clientcert -keystore trust_certs.keystore -file client.crt
+keytool -import -alias capaacert -keystore trust_certs.keystore -file capaa.crt
+
+hzmcadminefg
