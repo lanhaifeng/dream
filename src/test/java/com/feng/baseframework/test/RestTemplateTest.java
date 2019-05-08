@@ -4,6 +4,7 @@ import com.feng.baseframework.util.FileUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -50,10 +51,32 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
     @Test
     public void testRestTemplateCapaa() throws Exception {
-        RestTemplate restTemplate = getSslRestTemplate();
-        String html = sshRestTemplate.getForObject("https://127.0.0.1:8088/anonymous/redirectMethod/",String.class);
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		String sessionId = "8D15933104694293AFE5D0E3704E9BD7";
+		List<String> cookies = new ArrayList<>();
+		cookies.add("JSESSIONID=" + sessionId);
 
-        System.out.println(html);
+		requestHeaders.put(HttpHeaders.COOKIE,cookies);
+
+		HttpEntity<String> requestEntity = null;
+		String targetUrl = "https://192.168.230.206:18443/capaa/appconfigs/getConfig.public";
+		HttpMethod httpMethod = HttpMethod.GET;
+		String body = "{}";
+		switch (httpMethod){
+			case GET:
+				requestEntity = new HttpEntity<String>(requestHeaders);
+				break;
+			case POST:
+				requestEntity = new HttpEntity<String>(body, requestHeaders);
+				break;
+		}
+
+		RestTemplate restTemplate = getSslRestTemplate();
+
+		ResponseEntity<String> response = restTemplate.exchange(targetUrl, httpMethod,requestEntity,String.class);
+		System.out.println(response.getBody());
+
     }
 
     public static RestTemplate getSslRestTemplate() throws Exception {
