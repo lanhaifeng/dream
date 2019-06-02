@@ -30,8 +30,8 @@
 		<sun-mail.version>1.6.2</sun-mail.version>
 	</properties>
 
-	<repositories>
-		<repository>
+	<!--<repositories>
+		&lt;!&ndash;<repository>
 			<id>maven-net-cn</id>
 			<name>Maven China Mirror</name>
 			<url>http://central.maven.org/maven2/</url>
@@ -41,13 +41,13 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>
+		</repository>&ndash;&gt;
 		<repository>
 			<id>local_nexus</id>
 			<name>local nexus</name>
 			<url>http://nexus.mchz.com.cn:8081/nexus/content/groups/public/</url>
 		</repository>
-	</repositories>
+	</repositories>-->
 
 	<dependencies>
 		<!-- jmail -->
@@ -63,7 +63,7 @@
 			<version>2.0</version>
 		</dependency>
 		<!-- mc mail -->
-		<dependency>
+		<!--<dependency>
 			<groupId>com.mchz.tool</groupId>
 			<artifactId>mail</artifactId>
 			<version>${mc-mail-tool.version}</version>
@@ -85,7 +85,7 @@
 					<artifactId>log4j</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
         <!-- redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -278,6 +278,12 @@
 			<artifactId>lucene-core</artifactId>
 			<version>4.0.0</version>
 		</dependency>
+        <!-- comm -->
+        <dependency>
+            <groupId>javax.comm</groupId>
+            <artifactId>comm</artifactId>
+            <version>2.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>

@@ -37,9 +37,12 @@ public class MailServer implements Serializable {
 
 	public Properties buildMailInfo(){
 		protocol  = "smtp";
-		if(useSSL){
+		if(useSSL && !isExchange){
 			protocol  = "smtps";
 		}
+		if(isExchange){
+		    protocol = "jbexTransport";
+        }
 		MailServerTypeEnum serverType = MailServerTypeEnum.getEnum(mailServerType);
 		switch (serverType){
 			case SMTP:
