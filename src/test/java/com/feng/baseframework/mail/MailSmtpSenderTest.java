@@ -22,15 +22,15 @@ public class MailSmtpSenderTest {
 				.mailServerType(MailServerTypeEnum.EXCHANGE.toString())
 				.isExchange(true).useSSL(false)
 				.host("s.outlook.com").port(25).senderMail("lanhaifeng1991@outlook.com")
-				.auth(true).senderPassword("l13635881608/").domain("").build();//edxzjksaqtyibfji wwuvhyhxferybfbf
+				.auth(true).senderPassword("test").domain("").build();
 	}
 
 	private static MailServer buildSmtpMailServer(){
 		return MailServer.builder()
 				.mailServerType(MailServerTypeEnum.SMTP.toString())
 				.useSSL(false)
-				.host("smtp.qq.com").port(25).senderMail("758764630@qq.com")//465 smtphz.qiye.163.com lanhaifeng@mchz.com.cn
-				.auth(true).senderPassword("edxzjksaqtyibfji").domain("").build();//l13635881608/;
+				.host("smtp.qq.com").port(25).senderMail("758764630@qq.com")
+				.auth(true).senderPassword("test").domain("").build();
 	}
 
 	private static MailMessage buildMailMessage(){
