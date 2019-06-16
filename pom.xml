@@ -30,8 +30,8 @@
 		<sun-mail.version>1.6.2</sun-mail.version>
 	</properties>
 
-	<!--<repositories>
-		&lt;!&ndash;<repository>
+	<repositories>
+		<repository>
 			<id>maven-net-cn</id>
 			<name>Maven China Mirror</name>
 			<url>http://central.maven.org/maven2/</url>
@@ -41,15 +41,14 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>&ndash;&gt;
-		<repository>
-			<id>local_nexus</id>
-			<name>local nexus</name>
-			<url>http://nexus.mchz.com.cn:8081/nexus/content/groups/public/</url>
 		</repository>
-	</repositories>-->
+	</repositories>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 		<!-- jmail -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -86,6 +85,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>-->
+		</dependency>
         <!-- redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
