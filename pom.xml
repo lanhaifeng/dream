@@ -85,7 +85,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>-->
-		</dependency>
         <!-- redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
