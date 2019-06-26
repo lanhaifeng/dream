@@ -14,7 +14,7 @@ public class MailSmtpSenderTest {
 
 		sender.sendTextMail(buildSmtpMailServer(), buildMailMessage());
 
-		sender.sendTextMail(buildExchangeMailServer(), buildMailMessage());
+		//sender.sendTextMail(buildExchangeMailServer(), buildMailMessage());
 	}
 
 	private static MailServer buildExchangeMailServer(){
@@ -35,6 +35,6 @@ public class MailSmtpSenderTest {
 
 	private static MailMessage buildMailMessage(){
 		return MailMessage.builder()
-				.subject("Test Email").content("this is a test Text mail").build().addTargetMail("758764630@qq.com");
+				.subject("Test Email").content("this is a test Text mail").build().addTargetMail("6@qq.com");
 	}
 }

@@ -63,4 +63,20 @@ public class RegularExpressionTest {
 
         System.getProperties().list(System.out);
     }
+
+    @Test
+    public void testGroup(){
+        String version = "4.5.6";
+        Pattern pattern =  Pattern.compile("\\d+\\.\\d+");
+        Matcher matcher = pattern.matcher(version);
+        String verValue = "V未知";
+        if(matcher.find()){
+            String ver = matcher.group();
+            if(null != ver && ver.length() > 0){
+                verValue = "V"+ver;
+            }
+        }
+
+        System.out.println(verValue);
+    }
 }
