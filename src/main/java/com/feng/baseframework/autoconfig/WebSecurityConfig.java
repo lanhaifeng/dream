@@ -46,22 +46,24 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode()));
     }
 
+    //SimpleUrlHandlerMapping UrlFilenameViewController
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //自定义认证
         if (SecurityModeEnum.CUSTOM_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
             http
                     .authorizeRequests()
-                    .antMatchers("/", "/index").permitAll()
+                    //.antMatchers("/", "/static/index.html").permitAll()
+                    .antMatchers("/", "/static/index.html").authenticated()
                     .anyRequest().authenticated()
                     .and()
                     .formLogin()
-                    .loginPage("/login")
+                    .loginPage("/static/login.html")
                     .permitAll()
                     .defaultSuccessUrl("/static/hello.html")
                     .and()
                     .logout()
-                    .logoutSuccessUrl("/login")
+                    .logoutSuccessUrl("/static/logout.html")
                     .permitAll()
                     .invalidateHttpSession(true)
                     .and()
