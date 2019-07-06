@@ -11,6 +11,7 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -33,22 +34,39 @@ import java.util.List;
  * @UpdateRemark:
  * @Version: 1.0
  */
+@ActiveProfiles("pro")
 public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
-    @Resource(name = "sshIgnoreVerificationRestTemplate2")
-    private RestTemplate restTemplate;
+    @Resource(name = "restTemplate")
+    private RestTemplate simpleRestTemplate;
+	@Resource(name = "sshIgnoreVerificationRestTemplate")
+	private RestTemplate ignoreVerificationrestTemplate;
+	@Resource(name = "sshIgnoreVerificationRestTemplate2")
+	private RestTemplate ignoreVerificationrestTemplate2;
     @Resource(name = "sshRestTemplate")
     private RestTemplate sshRestTemplate;
 
     @Test
-    public void testRestTemplateGet(){
-        String html = restTemplate.getForObject("http://www.baidu.com",String.class);
+    public void testRestTemplateGet1(){
+		String html = simpleRestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
         System.out.println(html);
     }
 
     @Test
+    public void testRestTemplateGet2(){
+		String html = ignoreVerificationrestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
+		System.out.println(html);
+    }
+
+    @Test
+    public void testRestTemplateGet3(){
+		String html = ignoreVerificationrestTemplate2.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
+		System.out.println(html);
+    }
+
+    @Test
     public void testRestTemplateHttpsGet() {
-        String html = sshRestTemplate.getForObject("https://127.0.0.1:8088/anonymous/redirectMethod/",String.class);
+        String html = sshRestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
         System.out.println(html);
     }
 
