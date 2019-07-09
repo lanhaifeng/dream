@@ -29,6 +29,7 @@
 		<mc-mail-tool.version>1.0.0</mc-mail-tool.version>
 		<sun-mail.version>1.6.2</sun-mail.version>
 		<jasypt.version>1.16</jasypt.version>
+		<ehcache.version>2.8.2</ehcache.version>
 	</properties>
 
 	<repositories>
@@ -46,6 +47,12 @@
 	</repositories>
 
 	<dependencies>
+		<!-- ehcache 相关依赖  -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>${ehcache.version}</version>
+		</dependency>
 		<!-- jasypt -->
 		<dependency>
 			<groupId>com.github.ulisesbocchio</groupId>
