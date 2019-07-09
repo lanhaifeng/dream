@@ -1,5 +1,6 @@
 package com.feng.baseframework.jdk.util;
 
+import io.jsonwebtoken.lang.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,5 +37,35 @@ public class CollectionTest {
 
         logger.info("set actual size:" + set.size());
         logger.info("set to array:" + set.toArray());
+    }
+
+    @Test
+    public void testArrayList1(){
+        String[] strs = new String[]{"aba", "aba", "db"};
+        List<String> list = Arrays.asList(strs);
+        boolean result = false;
+        try {
+            list.add("test");
+        }catch (Exception e){
+            result = true;
+        }
+
+        Assert.state(result, "新增成功");
+    }
+    @Test
+    public void testArrayList2(){
+        String[] strs = new String[]{"aba", "aba", "db"};
+        List<String> list1 = Arrays.asList(strs);
+        List<String> list2 = new ArrayList<>();
+
+        boolean result = false;
+        try {
+            list2.addAll(list1);
+            list2.add("test");
+        }catch (Exception e){
+            result = true;
+        }
+
+        Assert.state(!result, "新增失败");
     }
 }
