@@ -6,7 +6,7 @@ import com.feng.baseframework.model.User;
 rule "user rule2"
 
     when
-        matd : User(userName != null, userName != "admin");
+        matd : User(userName != null, userName.toUpperCase() != "ADMIN");
     then
         System.out.println("非admin用户!");
 end

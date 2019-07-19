@@ -6,6 +6,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,7 @@ public class SystemConfiguartion {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "spring.https", name = "redirectPort", havingValue = "true")
     public Connector connector(){
         Connector connector=new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
@@ -68,6 +70,7 @@ public class SystemConfiguartion {
     }*/
 
     @Bean
+    @ConditionalOnProperty(prefix = "spring.https", name = "redirectPort", havingValue = "true")
     public EmbeddedServletContainerFactory servletContainerFactory(){
         TomcatEmbeddedServletContainerFactory containerFactory = new TomcatEmbeddedServletContainerFactory(){
 
