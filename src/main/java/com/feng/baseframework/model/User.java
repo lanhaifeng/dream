@@ -1,8 +1,11 @@
 package com.feng.baseframework.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: baseframework
@@ -81,6 +84,18 @@ public class User implements Serializable, Cloneable,Comparable<User> {
     private String name;
     private String password;
 
+    private List<String> ids = new ArrayList<>();
+
+    public void addId(String id){
+        if(StringUtils.isNotBlank(id)){
+            ids.add(id);
+        }
+    }
+
+    public List<String> getIds() {
+        return ids;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -118,8 +133,7 @@ public class User implements Serializable, Cloneable,Comparable<User> {
         return (User)super.clone();
     }
 
-    @Override
-    public String toString() {
+    public String toBeanString() {
         return "User{" +
                 "id=" + ( id == null ? "" : id) +
                 ", userName='" + ( userName == null ? "" : userName ) + '\'' +
@@ -127,4 +141,5 @@ public class User implements Serializable, Cloneable,Comparable<User> {
                 ", password='" + ( password == null ? ""  : password ) + '\'' +
                 '}';
     }
+
 }

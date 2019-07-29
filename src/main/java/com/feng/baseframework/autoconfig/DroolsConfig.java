@@ -27,19 +27,21 @@ import java.io.IOException;
  **/
 @Configuration
 public class DroolsConfig {
-	private static final String RULES_PATH = "rules/";
+	private static final String[] RULES_PATHS = new String[]{"rules/", "rules2/"};
 
 	@Bean
 	@ConditionalOnMissingBean(KieFileSystem.class)
 	public KieFileSystem kieFileSystem() throws IOException {
 		KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
-		for (Resource file : getRuleFiles()) {
-			kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
+		for (String RULES_PATH : RULES_PATHS) {
+			for (Resource file : getRuleFiles(RULES_PATH)) {
+				kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
+			}
 		}
 		return kieFileSystem;
 	}
 
-	private Resource[] getRuleFiles() throws IOException {
+	private Resource[] getRuleFiles(String RULES_PATH) throws IOException {
 		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 		return resourcePatternResolver.getResources("classpath*:" + RULES_PATH + "**/*.*");
 	}
@@ -48,13 +50,6 @@ public class DroolsConfig {
 	@ConditionalOnMissingBean(KieContainer.class)
 	public KieContainer kieContainer() throws IOException {
 		final KieRepository kieRepository = getKieServices().getRepository();
-
-		kieRepository.addKieModule(new KieModule() {
-			public ReleaseId getReleaseId() {
-				return kieRepository.getDefaultReleaseId();
-			}
-		});
-
 		KieBuilder kieBuilder = getKieServices().newKieBuilder(kieFileSystem());
 		kieBuilder.buildAll();
 
