@@ -1,6 +1,7 @@
 package com.feng.baseframework.common;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -16,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 
 @RunWith(MockitoJUnitRunner.class)
+@Category(FastTests.class)
 public class MockitoBaseTest {
 
     @Test

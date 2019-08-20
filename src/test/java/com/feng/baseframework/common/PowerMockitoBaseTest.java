@@ -1,14 +1,9 @@
 package com.feng.baseframework.common;
 
-import com.feng.baseframework.model.Student;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.junit.Assert.assertEquals;
 
 /**     
   *
@@ -21,18 +16,11 @@ import static org.junit.Assert.assertEquals;
   * @UpdateRemark:   
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Student.class)
+@Category(FastTests.class)
 public class PowerMockitoBaseTest {
 
-	@Mock
-	private Student student = new Student();
-
 	@Test
-    public void powerMockit() throws Exception {
-        student = PowerMockito.spy(student);
-        PowerMockito.when(student,"check").thenReturn(true);
-        String name = student.getPrivateName("tom");
-        assertEquals("private 被mock 了", name);
+    public void powerMockit() {
     }
 
 }
