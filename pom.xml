@@ -333,6 +333,12 @@
 				<testcase.groups>com.feng.baseframework.common.FastTests</testcase.groups>
 			</properties>
 		</profile>
+		<profile>
+			<id>AllTests</id>
+			<properties>
+				<testcase.groups>com.feng.baseframework.common.SlowTests,com.feng.baseframework.common.FastTests</testcase.groups>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
