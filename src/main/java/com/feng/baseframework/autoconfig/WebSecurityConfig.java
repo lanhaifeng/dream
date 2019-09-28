@@ -3,13 +3,16 @@ package com.feng.baseframework.autoconfig;
 import com.feng.baseframework.constant.GlobalPropertyConfig;
 import com.feng.baseframework.constant.SecurityModeEnum;
 import com.feng.baseframework.security.MyAuthenticationProvider;
+import com.feng.baseframework.security.MySecurityMetadataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 /**
  * @ProjectName: baseframework
@@ -29,6 +32,8 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
     private MyAuthenticationProvider myAuthenticationProvider;
     @Autowired
     private GlobalPropertyConfig globalPropertyConfig;
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -58,12 +63,12 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated()
                     .and()
                     .formLogin()
-                    .loginPage("/static/login.html")
+                    .loginPage("login")
                     .permitAll()
                     .defaultSuccessUrl("/static/hello.html")
                     .and()
                     .logout()
-                    .logoutSuccessUrl("/static/logout.html")
+                    .logoutSuccessUrl("logout")
                     .permitAll()
                     .invalidateHttpSession(true)
                     .and()
@@ -87,4 +92,11 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         }
     }
 
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+        filterSecurityInterceptor.setSecurityMetadataSource(mySecurityMetadataSource);
+        web.securityInterceptor(filterSecurityInterceptor);
+    }
 }
