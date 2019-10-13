@@ -20,28 +20,28 @@ import java.util.List;
 @Component
 public interface UserMapper {
 
-    @Insert("insert into users(id,name,userName,password) values(#{id},#{name},#{userName},#{password})")
+    @Insert("insert into base_user(id,name,user_name,password) values(#{id},#{name},#{userName},#{password})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     public void addUser(User user);
 
-    @Update("update users set name=#{name},password=#{password} where id=#{id}")
+    @Update("update base_user set name=#{name},password=#{password} where id=#{id}")
     public void updateUser(User user);
 
-    @Delete("delete from users where id in(#{ids})")
+    @Delete("delete from base_user where id in(#{ids})")
     @Lang(SimpleLangDriver.class)
     public void deleteUsers(List<Integer> ids);
 
-    @Delete("delete from users where id in(#{id})")
+    @Delete("delete from base_user where id in(#{id})")
     public void deleteUser(Integer id);
 
-    @Select("SELECT id, name, userName, password FROM users WHERE id = #{id}")
+    @Select("SELECT id, name, user_name, password FROM base_user WHERE id = #{id}")
     @Results(id="userMap" , value = { @Result(column = "id", property = "id", javaType = Integer.class),
             @Result(column = "name", property = "name", javaType = String.class),
-            @Result(column = "userName", property = "userName", javaType = String.class),
+            @Result(column = "user_name", property = "userName", javaType = String.class),
             @Result(column = "password", property = "password", javaType = String.class) })
     public User getUserById(Integer id);
 
-    @Select("SELECT id, name, userName, password FROM users WHERE userName = #{userName}")
+    @Select("SELECT id, name, user_name, password FROM base_user WHERE user_name = #{userName}")
     @ResultMap(value = "userMap")
     public User getUserByName(String userName);
 }

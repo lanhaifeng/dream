@@ -6,44 +6,50 @@ create user 'admin'@'%' identified by 'admin';
 grant select,insert,update,delete,create on baseframework.* to admin;
 FLUSH PRIVILEGES;
 
---create table users;
-CREATE TABLE users(
+--create table base_user;
+CREATE TABLE base_user(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) DEFAULT NULL,
-  `userName` varchar(100) DEFAULT NULL,
-  `password` varchar(100) DEFAULT NULL,
+  `name` varchar(100) NOT NULL,
+  `user_name` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
---create table userRoles;
-CREATE TABLE userRoles(
+--create table base_user_role;
+CREATE TABLE base_user_role(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `userId` int(10) NOT NULL,
-  `roleId` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `role_id` int(10) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
---create table roles;
-CREATE TABLE roles(
+--create table base_role;
+CREATE TABLE base_role(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `roleName` varchar(100) DEFAULT NULL,
+  `role_name` varchar(100) DEFAULT NULL,
+  `desc` varchar(100) DEFAULT NULL,
   `mark` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
---create table resources;
-CREATE TABLE resources(
+--create table base_menu;
+CREATE TABLE base_menu(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `resourcePath` varchar(500) NOT NULL,
-  `methodName` varchar(500) DEFAULT NULL,
-  `className` varchar(500) DEFAULT NULL,
+  `url` varchar(500) NOT NULL,
+  `seq` int(10) NOT NULL,
+  `parent_id` int(10),
+  `name` varchar(500) NOT NULL,
+  `icon` varchar(500),
+  `order` varchar(500) NOT NULL DEFAULT 0,
+  `is_leaf` tinyint  NOT NULL DEFAULT 0,
+  `mark` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
---create table roleResources;
-CREATE TABLE roleResources(
+--create table base_role_menu;
+CREATE TABLE base_role_menu(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `roleId` int(10) NOT NULL,
-  `resourceId` int(10) NOT NULL,
+  `role_id` int(10) NOT NULL,
+  `menu_id` int(10) NOT NULL,
   PRIMARY KEY (`id`)
 );

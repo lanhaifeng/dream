@@ -3,8 +3,6 @@ package com.feng.baseframework.model;
 import io.jsonwebtoken.lang.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class LombokAnnotationTest {
 
     @Test
@@ -31,14 +29,14 @@ public class LombokAnnotationTest {
 
     @Test
     public void chain(){
-        UserRole userRole = UserRole.of().setRole("test").setUserId(1l);
+        UserRole userRole = UserRole.of().setRoleId("test").setUserId(1l);
 
         Assert.state(userRole != null ,"lombok Accessors annotation");
     }
 
     @Test
     public void staticConstruct(){
-        UserRole userRole = UserRole.of().setRole("test").setUserId(1l);
+        UserRole userRole = UserRole.of().setRoleId("test").setUserId(1l);
 
         Assert.state(userRole != null ,"lombok RequiredArgsConstructor annotation");
     }

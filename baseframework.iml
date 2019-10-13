@@ -26,6 +26,8 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: com.github.ulisesbocchio:jasypt-spring-boot-starter:1.16" level="project" />
     <orderEntry type="library" name="Maven: com.github.ulisesbocchio:jasypt-spring-boot:1.16" level="project" />
     <orderEntry type="library" name="Maven: org.jasypt:jasypt:1.9.2" level="project" />
@@ -72,6 +74,17 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.10" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.3.14.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.14.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-thymeleaf:1.5.10.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf-spring4:2.1.6.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf:2.1.6.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: ognl:ognl:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.21.0-GA" level="project" />
+    <orderEntry type="library" name="Maven: org.unbescape:unbescape:1.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy:2.4.13" level="project" />
+    <orderEntry type="library" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.22" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Maven: org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat:tomcat-jdbc:8.5.27" level="project" />
@@ -95,6 +108,30 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:4.2.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.8.13" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-stub:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-core:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-context:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: io.opencensus:opencensus-api:0.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.opencensus:opencensus-contrib-grpc-metrics:0.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:20.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java-util:3.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.api.grpc:proto-google-common-protos:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf-lite:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-netty:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http2:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.22.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.22.Final" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-activemq:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jms:4.3.14.RELEASE" level="project" />
@@ -113,7 +150,6 @@
     <orderEntry type="library" name="Maven: org.mvel:mvel2:2.3.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.kie:kie-api:7.0.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.kie:kie-internal:7.0.0.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Maven: org.drools:drools-compiler:7.0.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.5" level="project" />
@@ -174,7 +210,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-module-junit4-common:1.7.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-reflect:1.7.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:1.7.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.21.0-GA" level="project" />
     <orderEntry type="module" module-name="memory-calculation" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.0.0" level="project" />
     <orderEntry type="library" name="Maven: javax.comm:comm:2.0" level="project" />

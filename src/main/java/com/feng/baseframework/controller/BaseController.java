@@ -3,6 +3,7 @@ package com.feng.baseframework.controller;
 import com.feng.baseframework.model.User;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ public class BaseController {
     private Logger logger = Logger.getLogger(getClass());
 
 	@RequestMapping(value = "/baseManage/getWebRootPath",method=RequestMethod.GET)
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
 	public String getWebRootPath() {
     	return System.getProperty("projectRootPath") == null ? "" : System.getProperty("projectRootPath");
 	}

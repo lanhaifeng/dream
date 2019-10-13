@@ -27,7 +27,7 @@ public class UserRole implements Serializable {
     private Long id;
 
     @NotNull
-    private String role;
+    private String roleId;
     private Long userId;
 
 }
