@@ -6,10 +6,10 @@ import com.feng.baseframework.security.MyAuthenticationProvider;
 import com.feng.baseframework.security.MySecurityMetadataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -84,7 +84,14 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证
                     .anyRequest()        // 任何请求,登录后可以访问
-                    .authenticated();
+                    .authenticated()
+                    .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                        @Override
+                        public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
+                            fsi.setSecurityMetadataSource(mySecurityMetadataSource);
+                            return fsi;
+                        }
+                    });
         }
         //无认证
         if (SecurityModeEnum.NO_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())){
@@ -92,11 +99,4 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         }
     }
 
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
-        filterSecurityInterceptor.setSecurityMetadataSource(mySecurityMetadataSource);
-        web.securityInterceptor(filterSecurityInterceptor);
-    }
 }
