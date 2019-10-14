@@ -30,7 +30,7 @@ public class BaseController {
     private Logger logger = Logger.getLogger(getClass());
 
 	@RequestMapping(value = "/baseManage/getWebRootPath",method=RequestMethod.GET)
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
 	public String getWebRootPath() {
     	return System.getProperty("projectRootPath") == null ? "" : System.getProperty("projectRootPath");
 	}
