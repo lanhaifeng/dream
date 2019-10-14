@@ -30,10 +30,15 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
     @Autowired
     private MenuMapper menuMapper;
     private DefaultFilterInvocationSecurityMetadataSource defaultFilterInvocationSecurityMetadataSource;
+    private Collection<ConfigAttribute> defaultAttributes;
 
 	@Override
 	public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
-		return defaultFilterInvocationSecurityMetadataSource.getAttributes(o);
+        Collection<ConfigAttribute> attrs = defaultFilterInvocationSecurityMetadataSource.getAttributes(o);
+        if(attrs == null || attrs.isEmpty()){
+            return defaultAttributes;
+        }
+        return attrs;
 	}
 
 	@Override
@@ -49,6 +54,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
     @Override
     public void afterPropertiesSet() throws Exception {
         defaultFilterInvocationSecurityMetadataSource = new DefaultFilterInvocationSecurityMetadataSource(initSecurityMetadataSource());
+        initDefaultAttributes();
     }
 
     private Map<String, String> getMenusWithRoles(){
@@ -72,7 +78,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
 
         menusWithRoles.forEach((url, roles)->{
             RequestMatcher requestMatcher = new AntPathRequestMatcher(url);
-            Collection<ConfigAttribute> atts = new ArrayList<ConfigAttribute>();
+            Collection<ConfigAttribute> atts = new ArrayList<>();
             for (String role : roles.split(",")) {
                 atts.add(new SecurityConfig(role));
             }
@@ -80,5 +86,11 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         });
 
 	    return resources;
+    }
+
+    //当url未匹配上需要系统管理员权限才能访问
+    private void initDefaultAttributes(){
+        defaultAttributes = new ArrayList<>();
+        defaultAttributes.add(new SecurityConfig("admin"));
     }
 }
