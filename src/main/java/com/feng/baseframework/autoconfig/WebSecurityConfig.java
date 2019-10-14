@@ -95,6 +95,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                         @Override
                         public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
+                            //利用后置类为FilterSecurityInterceptor配置自定义资源类
                             fsi.setSecurityMetadataSource(mySecurityMetadataSource);
                             //AffirmativeBased中Voter默认使用的是WebExpressionVoter，
                             // 而WebExpressionVoter中ConfigAttribute使用的是WebExpressionConfigAttribute对象，该类是包内可见，
