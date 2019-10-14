@@ -96,6 +96,9 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                         @Override
                         public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
                             fsi.setSecurityMetadataSource(mySecurityMetadataSource);
+                            //AffirmativeBased中Voter默认使用的是WebExpressionVoter，
+                            // 而WebExpressionVoter中ConfigAttribute使用的是WebExpressionConfigAttribute对象，该类是包内可见，
+                            // 因此自定义MySecurityMetadataSource无法WebExpressionConfigAttribute对象，导致无法验证，替换AffirmativeBased中Voter为RoleVoter
                             fsi.setAccessDecisionManager(getAccessDecisionManager());
                             return fsi;
                         }

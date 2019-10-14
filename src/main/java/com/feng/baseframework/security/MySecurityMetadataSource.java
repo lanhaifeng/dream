@@ -9,7 +9,6 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
-import org.springframework.security.web.access.intercept.RequestKey;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
@@ -91,6 +90,6 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
     //当url未匹配上需要系统管理员权限才能访问
     private void initDefaultAttributes(){
         defaultAttributes = new ArrayList<>();
-        defaultAttributes.add(new SecurityConfig("admin"));
+        defaultAttributes.add(new SecurityConfig("ROLE_ADMIN"));
     }
 }
