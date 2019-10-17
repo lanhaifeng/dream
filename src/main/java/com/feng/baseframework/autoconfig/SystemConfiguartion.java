@@ -1,11 +1,15 @@
 package com.feng.baseframework.autoconfig;
 
+import com.feng.baseframework.annotation.AdviceTag;
+import com.feng.baseframework.interceptor.MyMethodInterceptor;
 import com.feng.baseframework.listener.ApplicationEventListener;
 import com.feng.baseframework.util.SpringUtil;
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -87,6 +91,19 @@ public class SystemConfiguartion {
         };
         containerFactory.addAdditionalTomcatConnectors(connector());
         return containerFactory;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor defaultPointcutAdvisor(){
+        AnnotationMatchingPointcut pointcut = new AnnotationMatchingPointcut(AdviceTag.class, true);
+        /*JdkRegexpMethodPointcut pointcut2 = new JdkRegexpMethodPointcut();
+        pointcut2.setPatterns("com.feng.baseframework.*");*/
+
+        // 配置增强类advisor
+        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor();
+        advisor.setPointcut(pointcut);
+        advisor.setAdvice(new MyMethodInterceptor());
+        return advisor;
     }
 
 }
