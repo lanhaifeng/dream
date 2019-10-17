@@ -1,12 +1,12 @@
---create database
+-- create database
 create database baseframework default character set utf8 collate utf8_general_ci;
---create user
+-- create user
 create user 'admin'@'%' identified by 'admin';
---grant privileges
+-- grant privileges
 grant select,insert,update,delete,create on baseframework.* to admin;
 FLUSH PRIVILEGES;
 
---create table base_user;
+-- create table base_user;
 CREATE TABLE base_user(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE base_user(
   PRIMARY KEY (`id`)
 );
 
---create table base_user_role;
+-- create table base_user_role;
 CREATE TABLE base_user_role(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE base_user_role(
   PRIMARY KEY (`id`)
 );
 
---create table base_role;
+-- create table base_role;
 CREATE TABLE base_role(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `role_name` varchar(100) DEFAULT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE base_role(
   PRIMARY KEY (`id`)
 );
 
---create table base_menu;
+-- create table base_menu;
 CREATE TABLE base_menu(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(500) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE base_menu(
   PRIMARY KEY (`id`)
 );
 
---create table base_role_menu;
+-- create table base_role_menu;
 CREATE TABLE base_role_menu(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` int(10) NOT NULL,

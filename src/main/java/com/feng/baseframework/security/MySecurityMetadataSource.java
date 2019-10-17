@@ -2,6 +2,7 @@ package com.feng.baseframework.security;
 
 import com.feng.baseframework.mapper.MenuMapper;
 import com.feng.baseframework.model.Menu;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -14,6 +15,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * baseframework
@@ -37,7 +39,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         if(attrs == null || attrs.isEmpty()){
             return defaultAttributes;
         }
-        return attrs;
+        return attrs.stream().filter(attr->"ROLE_ANONYMOUS".equals(attr.getAttribute())).collect(Collectors.toList()).size() > 0 ? null : attrs;
 	}
 
 	@Override
@@ -67,6 +69,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
                 menusWithRoles.put(menu.getUrl(), menu.getRoleName());
             }
         });
+        loadPreMenusWithRoles(menusWithRoles);
 
         return menusWithRoles;
     }
@@ -75,17 +78,27 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
 	    LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> resources = new LinkedHashMap<>();
         Map<String, String> menusWithRoles = getMenusWithRoles();
 
-        menusWithRoles.forEach((url, roles)->{
-            RequestMatcher requestMatcher = new AntPathRequestMatcher(url);
-            Collection<ConfigAttribute> atts = new ArrayList<>();
-            for (String role : roles.split(",")) {
-                atts.add(new SecurityConfig(role));
-            }
+		menusWithRoles.forEach((url, roles)->{
+			RequestMatcher requestMatcher = new AntPathRequestMatcher(url);
+			Collection<ConfigAttribute> atts = new ArrayList<>();
+			if(StringUtils.isNotBlank(roles)){
+				for (String role : roles.split(",")) {
+					atts.add(new SecurityConfig(role));
+				}
+			}else {
+				atts = null;
+			}
             resources.put(requestMatcher, atts);
         });
 
 	    return resources;
     }
+
+    private void loadPreMenusWithRoles(Map<String, String> menusWithRoles){
+		if(menusWithRoles == null) return;
+		menusWithRoles.put("/baseManage/getInfo", "ROLE_ADMIN,ROLE_TEST,ROLE_USER");
+		menusWithRoles.put("/anonymous/*", "ROLE_ANONYMOUS");
+	}
 
     //当url未匹配上需要系统管理员权限才能访问
     private void initDefaultAttributes(){

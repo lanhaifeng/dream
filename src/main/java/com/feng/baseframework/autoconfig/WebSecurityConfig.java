@@ -90,6 +90,7 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .and()
                     .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证
+//                    .antMatchers("/baseManage/getInfo").hasAnyRole("ADMIN", "TEST")  //使用自定义资源类后，不支持antMatchers方式配置的权限
                     .anyRequest()        // 任何请求,登录后可以访问
                     .authenticated()
                     .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
