@@ -96,7 +96,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
 
     private void loadPreMenusWithRoles(Map<String, String> menusWithRoles){
 		if(menusWithRoles == null) return;
-		menusWithRoles.put("/baseManage/getInfo", "ROLE_ADMIN,ROLE_TEST,ROLE_USER");
+		menusWithRoles.put("/baseManage/*", "ROLE_ADMIN,ROLE_TEST,ROLE_USER");
 		menusWithRoles.put("/anonymous/*", "ROLE_ANONYMOUS");
 	}
 
