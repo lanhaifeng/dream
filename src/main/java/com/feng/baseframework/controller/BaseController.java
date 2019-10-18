@@ -25,7 +25,7 @@ import java.util.List;
  **/
 @RestController
 @Validated
-public class BaseController {
+public class BaseController extends ClassFilterController {
 
     private Logger logger = Logger.getLogger(getClass());
 

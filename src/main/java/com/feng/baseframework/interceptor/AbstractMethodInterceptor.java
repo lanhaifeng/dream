@@ -1,6 +1,6 @@
 package com.feng.baseframework.interceptor;
 
-import com.feng.baseframework.annotation.AdviceTag;
+import com.feng.baseframework.annotation.ClassLevelAdviceTag;
 import com.feng.baseframework.annotation.MethodAdvice;
 import io.jsonwebtoken.lang.Assert;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -21,10 +21,14 @@ public abstract class AbstractMethodInterceptor implements MethodInterceptor {
 	protected boolean isInterceptor(MethodInvocation methodInvocation){
 		boolean isInterceptor = false;
 		Class sourceClass = methodInvocation.getMethod().getDeclaringClass();
-		Annotation annotation = sourceClass.getAnnotation(AdviceTag.class);
-		Assert.notNull(annotation, "没有切面标记");
-		Class interceptorHandler = ((AdviceTag)annotation).value();
-		Assert.notNull(interceptorHandler, "切换拦截处理器不能为空");
+		Annotation methodAnnotation = methodInvocation.getMethod().getAnnotation(ClassLevelAdviceTag.class);
+		Annotation classAnnotation = sourceClass.getAnnotation(ClassLevelAdviceTag.class);
+		Class interceptorHandler = ((ClassLevelAdviceTag)methodAnnotation).value();
+		if(interceptorHandler == null){
+			interceptorHandler = ((ClassLevelAdviceTag)classAnnotation).value();
+		}
+
+		Assert.notNull(interceptorHandler, "切点拦截处理器不能为空");
 		if(Object.class.equals(interceptorHandler) || AbstractMethodInterceptor.class.isAssignableFrom(interceptorHandler)){
 			isInterceptor = true;
 		}

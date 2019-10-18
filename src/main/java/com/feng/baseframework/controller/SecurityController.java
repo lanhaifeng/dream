@@ -1,6 +1,6 @@
 package com.feng.baseframework.controller;
 
-import com.feng.baseframework.annotation.AdviceTag;
+import com.feng.baseframework.annotation.ClassLevelAdviceTag;
 import com.feng.baseframework.annotation.MethodAdvice;
 import com.feng.baseframework.annotation.MethodTimeAop;
 import com.feng.baseframework.service.RedisService;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @since
  **/
 @RestController
-@AdviceTag
+@ClassLevelAdviceTag
 public class SecurityController {
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -39,7 +39,6 @@ public class SecurityController {
 	@RequestMapping(value = "/baseManage/getInfo",method= RequestMethod.GET)
 	@MethodTimeAop
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_TEST')")
-	@MethodAdvice
 	public String baseMethod(){
 		logger.info("测试基于内存的简单认证");
 		Map<String,String> data = new HashMap<>();
@@ -54,6 +53,7 @@ public class SecurityController {
 	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
 	@MethodTimeAop
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_TEST')")
+	@MethodAdvice
 	public void testSession(HttpServletRequest request){
 		HttpSession session = request.getSession(false);
 		if(session != null){

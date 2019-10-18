@@ -1,6 +1,6 @@
 package com.feng.baseframework.autoconfig;
 
-import com.feng.baseframework.annotation.AdviceTag;
+import com.feng.baseframework.annotation.ClassLevelAdviceTag;
 import com.feng.baseframework.interceptor.MyMethodInterceptor;
 import com.feng.baseframework.listener.ApplicationEventListener;
 import com.feng.baseframework.util.SpringUtil;
@@ -95,8 +95,23 @@ public class SystemConfiguartion {
 
     @Bean
     public DefaultPointcutAdvisor defaultPointcutAdvisor(){
-        AnnotationMatchingPointcut pointcut = new AnnotationMatchingPointcut(AdviceTag.class, true);
-        /*JdkRegexpMethodPointcut pointcut2 = new JdkRegexpMethodPointcut();
+        AnnotationMatchingPointcut pointcut = new AnnotationMatchingPointcut(ClassLevelAdviceTag.class, true);
+
+		/*注解切点
+		//等价于AnnotationMatchingPointcut(ClassLevelAdviceTag.class, false)
+        pointcut = new AnnotationMatchingPointcut(ClassLevelAdviceTag.class);
+
+        //第二参数默认为false，为true表示会检测父类和父接口的注解,为false不检测父类和父接口的注解
+        pointcut = new AnnotationMatchingPointcut(ClassLevelAdviceTag.class, true);
+        //第一个参数是类注解，第二个参数是方法级别注解，当只传类注解时，此时方法匹配器为MethodMatcher.TRUE，默认所有的方法都拦截
+        //当类注解为null，而方法级别注解不为null时，只拦截有方法级别注解的方法
+        //当类注解和方法级别注解都不为null时，只拦截类上有注解并且方法上也有注解的方法
+        pointcut = new AnnotationMatchingPointcut(null, MethodLevelAdviceTag.class);
+        pointcut = new AnnotationMatchingPointcut(ClassLevelAdviceTag.class, MethodLevelAdviceTag.class);
+        */
+
+        /*正则切点
+        JdkRegexpMethodPointcut pointcut5 = new JdkRegexpMethodPointcut();
         pointcut2.setPatterns("com.feng.baseframework.*");*/
 
         // 配置增强类advisor
