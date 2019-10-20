@@ -6,6 +6,7 @@ import com.feng.baseframework.annotation.MethodTimeAop;
 import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
 import org.apache.log4j.Logger;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class SecurityController {
 		String str = JacksonUtil.mapToJson(data);
 		redisService.set("testAop",str);
 		test();
+        ((SecurityController)AopContext.currentProxy()).test();
 		return str;
 	}
 
@@ -71,6 +73,7 @@ public class SecurityController {
 		return str;
 	}
 
+    @MethodTimeAop
 	public void test(){
 		logger.info("测试同类内是否会aop");
 	}
