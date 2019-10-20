@@ -7,6 +7,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 
 /**
  * baseframework
@@ -23,10 +24,10 @@ public abstract class AbstractMethodInterceptor implements MethodInterceptor {
 		Class sourceClass = methodInvocation.getMethod().getDeclaringClass();
 		Annotation methodAnnotation = methodInvocation.getMethod().getAnnotation(ClassLevelAdviceTag.class);
 		Annotation classAnnotation = sourceClass.getAnnotation(ClassLevelAdviceTag.class);
-		Class interceptorHandler = ((ClassLevelAdviceTag)methodAnnotation).value();
-		if(interceptorHandler == null){
-			interceptorHandler = ((ClassLevelAdviceTag)classAnnotation).value();
-		}
+		if(methodAnnotation == null && classAnnotation == null){
+		    return isInterceptor;
+        }
+        Class interceptorHandler =   ((ClassLevelAdviceTag)Optional.ofNullable(methodAnnotation).orElse(classAnnotation)).value();
 
 		Assert.notNull(interceptorHandler, "切点拦截处理器不能为空");
 		if(Object.class.equals(interceptorHandler) || AbstractMethodInterceptor.class.isAssignableFrom(interceptorHandler)){
