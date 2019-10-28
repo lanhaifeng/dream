@@ -5,6 +5,14 @@ create user 'admin'@'%' identified by 'admin';
 -- grant privileges
 grant select,insert,update,delete,create on baseframework.* to admin;
 FLUSH PRIVILEGES;
+-- grant all privileges
+grant ALL on baseframework.* to admin;
+
+FLUSH PRIVILEGES;
+
+-- cmd backup database
+-- mysqldump -uroot --databases baseframework > ackup.sql
+-- mysql -uroot -proot soc < socbackup.sql
 
 -- create table base_user;
 CREATE TABLE base_user(
