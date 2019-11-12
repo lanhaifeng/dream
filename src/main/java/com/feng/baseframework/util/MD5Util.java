@@ -45,9 +45,9 @@ public class MD5Util {
         return md5PasswordEncoder.encodePassword(password,null);
     }
 
-    public static String password2MD5(String userName, String password){
+    public static String password2MD5(String password, Object salt){
         Md5PasswordEncoder md5PasswordEncoder = new Md5PasswordEncoder();
-        return md5PasswordEncoder.encodePassword(password,userName);
+        return md5PasswordEncoder.encodePassword(password,salt);
     }
 
     public static void main(String[] args) {
