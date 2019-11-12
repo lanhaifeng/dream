@@ -3,6 +3,7 @@ package com.feng.baseframework.model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 @Data
 public class Student implements Serializable, Cloneable {
@@ -11,11 +12,22 @@ public class Student implements Serializable, Cloneable {
     private Integer age;
     private Teacher teacher;
 
+    public String hobby;
+    public static String type = "person";
+
+    public static String getTestType(){
+        return type.toUpperCase();
+    }
+
     public  String getPrivateName(String name) {
         if (check()){
             return "private 被mock 了";
         }
         return name;
+    }
+
+    public Optional<Integer> getAge() {
+        return Optional.ofNullable(age);
     }
 
     private Boolean check(){
@@ -25,11 +37,20 @@ public class Student implements Serializable, Cloneable {
     public Student() {
     }
 
+    public Student(String name) {
+        this.name = name;
+    }
+
     public Student(Integer id, String name, Integer age, Teacher teacher) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.teacher = teacher;
+    }
+
+    public String nameToUpperCase() {
+        this.name = this.name.toUpperCase();
+        return this.name;
     }
 
     //浅拷贝
