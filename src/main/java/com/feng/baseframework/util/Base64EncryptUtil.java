@@ -60,4 +60,17 @@ public class Base64EncryptUtil {
 		}
 
 	}
+
+	public static byte[] decodeToBytes(String str) {
+		byte[] bt = null;
+		try {
+			BASE64Decoder decoder = new BASE64Decoder();
+			bt = decoder.decodeBuffer(str);
+			return bt;
+		} catch (IOException e) {
+			logger.error("解码失败：" + ExceptionUtils.getFullStackTrace(e));
+			return null;
+		}
+
+	}
 }
