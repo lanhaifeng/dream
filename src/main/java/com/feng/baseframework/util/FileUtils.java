@@ -1,10 +1,14 @@
 package com.feng.baseframework.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
  * baseframework
@@ -109,6 +113,60 @@ public class FileUtils {
 			return null;
 		}
 	}
+
+	/**
+	 * 2019/12/5 10:25
+	 * 根据路径获取文件
+	 *
+	 * @param path
+	 * @author lanhaifeng
+	 * @return java.io.File
+	 */
+	public static File getFile(String path) {
+		try {
+			if (StringUtils.isBlank(path)) return null;
+			if (path.startsWith("classpath:")) {
+				return ResourceUtils.getFile(path);
+			}
+			if (path.startsWith(File.separator)) return new File(path);
+			if (!path.startsWith("/") || !path.startsWith("\\")) return new File(path);
+			return null;
+		} catch (Exception e) {
+			logger.error("获取文件失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+			return null;
+		}
+	}
+
+	/**
+	 * 2019/12/4 17:36
+	 * 文件反序列化对象
+	 *
+	 * @param filePath		路径
+	 * @author lanhaifeng
+	 * @return T
+	 */
+	public static <T>T readObject(String filePath) throws IOException, ClassNotFoundException {
+		Assert.state(StringUtils.isNotBlank(filePath), "filePath参数不能为空");
+		ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(filePath));
+		return (T)objIn.readObject();
+	}
+
+	/**
+	 * 2019/12/4 17:39
+	 * 将对象序列化为文件
+	 *
+	 * @param filePath
+	 * @param t
+	 * @author lanhaifeng
+	 * @return void
+	 */
+	public static <T> void saveObjFile(String filePath, T t) throws IOException {
+		Objects.requireNonNull(t);
+		Assert.state(StringUtils.isNotBlank(filePath), "filePath参数不能为空");
+		ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(filePath));
+		objOut.writeObject(t);
+	}
+
 
 	public static void main(String[] args) throws IOException {
 		System.out.println(getWebRootPath());
