@@ -10,6 +10,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -58,6 +59,8 @@ import java.util.List;
 @Configuration
 public class RestTemplateConfiguration {
 
+    @Value("${spring.https.key-store-password}")
+    private String keyStorePassword;
     @Value("${spring.https.key-password}")
     private String keyPassword;
     @Value("${spring.https.key-file}")
@@ -144,7 +147,13 @@ public class RestTemplateConfiguration {
                 .register("https", socketFactory).build();
         PoolingHttpClientConnectionManager phccm = new PoolingHttpClientConnectionManager(registry);
         phccm.setMaxTotal(200);
-        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).setConnectionManager(phccm).setConnectionManagerShared(true).build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLSocketFactory(socketFactory)
+                .setConnectionManager(phccm)
+                .setConnectionManagerShared(true)
+                //重试机制
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(2, true))
+                .build();
         factory.setHttpClient(httpClient);
 
         return factory;
@@ -184,7 +193,7 @@ public class RestTemplateConfiguration {
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
         //构建SSL-Socket链接工厂
         SSLConnectionSocketFactory ssLSocketFactory = buildSSLSocketFactory(KeyStore.getDefaultType(),
-                keyFile,keyPassword,
+                keyFile, keyStorePassword, keyPassword,
                 Arrays.asList(StringUtils.split(sslProtocols)), trustServer, trustFile, trustPassword, mutualAuthentication);
         //Spring提供HttpComponentsClientHttpRequestFactory指定使用HttpClient作为底层实现创建 HTTP请求
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
@@ -212,7 +221,7 @@ public class RestTemplateConfiguration {
      * @throws Exception
      */
     private SSLConnectionSocketFactory buildSSLSocketFactory(String keyStoreType, String keyFilePath,
-                                                             String keyPassword, List<String> sslProtocols, boolean auth, String trustFilePath, String trustPassword, boolean mutualAuthentication) throws Exception {
+                                                             String keyStorePassword, String keyPassword, List<String> sslProtocols, boolean auth, String trustFilePath, String trustPassword, boolean mutualAuthentication) throws Exception {
         //证书管理器，指定证书及证书类型
         KeyManagerFactory keyManagerFactory = null;
         //信任证书管理器
@@ -228,7 +237,7 @@ public class RestTemplateConfiguration {
             InputStream inputStream = new FileInputStream(FileUtils.getFileByRelativePath(keyFilePath));
             try {
                 //添加证书
-                keyStore.load(inputStream, keyPassword.toCharArray());
+                keyStore.load(inputStream, keyStorePassword.toCharArray());
             } finally {
                 inputStream.close();
             }

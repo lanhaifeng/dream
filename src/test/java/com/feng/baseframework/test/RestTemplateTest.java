@@ -1,28 +1,17 @@
 package com.feng.baseframework.test;
 
-import com.feng.baseframework.util.FileUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClients;
+import io.jsonwebtoken.lang.Assert;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.ResourceHttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: baseframework
@@ -34,7 +23,7 @@ import java.util.List;
  * @UpdateRemark:
  * @Version: 1.0
  */
-@ActiveProfiles("pro")
+@ActiveProfiles("pro,dev1")
 public class RestTemplateTest extends BaseFrameworkApplicationTest {
 
     @Resource(name = "restTemplate")
@@ -46,27 +35,31 @@ public class RestTemplateTest extends BaseFrameworkApplicationTest {
     @Resource(name = "sshRestTemplate")
     private RestTemplate sshRestTemplate;
 
+    //普通http
     @Test
     public void testRestTemplateGet1(){
 		String html = simpleRestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
-        System.out.println(html);
+		Assert.state(StringUtils.isNotBlank(html), "无返回结果");
     }
 
+	//https单向忽略证书验证,修改属性server.ssl.client-auth=want，服务端不验证客户端
     @Test
     public void testRestTemplateGet2(){
 		String html = ignoreVerificationrestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
-		System.out.println(html);
+		Assert.state(StringUtils.isNotBlank(html), "无返回结果");
     }
 
+	//https单向忽略证书验证,修改属性server.ssl.client-auth=want，服务端不验证客户端
     @Test
     public void testRestTemplateGet3(){
 		String html = ignoreVerificationrestTemplate2.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
-		System.out.println(html);
+		Assert.state(StringUtils.isNotBlank(html), "无返回结果");
     }
 
+    //https双向验证,修改属性server.ssl.client-auth=need，服务端验证客户端
     @Test
     public void testRestTemplateHttpsGet() {
         String html = sshRestTemplate.getForObject("https://127.0.0.1:1443/anonymous/redirectMethod/",String.class);
-        System.out.println(html);
+		Assert.state(StringUtils.isNotBlank(html), "无返回结果");
     }
 }

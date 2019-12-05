@@ -49,9 +49,9 @@ keytool -certreq -alias client -file client.csr -keystore client.keystore
 
 4.使用根证书为待签名证书文件签名
 ````
-keytool -gencert -alias rootca -infile server.csr -outfile server.cer -keystore rootca.keystore
+keytool -gencert -alias rootca -validity 365 -infile server.csr -outfile server.cer -keystore rootca.keystore
 
-keytool -gencert -alias rootca -infile client.csr -outfile client.cer -keystore rootca.keystore
+keytool -gencert -alias rootca -validity 365 -infile client.csr -outfile client.cer -keystore rootca.keystore
 ````
 
 
