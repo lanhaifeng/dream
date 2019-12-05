@@ -11,8 +11,17 @@ grant ALL on baseframework.* to admin;
 FLUSH PRIVILEGES;
 
 -- cmd backup database
+-- backup databases
 -- mysqldump -uroot --databases baseframework > ackup.sql
+
+-- restore databases
 -- mysql -uroot -proot soc < socbackup.sql
+
+-- backup tables
+-- mysqldump -uroot -proot soc base_user>base_user.sql
+
+-- restore tables
+-- mysqldump -uroot -proot soc base_user<base_user.sql
 
 -- create table base_user;
 CREATE TABLE base_user(
