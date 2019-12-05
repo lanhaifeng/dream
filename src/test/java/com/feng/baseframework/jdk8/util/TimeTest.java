@@ -1,6 +1,7 @@
 package com.feng.baseframework.jdk8.util;
 
 import com.feng.baseframework.util.DateUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -59,5 +60,18 @@ public class TimeTest {
 		Date m = c.getTime();
 
 		System.out.println(format.format(m));
+	}
+
+	@Test
+	public void testTimeZone() {
+		Date now = new Date();
+		Calendar calendar8 = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+		calendar8.setTime(now);
+
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		calendar.setTime(now);
+
+
+		Assert.assertTrue("不同时区时间戳相同", calendar8.getTimeInMillis() == calendar.getTimeInMillis());
 	}
 }
