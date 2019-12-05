@@ -44,7 +44,7 @@ public class OptionalTest extends MockitoBaseTest {
 	public void testFlatMap() {
 		Student student = new Student();
 		student.setAge(1);
-		Assert.assertTrue("student age is not null",Optional.ofNullable(student).flatMap(e -> e.getAge()).orElse(0) > 0);
+		Assert.assertTrue("student age is not null",Optional.ofNullable(student).flatMap(e -> e.getAgeTest()).orElse(0) > 0);
 	}
 
 	@Test

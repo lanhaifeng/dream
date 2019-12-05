@@ -1,14 +1,18 @@
 package com.feng.baseframework.jdk8.util;
 
+import com.feng.baseframework.model.Student;
+import io.jsonwebtoken.lang.Assert;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -59,4 +63,93 @@ public class StreamTest {
         expectedException.expect(ConcurrentModificationException.class);
         System.out.println(list2); //java.util.ConcurrentModificationException
     }
+
+    @Test
+    public void testSorted() {
+        List<Student> students = new ArrayList<>();
+        Student student = null;
+        for (int i = 2; i < 10; i++) {
+            student = new Student();
+            student.setId(i);
+            students.add(student);
+        }
+
+        List<Integer> ids =students.stream().sorted(Comparator.comparing(Student::getId).reversed()).map(s->s.getId()).collect(Collectors.toList());
+        System.out.println(ids);
+        ids =students.stream().map(s->s.getId()).collect(Collectors.toList());
+
+        System.out.println(ids);
+    }
+
+    //测试lamblambda执行是否另起线程
+    @Test
+    public void testLambdaExecute() {
+        List<Integer> nums = new ArrayList<>();
+        nums.add(1);
+        nums.add(2);
+        nums.add(3);
+
+        int d=0;
+        ThreadInfo mainThreadInfo = new ThreadInfo(Thread.currentThread());
+        ThreadInfo lambda1ThreadInfo = new ThreadInfo();
+        ThreadInfo lambda2ThreadInfo = new ThreadInfo();
+        BinaryOperator<Integer> addFunction = (a,b)->{
+            lambda1ThreadInfo.build(Thread.currentThread());
+            return a+b+d;
+        };
+
+        addFunction.apply(1,2);
+
+        CountDownLatch cdl = new CountDownLatch(1);
+
+        new Thread(()->{
+            lambda2ThreadInfo.build(Thread.currentThread());
+            cdl.countDown();
+        }).start();
+        try {
+            cdl.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Assert.state(mainThreadInfo.equals(lambda1ThreadInfo), "期待普通lambda表达式在主线程执行");
+        Assert.state(!mainThreadInfo.equals(lambda2ThreadInfo), "期待普通线程lambda表达式在另一个线程执行");
+    }
+
+}
+
+@Setter
+@Getter
+class ThreadInfo{
+
+    public ThreadInfo() {
+    }
+
+    public ThreadInfo(Thread thread) {
+        this.threadId = thread.getId();
+        this.threadName = thread.getName();
+        this.threadStr = thread.toString();
+    }
+
+    public void build(Thread thread){
+        this.threadId = thread.getId();
+        this.threadName = thread.getName();
+        this.threadStr = thread.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(Objects.isNull(obj)) return false;
+        boolean result = false;
+        ThreadInfo target = (ThreadInfo)obj;
+        if((getThreadId() == null && target.getThreadId() != null) || (getThreadId() != null && target.getThreadId() == null )) return false;
+        if((getThreadName() == null && target.getThreadName() != null) || (getThreadName() != null && target.getThreadName() == null)) return false;
+        if((getThreadStr() == null && target.getThreadStr() != null) || (getThreadStr() != null && target.getThreadStr() == null)) return false;
+        if(getThreadId().equals(target.getThreadId()) && getThreadName().equals(target.getThreadName()) && getThreadStr().equals(target.getThreadStr())) result = true;
+        return result;
+    }
+
+    private Long threadId;
+    private String threadName;
+    private String threadStr;
 }
