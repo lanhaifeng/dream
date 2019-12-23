@@ -25,6 +25,9 @@ public class Base64EncryptUtil {
 
 		sql = "IydTRUxFQ1QgKiBGUk9NIERFUFQgV0hFUkUgREVQVE5PID0gMTAgQU5EIDE0MzMgPSBEQk1TX1BJ\\r\\nUEUuUkVDRUlWRV9NRVNTQUdFICggQ0hSICggNzEgKSB8fENIUiAoIDEwMCApIHx8Q0hSICggNzAg\\r\\nKSAsIDUgKQ==";
 		System.out.println(decode(sql));
+
+		sql = "eQySDnqLR5vcShmZ/HX+coSw9rupETKWjruw57O/yAFHD/SdV3ljYiMkKZchetcBx2CKcbSb2/yWyjnTDHhLVBa+sBtyr3eF/IsBHMLs44bl2JGzj5AJosSGcobGMVqRouLUQbOI+1dzeWCVEBWFfhfOOKu78kpDqX4iYh8jD9rZjpNQLrfbEz3CtX3iXNWrsWhvaC24t9aTjOLDcG7YpelFygkd9OvA9U+fr3s87ylqJQRzWRMS1Tf4aiioO+dicYmfqut/LcsZ2/fiJLKFVYkck5m1a/ZxOY7gX3pYL0THUDG6UDZNty1KEG2EzzD3en6u4VqB7ZhV3ha2eTsMMg==";
+		System.out.println(encode(sql.getBytes()));
 	}
 
 	/**

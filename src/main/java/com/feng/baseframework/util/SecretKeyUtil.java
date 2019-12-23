@@ -88,12 +88,25 @@ public final class SecretKeyUtil {
 	 * 2019/12/4 19:53
 	 * 生成对称加密秘钥
 	 *
-	 * @param
+	 * @param password		密码
 	 * @author lanhaifeng
 	 * @return javax.crypto.SecretKey
 	 */
 	public static SecretKey generateSecretKey(String password) throws NoSuchAlgorithmException {
-		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		return generateSecretKey("AES", password);
+	}
+
+	/**
+	 * 2019/12/4 19:53
+	 * 生成对称加密秘钥
+	 *
+	 * @param algorithm			加密算法，如：AES、AES/ECB/PKCS5Padding
+	 * @param password			密码
+	 * @author lanhaifeng
+	 * @return javax.crypto.SecretKey
+	 */
+	public static SecretKey generateSecretKey(String algorithm, String password) throws NoSuchAlgorithmException {
+		KeyGenerator gen = KeyGenerator.getInstance(algorithm);
 		gen.init(128, new SecureRandom(password.getBytes()));
 
 		return gen.generateKey();

@@ -39,6 +39,20 @@ public final class CipherUtil {
 
 	/**
 	 * 2019/8/6 10:07
+	 * 非对称解密
+	 *
+	 * @param key			秘钥
+	 * @param algorithm		算法
+	 * @param data			待处理字符串
+	 * @author lanhaifeng
+	 * @return byte[]
+	 */
+	public static byte[] decryptRSA(Key key, String algorithm, byte[] data) {
+		return decryptOrEncrypt(key, algorithm, data, CipherType.DECRYPT);
+	}
+
+	/**
+	 * 2019/8/6 10:07
 	 * 非对称加密
 	 *
 	 * @param key						秘钥
@@ -48,6 +62,20 @@ public final class CipherUtil {
 	 */
 	public static byte[] encryptRSA(Key key, byte[] data) {
 		return decryptOrEncrypt(key, "RSA", data, CipherType.ENCRYPT);
+	}
+
+	/**
+	 * 2019/8/6 10:07
+	 * 非对称加密
+	 *
+	 * @param key						秘钥
+	 * @param algorithm					算法
+	 * @param data						待处理字符串
+	 * @author lanhaifeng
+	 * @return byte[]
+	 */
+	public static byte[] encryptRSA(Key key, String algorithm, byte[] data) {
+		return decryptOrEncrypt(key, algorithm, data, CipherType.ENCRYPT);
 	}
 
 	/**
@@ -74,6 +102,34 @@ public final class CipherUtil {
 	 */
 	public static byte[] encryptAES(Key key, byte[] data) {
 		return decryptOrEncrypt(key, "AES", data, CipherType.ENCRYPT);
+	}
+
+	/**
+	 * 2019/8/6 10:07
+	 * 对称解密
+	 *
+	 * @param key			秘钥
+	 * @param algorithm		算法
+	 * @param data			待处理字符串
+	 * @author lanhaifeng
+	 * @return byte[]
+	 */
+	public static byte[] decryptAES(Key key, String algorithm, byte[] data) {
+		return decryptOrEncrypt(key, algorithm, data, CipherType.DECRYPT);
+	}
+
+	/**
+	 * 2019/8/6 10:07
+	 * 对称加密
+	 *
+	 * @param key						秘钥
+	 * @param algorithm					算法
+	 * @param data						待处理字符串
+	 * @author lanhaifeng
+	 * @return byte[]
+	 */
+	public static byte[] encryptAES(Key key, String algorithm, byte[] data) {
+		return decryptOrEncrypt(key, algorithm, data, CipherType.ENCRYPT);
 	}
 
 	/**

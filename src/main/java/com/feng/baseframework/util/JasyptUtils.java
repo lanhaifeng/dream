@@ -4,6 +4,9 @@ import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * baseframework
  * 2019/7/1 10:18
@@ -54,10 +57,16 @@ public class JasyptUtils {
 		return config;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// 加密
-		System.out.println(encryptPwd("panther", "root"));
+		System.out.println(encryptPwd("pantherpantherpanther", "rootrootrootroot"));
 		// 解密
-		System.out.println(decyptPwd("soc", "n/vZzJTsmr6pHEd34JKOFkfk0mxUeI23wjMSTCd8jBo="));
+		System.out.println(decyptPwd("pantherpantherpanther", "3RbBF1ePIPLuE6/jvT1htg=="));
+
+		SecretKey secretKey = SecretKeyUtil.generateSecretKey("AES", "pantherpantherpanther");
+		String result = Base64EncryptUtil.encode(CipherUtil.encryptAES(secretKey, "AES/CBC/PKCS5Padding", "rootrootrootroot".getBytes()));
+		System.out.println(result);
+		result = Base64EncryptUtil.encode(CipherUtil.encryptAES(secretKey,"AES/CBC/PKCS5Padding", "rootrootrootroot".getBytes()));
+		System.out.println(result);
 	}
 }
