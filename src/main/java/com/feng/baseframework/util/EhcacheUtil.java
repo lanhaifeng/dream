@@ -30,7 +30,7 @@ public class EhcacheUtil {
 
 	public static EhcacheUtil getInstance() {
 		if (ehCache == null) {
-			synchronized (ehCache){
+			synchronized (EhcacheUtil.class){
 				if (ehCache == null) {
 					ehCache = new EhcacheUtil(path);
 				}
