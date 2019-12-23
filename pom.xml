@@ -299,12 +299,6 @@
 			<artifactId>lucene-core</artifactId>
 			<version>4.0.0</version>
 		</dependency>
-        <!-- comm -->
-        <dependency>
-            <groupId>javax.comm</groupId>
-            <artifactId>comm</artifactId>
-            <version>2.0</version>
-        </dependency>
 	</dependencies>
 
 	<profiles>
@@ -338,6 +332,18 @@
 		</extensions>
 
 		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>utf-8</encoding>
+					<compilerArguments>
+						<verbose/>
+						<bootclasspath>${JAVA_HOME}/jre/lib/rt.jar${path.separator}${JAVA_HOME}/jre/lib/jce.jar</bootclasspath>
+					</compilerArguments>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
