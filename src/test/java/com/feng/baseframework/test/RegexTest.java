@@ -3,6 +3,7 @@ package com.feng.baseframework.test;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Test;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -50,5 +51,17 @@ public class RegexTest {
 		value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
 		System.out.println(value);
 		System.out.println("review:*".replace("review:*", "review:y"));
+	}
+
+	@Test
+	public void regexUrl() {
+		String content = "http://192.168.230.206/static/rest/media/favicon";
+		String patternStr = "^http:.*/.*(/[^/]+)$";
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher matcher = pattern.matcher(content);
+		if(matcher.find()){
+			System.out.println(matcher.group(0));
+			System.out.println(matcher.group(1));
+		}
 	}
 }

@@ -46,7 +46,7 @@ public class User implements Serializable, Cloneable,Comparable<User> {
     }
     public User(){}
 
-    static class Builder{
+    public static class Builder{
         private Integer id;
 
         private String userName;

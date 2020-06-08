@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @ProjectName: baseframework
@@ -116,6 +117,58 @@ public class StreamTest {
         Assert.state(!mainThreadInfo.equals(lambda2ThreadInfo), "期待普通线程lambda表达式在另一个线程执行");
     }
 
+    @Test
+    public void teseStreamCreate(){
+        List<String> datas = new ArrayList<>();
+
+        Stream<String> stream = Stream.<String>builder().add("a").build();
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = datas.stream();
+
+        //如果创建空流，要使用empty（）方法，避免为没有元素的流返回Null.
+        stream = datas == null ? Stream.empty() : datas.stream();
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = Stream.of("a");
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = Stream.of("a", "b", "c");
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = Stream.iterate("a", a -> a + "1").limit(4);
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = Stream.generate(()->"a").limit(3);
+//        System.out.println(stream.reduce(String::concat).get());
+
+        stream = Stream.concat(Stream.of("b"), Stream.generate(()->String.valueOf(new Random().nextInt()))).limit(7);
+        System.out.println(stream.reduce(String::concat).get());
+    }
+
+    @Test
+    public void teseStreamOf() {
+        //字符串拼接
+        String concatStr = Stream.of("a", "b", "c").reduce("-", String::concat);
+        Assert.state("-abc".equals(concatStr));
+
+        concatStr = Stream.of("a", "b", "c").reduce(String::concat).get();
+        Assert.state("abc".equals(concatStr));
+
+        //求最小值
+        double minVal = Stream.of(-1.5, 1.0, -9.9, 2.0).reduce(Double::min).get();
+        Assert.state(minVal == -9.9);
+
+        minVal = Stream.of(-1.5, 1.0, -9.9, 2.0).reduce(-12.1, Double::min);
+        Assert.state(minVal == -12.1);
+
+        //求最大值
+        int sum = Stream.of(1,2,3,4).reduce(Integer::sum).get();
+        Assert.state(sum == 10);
+
+        sum = Stream.of(1,2,3,4).reduce(7, Integer::sum);
+        Assert.state(sum == 17);
+    }
 }
 
 @Setter

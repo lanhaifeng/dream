@@ -2,7 +2,9 @@ package com.feng.baseframework.model;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ import java.util.List;
  **/
 @Getter
 @Component
+@PropertySource("classpath:application-dev1.properties")
 public class PropertyTest {
 
 	//使用默认值

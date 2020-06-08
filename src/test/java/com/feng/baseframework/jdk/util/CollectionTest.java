@@ -68,4 +68,19 @@ public class CollectionTest {
 
         Assert.state(!result, "新增失败");
     }
+
+    @Test
+    public void sublist() {
+        List<String> list = new ArrayList<>();
+        int j=1;
+        for (;j<100;j++){
+            list.add(j + "");
+        }
+        System.out.println(list);
+
+        int time = j % 20 == 0 ? j/20 : j/20 + 1;
+        for (int i=1;i <= time;i++){
+            System.out.println(list.subList((i-1)*20, i*20 < j ? i*20 : j - 1));
+        }
+    }
 }
