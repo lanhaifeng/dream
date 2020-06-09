@@ -47,8 +47,8 @@ public class DroolsUtilTest extends MockitoBaseTest {
 
 		ruleTps.add(new RuleTp("matd : User(userName != null, userName matches '[# %00 --+ --- /* */ %09 %0A %0B %0C %0D %A0 %20 /*! */]');","System.out.println(\"动态加载rule，非admin用户!\");",1));
 
-		ruleTps.add(new RuleTp("matd : User(userName != null,$userName:userName);","System.out.println(\"动态加载rule，非admin用户!\");regexSql('SELECT COUNT\\\\(\\\\*\\\\) FROM INFORMATION_SCHEMA.*',$userName);",1));
-		ruleTps.add(new RuleTp("$matd : User(userName != null,$userName:userName) and eval(regexSql('SELECT COUNT\\\\(\\\\*\\\\) FROM INFORMATION_SCHEMA.*',$userName));","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null);","System.out.println(\"动态加载rule，非admin用户!\");regexSql('SELECT COUNT\\\\(\\\\*\\\\) FROM INFORMATION_SCHEMA.*',matd.getUserName());",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null) and eval(regexSql('SELECT COUNT\\\\(\\\\*\\\\) FROM INFORMATION_SCHEMA.*',matd.getUserName()));","System.out.println(\"动态加载rule，非admin用户!\");",1));
 		return  ruleTps;
 	}
 }

@@ -1,6 +1,6 @@
 .idea
 target
-com
 .mvn
 mvnw
 mvnw.cmd
+/com/
