@@ -100,6 +100,6 @@ public class DroolsUtil {
 		String webRootAppPath = FileUtils.getWebRootPath();
 
 		return ResourceFactory.newFileResource(webRootAppPath+ File.separator
-				+ File.separator + "ruleTemplate/Tp.drl").getInputStream();
+				+ "ruleTemplate/Tp.drl").getInputStream();
 	}
 }
