@@ -3,10 +3,13 @@ seq
 condition
 content
 
+
 package com.feng.baseframework.mydrools
-import com.feng.baseframework.model.User
-import com.feng.baseframework.util.RegexUtil
+import com.feng.baseframework.model.User;
+import function com.feng.baseframework.util.RegexUtil.regexSql
 global java.util.List users;
+
+
 
 
 template "tp"

@@ -1,25 +1,37 @@
 package com.feng.baseframework.autoconfig;
 
 import com.feng.baseframework.constant.GlobalPropertyConfig;
+import com.feng.baseframework.constant.LdapPropertyConfig;
 import com.feng.baseframework.constant.SecurityModeEnum;
 import com.feng.baseframework.security.MyAuthenticationProvider;
 import com.feng.baseframework.security.MySecurityMetadataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.*;
 
 /**
  * @ProjectName: baseframework
@@ -41,6 +53,12 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
     private GlobalPropertyConfig globalPropertyConfig;
     @Autowired
     private MySecurityMetadataSource mySecurityMetadataSource;
+    @Resource(name = "myUserDetailsService")
+    private UserDetailsService userService;
+    @Autowired
+    private PasswordEncoder myPasswordEncoder;
+    @Autowired
+    private LdapPropertyConfig ldapPropertyConfig;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -67,15 +85,16 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                     //.antMatchers("/", "/static/index.html").permitAll()
                     .antMatchers("/", "/static/index.html").authenticated()
+                    .antMatchers("/anonymous/**").anonymous()
                     .anyRequest().authenticated()
                     .and()
                     .formLogin()
-                    .loginPage("login")
+                    .loginPage("/login")
                     .permitAll()
                     .defaultSuccessUrl("/static/hello.html")
                     .and()
                     .logout()
-                    .logoutSuccessUrl("logout")
+                    .logoutSuccessUrl("/logout")
                     .permitAll()
                     .invalidateHttpSession(true)
                     .and()
@@ -86,10 +105,10 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         if (SecurityModeEnum.DEFAULT_AUTHENTICATION.toString().equals(globalPropertyConfig.getSecurityMode())) {
             http.csrf().disable()
                     .formLogin()          // 定义当需要用户登录时候，转到的登录页面。
-                    .defaultSuccessUrl("/baseManage/getInfo", true)
+                    .defaultSuccessUrl("/static/hello.html", true)
                     .and()
                     .authorizeRequests()    // 定义哪些URL需要被保护、哪些不需要被保护
-                    .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证
+//                    .antMatchers("/anonymous/**").anonymous()  //定义那些url匿名认证
 //                    .antMatchers("/baseManage/getInfo").hasAnyRole("ADMIN", "TEST")  //使用自定义资源类后，不支持antMatchers方式配置的权限
                     .anyRequest()        // 任何请求,登录后可以访问
                     .authenticated()
@@ -121,5 +140,62 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         accessDecisionVoters.add(new RoleVoter());
 
         return accessDecisionVoters;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider bean = new DaoAuthenticationProvider();
+        //返回错误信息提示，而不是Bad Credential
+        bean.setHideUserNotFoundExceptions(true);
+        //覆盖UserDetailsService类
+        bean.setUserDetailsService(userService);
+        //覆盖默认的密码验证类
+        bean.setPasswordEncoder(myPasswordEncoder);
+        return bean;
+    }
+
+    @Bean
+    public LdapContextSource ldapContextSource(){
+        LdapContextSource contextSource = new LdapContextSource();
+        Map<String, Object> config = new HashMap<>();
+
+        contextSource.setUrl(ldapPropertyConfig.getLdapUrl());
+        contextSource.setBase(ldapPropertyConfig.getBaseDc());
+        contextSource.setUserDn(ldapPropertyConfig.getLdapUserName());
+        contextSource.setPassword(ldapPropertyConfig.getLdapPassword());
+
+        config.put("java.naming.ldap.attributes.binary", "objectGUID");
+        config.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        contextSource.setPooled(true);
+        contextSource.setBaseEnvironmentProperties(config);
+        contextSource.afterPropertiesSet();
+
+        return contextSource;
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "spring.profiles.active", havingValue = "pro")
+    public DirContext dirContext() throws NamingException {
+        Hashtable<String, String> HashEnv = new Hashtable<String, String>();
+        // LDAP访问安全级别(none,simple,strong);
+        HashEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
+        // 用户名
+        HashEnv.put(Context.SECURITY_PRINCIPAL, ldapPropertyConfig.getLdapUserName());
+        // 密码
+        HashEnv.put(Context.SECURITY_CREDENTIALS, ldapPropertyConfig.getLdapPassword());
+        // LDAP工厂类
+        HashEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        // 连接超时设置为3秒
+        HashEnv.put("com.sun.jndi.ldap.connect.timeout", "3000");
+        // 默认端口389
+        HashEnv.put(Context.PROVIDER_URL, ldapPropertyConfig.getLdapUrl());
+        // 初始化上下文
+        return new InitialDirContext(HashEnv);
+    }
+
+    @Bean
+    public LdapTemplate ldapTemplate(){
+        return new LdapTemplate(ldapContextSource());
     }
 }
