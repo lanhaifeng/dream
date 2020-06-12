@@ -13,5 +13,9 @@ public class RegexUtilTest {
 
 		regex = "SELECT COUNT \\( \\* \\) FROM INFORMATION_SCHEMA.*";
 		Assert.state(RegexUtil.regexSql(regex, sqltext));
+
+		regex = "^TEST.*$";
+		String ruleName = "TESTAff";
+		Assert.state(RegexUtil.regexSql(regex, ruleName));
 	}
 }
