@@ -27,12 +27,26 @@ public class RegexUtil {
 	 * @author lanhaifeng
 	 **/
 	public static boolean regexSql(String regex, String sql){
+		return regexSql(regex, sql, false);
+	}
+
+	/**
+	 * 2020/6/6 9:30
+	 * 正则匹配
+	 *
+	 * @author lanhaifeng
+	 **/
+	public static boolean regexSql(String regex, String sql, boolean ignoreCase){
 		Pattern pattern = regexMap.get(regex);
 		if(pattern == null){
 			lock.lock();
 			try{
 				if(pattern == null){
-					pattern = Pattern.compile(regex);
+					if(ignoreCase){
+						pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+					}else {
+						pattern = Pattern.compile(regex);
+					}
 					regexMap.put(regex, pattern);
 				}
 			}finally {
