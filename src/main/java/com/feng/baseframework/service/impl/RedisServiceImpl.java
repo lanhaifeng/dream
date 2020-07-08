@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * capaa-parent
+ * baseframework
  * 2018/8/20 15:23
  * redis缓存业务实现
  *

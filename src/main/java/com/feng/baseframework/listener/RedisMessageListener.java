@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
- * capaa-parent
+ * baseframework
  * 2018/8/21 15:02
  * redis订阅监听
  *

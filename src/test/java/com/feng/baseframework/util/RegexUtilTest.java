@@ -30,12 +30,16 @@ public class RegexUtilTest {
 		sqltext = "insert INTO TAB VALUES(...)";
 		Assert.state(RegexUtil.regexSql(regex, sqltext));
 
-		regex = "#  ` %00 --+ -- - /* */ %09 %0A %0B  %0C %0D %A0 %20 /*! 、*/";
-		sqltext = "INSERT INTO TAB VALUES(...)";
-		Assert.state(!RegexUtil.regexSql(regex, sqltext));
+		regex = "#|`|(%00)|(--\\+)|(---)|(\\/\\*)|(\\*\\/)|(%09)|(%0A)|(%0B)|(%0C)|(%0D)|(%A0)|(%20)|!";
+		sqltext = "select aaaa %0033333 %09 from ? %0 A %2022229999 / * ! from ttt";
+		Assert.state(RegexUtil.regexSql(regex, sqltext));
 
-		regex = "a\\c";
-		regex = regex.replaceAll("\\\\", "\\\\\\\\");
-		System.out.println(regex);
+		regex = "^【SQL注入】.*$";
+		sqltext = "【SQL注入】基于布尔值盲注2";
+		Assert.state(RegexUtil.regexSql(regex, sqltext));
+
+		regex = "^【漏洞】.*$";
+		sqltext = "【漏洞】基于布尔值盲注";
+		Assert.state(RegexUtil.regexSql(regex, sqltext));
 	}
 }
