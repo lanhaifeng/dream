@@ -145,13 +145,6 @@ public class NioClient {
         channel.write(outBuffer);*/
     }
 
-    public void write(byte[] destBytes, int destPos, byte[] srcBytes, int srcPos, int len) {
-        IOUtils.ensureCapacity(destBytes, destPos + 1, len);
-        System.arraycopy(srcBytes, srcPos, destBytes, destPos, len);
-    }
-
-
-
     /**
      * 启动客户端测试
      *
