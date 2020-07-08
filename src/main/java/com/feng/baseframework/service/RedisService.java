@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * capaa-parent
+ * baseframework
  * 2018/8/20 15:03
  * redis缓存接口
  *

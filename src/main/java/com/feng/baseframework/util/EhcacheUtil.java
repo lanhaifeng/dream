@@ -7,7 +7,7 @@ import net.sf.ehcache.Element;
 import java.net.URL;
 
 /**
- * capaa-web2
+ * baseframework
  * 2019/7/8 10:45
  * 缓存工具类
  *
