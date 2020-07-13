@@ -2,6 +2,7 @@ package com.feng.baseframework.util;
 
 import com.feng.baseframework.common.JunitBaseTest;
 import com.feng.baseframework.model.SolrUpdateLog;
+import io.jsonwebtoken.lang.Assert;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -11,22 +12,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @ActiveProfiles("dev")
 public class SolrUtilTest extends JunitBaseTest {
 
 	private SolrUpdateLog solrUpdateLog;
+	private List<SolrUpdateLog> solrUpdateLogs;
 	private String collection;
 	private String auditId;
+	private String auditIds;
 	private SolrQuery solrQuery;
+	private String DATEFORMAT_SOLR;
 
 	@Before
 	public void setUp() {
-		collection = "1_1545634851850";
-		auditId = "38818219521545634867968960";
+		collection = "13";
+		auditId = "e87e60d5-376a-478c-91c6-8d230ebceed6";
+		solrUpdateLogs = new ArrayList<>();
+		DATEFORMAT_SOLR = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	}
 
 	@Test
@@ -41,11 +45,30 @@ public class SolrUtilTest extends JunitBaseTest {
 	public void updateIndex() {
 		solrUpdateLog = new SolrUpdateLog();
 		solrUpdateLog.setAuditId(auditId);
-		solrUpdateLog.setField("review");
-		solrUpdateLog.setFieldValue("y");
+		solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review", "y"));
+		solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review_time", DateUtil.dateToString(new Date(), DATEFORMAT_SOLR, null)));
 		solrUpdateLog.setCollection(collection);
 
-		SolrUtil.updateIndex(solrUpdateLog);
+		Assert.state(SolrUtil.updateIndex(solrUpdateLog), "更新索引失败");
+	}
+
+	@Test
+	public void updateIndexs() {
+		auditIds = "787720f3-727d-42be-b09b-46083dc498b6,85fb99c7-a1de-4fad-90ad-bd31d9413a82";
+		List<String> ids = Arrays.asList(auditIds.split(","));
+		for (String id : ids) {
+			solrUpdateLog = new SolrUpdateLog();
+			solrUpdateLog.setAuditId(id);
+			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review", "y"));
+			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("issue_deal_type", "0"));
+			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review_time", DateUtil.dateToString(new Date(), DATEFORMAT_SOLR, null)));
+			solrUpdateLog.setCollection(collection);
+
+			solrUpdateLogs.add(solrUpdateLog);
+		}
+
+
+		Assert.state(SolrUtil.updateIndexs(collection, solrUpdateLogs), "更新索引失败");
 	}
 
 	@Test

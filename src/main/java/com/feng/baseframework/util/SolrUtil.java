@@ -10,7 +10,6 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.params.CursorMarkParams;
@@ -48,9 +47,9 @@ public class SolrUtil {
 		Boolean result = true;
 		try {
 			solrClient.add(collection, docs);
-			solrClient.commit();
+			solrClient.commit(collection);
 		} catch (Exception e) {
-			logger.error("新增索引失败,", ExceptionUtils.getFullStackTrace(e));
+			logger.error("新增索引失败," + ExceptionUtils.getFullStackTrace(e));
 			result = false;
 		}
 
@@ -60,9 +59,29 @@ public class SolrUtil {
 	public static boolean updateIndex(SolrUpdateLog solrUpdateLog){
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", solrUpdateLog.getAuditId());
-		doc.addField(solrUpdateLog.getField(),
-				solrUpdateLog.getUpdateAtomicVal());
+		List<SolrUpdateLog.UpdateField> fields = solrUpdateLog.getFields();
+		for (SolrUpdateLog.UpdateField field : fields) {
+			doc.addField(field.getField(),
+					field.getUpdateAtomicVal());
+		}
+
 		return addDoc(solrUpdateLog.getCollection(), doc);
+	}
+
+	public static boolean updateIndexs(String solrName, List<SolrUpdateLog> solrUpdateLogs){
+		SolrInputDocument doc;
+		List<SolrInputDocument> docs = new ArrayList<>();
+		for (SolrUpdateLog solrUpdateLog : solrUpdateLogs) {
+			doc = new SolrInputDocument();
+			doc.addField("id", solrUpdateLog.getAuditId());
+			List<SolrUpdateLog.UpdateField> fields = solrUpdateLog.getFields();
+			for (SolrUpdateLog.UpdateField field : fields) {
+				doc.addField(field.getField(),
+						field.getUpdateAtomicVal());
+			}
+			docs.add(doc);
+		}
+		return addDocs(solrName, docs);
 	}
 
 	public static SolrDocument getDoc(String collection, String id){
