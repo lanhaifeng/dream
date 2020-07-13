@@ -6,7 +6,6 @@ import com.feng.baseframework.constant.SecurityModeEnum;
 import com.feng.baseframework.security.MyAuthenticationProvider;
 import com.feng.baseframework.security.MySecurityMetadataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.LdapTemplate;
@@ -28,10 +27,10 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 
 import javax.annotation.Resource;
 import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ProjectName: baseframework
@@ -172,26 +171,6 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         contextSource.afterPropertiesSet();
 
         return contextSource;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.profiles.active", havingValue = "pro")
-    public DirContext dirContext() throws NamingException {
-        Hashtable<String, String> HashEnv = new Hashtable<String, String>();
-        // LDAP访问安全级别(none,simple,strong);
-        HashEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
-        // 用户名
-        HashEnv.put(Context.SECURITY_PRINCIPAL, ldapPropertyConfig.getLdapUserName());
-        // 密码
-        HashEnv.put(Context.SECURITY_CREDENTIALS, ldapPropertyConfig.getLdapPassword());
-        // LDAP工厂类
-        HashEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        // 连接超时设置为3秒
-        HashEnv.put("com.sun.jndi.ldap.connect.timeout", "3000");
-        // 默认端口389
-        HashEnv.put(Context.PROVIDER_URL, ldapPropertyConfig.getLdapUrl());
-        // 初始化上下文
-        return new InitialDirContext(HashEnv);
     }
 
     @Bean

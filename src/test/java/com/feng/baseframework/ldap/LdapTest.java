@@ -1,9 +1,13 @@
 package com.feng.baseframework.ldap;
 
+import com.feng.baseframework.autoconfig.LdapFactory;
 import com.feng.baseframework.common.JunitBaseTest;
+import com.feng.baseframework.constant.LdapPropertyConfig;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ldap.control.PagedResultsCookie;
 import org.springframework.ldap.control.PagedResultsDirContextProcessor;
 import org.springframework.ldap.core.ContextMapper;
@@ -42,6 +46,9 @@ public class LdapTest extends JunitBaseTest {
 
 	@Autowired
 	private LdapTemplate ldapTemplate;
+	@Autowired
+	@Qualifier("ldapFactory")
+	private LdapFactory ldapFactory;
 
 	@Test
 	public void authenticateLdapTest() {
@@ -340,5 +347,66 @@ public class LdapTest extends JunitBaseTest {
 		contextSource.afterPropertiesSet();
 		contextSource.getReadOnlyContext();
 
+	}
+
+	@Test
+	public void testLdapFactory() throws Exception {
+		DirContext dirContext = ldapFactory.getObject();
+		SearchControls controls = new SearchControls();
+		controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+		String searchBase = "ou=dev,ou=users,dc=mchz,dc=com";
+		String searchFilter = "(&(objectClass=inetOrgPerson)(cn=*))";
+		NamingEnumeration<SearchResult> answers = dirContext.search(searchBase, searchFilter, controls);
+		boolean result = false;
+		Object value;
+		while (answers.hasMoreElements()){
+			value = answers.nextElement().getAttributes().get("cn").get();
+			if(value != null && StringUtils.isNotBlank(value.toString())){
+				result = true;
+				break;
+			}
+		}
+		if(result){
+			System.out.println("exists");
+		}else {
+			System.out.println("not exists");
+		}
+		while (answers.hasMoreElements()){
+			System.out.println(answers.nextElement().getAttributes().get("cn"));
+		}
+		dirContext.close();
+
+		LdapPropertyConfig ldapPropertyConfig = new LdapPropertyConfig();
+		ldapPropertyConfig.setLdapUrl("ldap://192.168.239.90:389/");
+		ldapPropertyConfig.setLdapUserName("dcadmin@hzmc.com");
+		ldapPropertyConfig.setLdapPassword("Hzmc321#");
+
+		ldapFactory.setLdapPropertyConfig(ldapPropertyConfig);
+		dirContext = ldapFactory.getObject();
+
+		controls = new SearchControls();
+		controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+		searchBase = "CN=Users,dc=hzmc,dc=com";
+		searchFilter = "(&(objectCategory=person)(objectClass=user)(displayname=*))";
+		answers = dirContext.search(searchBase, searchFilter, controls);
+		result = false;
+		while (answers.hasMoreElements()){
+			value = answers.nextElement().getAttributes().get("displayname").get();
+			if(value != null && StringUtils.isNotBlank(value.toString())){
+				result = true;
+				break;
+			}
+		}
+		if(result){
+			System.out.println("exists");
+		}else {
+			System.out.println("not exists");
+		}
+		while (answers.hasMoreElements()){
+			System.out.println(answers.nextElement().getAttributes().get("displayname"));
+		}
+		dirContext.close();
 	}
 }
