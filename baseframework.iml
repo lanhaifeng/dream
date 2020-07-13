@@ -192,6 +192,7 @@
     <orderEntry type="library" name="Maven: org.springframework.ldap:spring-ldap-core:2.3.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.3.14.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.14.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.23.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:1.5.10.RELEASE" level="project" />
@@ -219,5 +220,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-core:1.7.4" level="project" />
     <orderEntry type="module" module-name="memory-calculation" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty:4.0.0.Alpha8" level="project" />
   </component>
 </module>
