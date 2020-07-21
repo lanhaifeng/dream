@@ -54,13 +54,14 @@ public class SolrUtilTest extends JunitBaseTest {
 
 	@Test
 	public void updateIndexs() {
-		auditIds = "787720f3-727d-42be-b09b-46083dc498b6,85fb99c7-a1de-4fad-90ad-bd31d9413a82";
+		auditIds = "74615947-883a-4f21-abaf-8e1d90037236,f5d94eb0-b635-4ff2-a3d8-f45ae0bd600e,372ae9d1-7d90-4a66-9411-d463732933d0";
 		List<String> ids = Arrays.asList(auditIds.split(","));
 		for (String id : ids) {
 			solrUpdateLog = new SolrUpdateLog();
 			solrUpdateLog.setAuditId(id);
 			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review", "y"));
 			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("issue_deal_type", "0"));
+			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review_id", "100"));
 			solrUpdateLog.addFiledAndValues(new SolrUpdateLog.UpdateField("review_time", DateUtil.dateToString(new Date(), DATEFORMAT_SOLR, null)));
 			solrUpdateLog.setCollection(collection);
 
