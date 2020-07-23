@@ -41,7 +41,7 @@ public class DroolsUtilTest extends MockitoBaseTest {
 	private List<RuleTp> loadRuleTps(){
 		List<RuleTp> ruleTps = new ArrayList<>();
 		ruleTps.add(new RuleTp("matd : User(userName != null, userName == \"admin\");","System.out.println(\"动态加载rule，admin用户!\");",0));
-		ruleTps.add(new RuleTp("matd : User(userName != null, ( ( userName matches 'SELECT count\\\\(\\*\\\\) FROM INFORMATION_SCHEMA.*' ) ),true );","System.out.println(\"动态加载rule，非admin用户!\");",1));
+		ruleTps.add(new RuleTp("matd : User(userName != null, ( ( userName matches 'SELECT count\\\\(\\\\*\\\\) FROM INFORMATION_SCHEMA.*' ) ),true );","System.out.println(\"动态加载rule，非admin用户!\");",1));
 		ruleTps.add(new RuleTp("matd : User(userName != null, ( ( userName matches '(?i).*information_schema.*' ) ),true );","System.out.println(\"动态加载rule，非admin用户!\");",1));
 		ruleTps.add(new RuleTp("matd : User(userName != null, userName.indexOf('#&~')==-1,true );","System.out.println(\"动态加载rule，非admin用户!\");",1));
 
