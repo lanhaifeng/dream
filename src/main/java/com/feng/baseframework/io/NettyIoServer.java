@@ -15,8 +15,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * baseframework
  * nettty服务端
@@ -122,7 +120,9 @@ class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        message.retain();
         ctx.writeAndFlush(message);
+        System.out.println("refCnt1:" + message.refCnt());
     }
 
     @Override
@@ -130,9 +130,13 @@ class NettyServerHandler extends ChannelInboundHandlerAdapter {
         ByteBuf in = (ByteBuf) msg;
         System.out.println("nettyServer receive:" + in.toString(CharsetUtil.UTF_8));
 
-        ByteBuf out = Unpooled.buffer(256);
-        out.writeBytes("I am is server\n".getBytes(CharsetUtil.UTF_8));
-        ctx.writeAndFlush(out);
+        System.out.println("refCnt2:" + message.refCnt());
+        message.retain();
+        message.clear();
+        System.out.println("refCnt3:" + message.refCnt());
+        message.writeBytes("I am is server\n".getBytes(CharsetUtil.UTF_8));
+        ctx.writeAndFlush(message);
+        System.out.println("refCnt4:" + message.refCnt());
     }
 
     @Override
