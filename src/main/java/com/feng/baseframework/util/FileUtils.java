@@ -66,7 +66,7 @@ public class FileUtils {
 
 	/**
 	 * 2018/9/30 17:23
-	 * 获取项目根路径
+	 * 获取项目编译路径
 	 *
 	 * @author lanhaifeng
 	 * @return
