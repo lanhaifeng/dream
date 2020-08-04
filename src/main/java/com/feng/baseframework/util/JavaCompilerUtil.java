@@ -9,9 +9,9 @@ import javax.tools.*;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * baseframework
@@ -48,17 +48,17 @@ public class JavaCompilerUtil {
 		Iterable<String> options = Arrays.asList(flag, outDir);
 
 		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, fileObjects);
-		boolean result = task.call();
-		if (result == true) {
-			try {
-				return Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				logger.error("加载class文件失败，错误：" + ExceptionUtils.getFullStackTrace(e));
-			}
-		}
-		return null;
+		return task.call() ? ClassLoaderUtil.loadClassByPath(className, outDir) : null;
 	}
 
+	/**
+	 * 2020/8/4 14:45
+	 * 构建输出路径
+	 *
+	 * @param outDir
+	 * @author lanhaifeng
+	 * @return java.lang.String
+	 */
 	private static String getOutputDir(String outDir) {
 		String currentDir = "";
 		try {
@@ -76,43 +76,86 @@ public class JavaCompilerUtil {
 				outDir = currentDir;
 				outDirFile.delete();
 			}
+			//注意使用URLClassLoader加载class文件时，如果路径不是以分隔符结果，Windows环境下将加载失败，linux未测试
+			if(!outDir.endsWith("/") && !outDir.endsWith("\\")){
+				outDir += File.separator;
+			}
 		}
 		return outDir;
+	}
+
+	/**
+	 * 2020/8/4 9:58
+	 * 批量编译java文件
+	 *
+	 * @param classFiles    .java文件路径集合
+	 * @param outDir		编译输出目录
+	 * @author lanhaifeng
+	 * @return void
+	 */
+	public static void compileByFiles(String[] classFiles, String outDir){
+		JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager manager = javaCompiler.getStandardFileManager(null,null,null);
+		List<File> files = new ArrayList<>();
+		for (String classFile : classFiles) {
+			files.add(new File(classFile));
+		}
+		Iterable<? extends JavaFileObject> compilationUnits = manager.getJavaFileObjectsFromFiles(files);
+
+		// 编译
+		// 设置编译选项，配置class文件输出路径
+		outDir = getOutputDir(outDir);
+		Iterable<String> options = Arrays.asList("-d", outDir);
+		JavaCompiler.CompilationTask task = javaCompiler.getTask(
+				null, manager, null, options, null, compilationUnits);
+		// 执行编译任务
+		boolean result = task.call();
+		if(!result) {
+			logger.error("编译失败！");
+			throw new RuntimeException("编译失败！");
+		}
 	}
 
 	/**
 	 * 2020/7/30 10:55
 	 * 将.java文件编译成class文件并加载
 	 *
-	 * @param classFileName
+	 * @param classFile
 	 * @param packageName
 	 * @author lanhaifeng
 	 * @return java.lang.Class<?>
 	 */
-	public static Class<?> compileByFile(String classFileName, String packageName, String outDir) {
-		if(StringUtils.isBlank(classFileName) || !classFileName.endsWith(".java")) return null;
+	public static Class<?> compileByFile(String classFile, String packageName, String outDir) {
+		if(StringUtils.isBlank(classFile) || !classFile.endsWith(".java")) return null;
 		outDir = getOutputDir(outDir);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		int result = compiler.run(null, null, null, "-d" , outDir, classFileName);
-		if(result == 0){
-			int separatorIndex = classFileName.lastIndexOf(File.separator);
-			if(separatorIndex == -1) separatorIndex = classFileName.lastIndexOf("\\");
+		String className = parseClassName(classFile, packageName);
 
-			try {
-				String className = classFileName.substring(separatorIndex + 1, classFileName.length() - 5);
-				URL[] urls = new URL[]{new URL("file:/" + classFileName.substring(0, separatorIndex + 1))};
-				URLClassLoader classLoader = new URLClassLoader(urls);
-				if(StringUtils.isNotBlank(packageName)){
-					className = packageName + "." + className;
-				}
+		int result = compiler.run(null, null, null, "-d" , outDir, classFile);
+		return result == 0 ? ClassLoaderUtil.loadClassByPath(className, outDir) : null;
+	}
 
-				return classLoader.loadClass(className);
-			} catch (Exception e) {
-				logger.error("加载class文件失败，错误：" + ExceptionUtils.getFullStackTrace(e));
-			}
+	/**
+	 * 2020/8/4 16:30
+	 * 根据文件名和包路径得到全类名
+	 *
+	 * @param classFile
+	 * @param packageName
+	 * @author lanhaifeng
+	 * @return java.lang.String
+	 */
+	public static String parseClassName(String classFile, String packageName) {
+		int separatorIndex = classFile.lastIndexOf(File.separator);
+		if(separatorIndex == -1) separatorIndex = classFile.lastIndexOf("\\");
+		int endIndex = classFile.length() - 5;
+		if(classFile.endsWith(".class")){
+			endIndex = classFile.length() - 6;
 		}
-
-		return null;
+		String className = classFile.substring(separatorIndex + 1, endIndex);
+		if(StringUtils.isNotBlank(packageName)){
+			className = packageName + "." + className;
+		}
+		return className;
 	}
 
 	private static class StrSrcJavaObject extends SimpleJavaFileObject {
