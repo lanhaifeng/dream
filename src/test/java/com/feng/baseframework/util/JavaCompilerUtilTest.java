@@ -62,7 +62,7 @@ public class JavaCompilerUtilTest extends MockitoBaseTest {
 
 	@Test
 	public void compile2() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-		Class cls = JavaCompilerUtil.compileByFile(classFilePath, packageName);
+		Class cls = JavaCompilerUtil.compileByFile(classFilePath, packageName, outDir);
 
 		Assert.assertNotNull(cls);
 		Assert.assertTrue(className.equals(cls.getName()));

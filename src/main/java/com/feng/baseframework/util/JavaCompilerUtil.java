@@ -44,6 +44,22 @@ public class JavaCompilerUtil {
 		Iterable<? extends JavaFileObject> fileObjects = Arrays.asList(srcObject);
 
 		String flag = "-d";
+		outDir = getOutputDir(outDir);
+		Iterable<String> options = Arrays.asList(flag, outDir);
+
+		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, fileObjects);
+		boolean result = task.call();
+		if (result == true) {
+			try {
+				return Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				logger.error("加载class文件失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+			}
+		}
+		return null;
+	}
+
+	private static String getOutputDir(String outDir) {
 		String currentDir = "";
 		try {
 			File classPath = new File(Thread.currentThread().getContextClassLoader().getResource("").toURI());
@@ -61,18 +77,7 @@ public class JavaCompilerUtil {
 				outDirFile.delete();
 			}
 		}
-		Iterable<String> options = Arrays.asList(flag, outDir);
-
-		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, fileObjects);
-		boolean result = task.call();
-		if (result == true) {
-			try {
-				return Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				logger.error("加载class文件失败，错误：" + ExceptionUtils.getFullStackTrace(e));
-			}
-		}
-		return null;
+		return outDir;
 	}
 
 	/**
@@ -84,10 +89,11 @@ public class JavaCompilerUtil {
 	 * @author lanhaifeng
 	 * @return java.lang.Class<?>
 	 */
-	public static Class<?> compileByFile(String classFileName, String packageName) {
+	public static Class<?> compileByFile(String classFileName, String packageName, String outDir) {
 		if(StringUtils.isBlank(classFileName) || !classFileName.endsWith(".java")) return null;
+		outDir = getOutputDir(outDir);
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		int result = compiler.run(null, null, null, classFileName);
+		int result = compiler.run(null, null, null, "-d" , outDir, classFileName);
 		if(result == 0){
 			int separatorIndex = classFileName.lastIndexOf(File.separator);
 			if(separatorIndex == -1) separatorIndex = classFileName.lastIndexOf("\\");
