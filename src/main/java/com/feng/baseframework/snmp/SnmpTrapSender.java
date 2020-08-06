@@ -81,7 +81,10 @@ public class SnmpTrapSender extends AbstractSnmp {
 		}
 		if(version == SnmpConstants.version3){
 			target = new UserTarget();
-			target.setSecurityName(new OctetString(snmpAuth.getUserName()));
+			if(snmpAuth.getSecurityLevel() == SecurityLevel.AUTH_NOPRIV
+					|| snmpAuth.getSecurityLevel() == SecurityLevel.AUTH_PRIV){
+				target.setSecurityName(new OctetString(snmpAuth.getUserName()));
+			}
 			target.setSecurityLevel(snmpAuth.getSecurityLevel());
 			target.setSecurityModel(snmpAuth.getSecurityModel());
 			//设置目标地址
