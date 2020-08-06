@@ -182,11 +182,11 @@ public class SnmpTrapSender extends AbstractSnmp {
 		SnmpAuth snmpAuth = new SnmpAuth();
 		snmpAuth.withVersion(version).withCommunity(community);
 		SnmpTrapSender sender = new SnmpTrapSender();
-		sender.initComm(snmpAuth);
 		if(version == SnmpConstants.version3){
 			snmpAuth.withSecurityLevel(securityLevel).withSecurityModel(securityModel)
 					.withUserName(userName).withPassAuth(passAuth).withPrivatePass(prviatePass);
 		}
+		sender.initComm(snmpAuth);
 
 		sender.sendPDU(ip, port, snmpAuth);
 	}
