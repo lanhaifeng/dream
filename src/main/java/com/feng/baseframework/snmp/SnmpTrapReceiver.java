@@ -108,7 +108,6 @@ public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 			String ip = "192.168.61.47";
 			int port = 162;
 
-			int version = SnmpConstants.version3;
 			String community = "hzmc+Ra2$yuL";
 			int securityLevel = SecurityLevel.AUTH_PRIV;
 			int securityModel = SecurityModel.SECURITY_MODEL_USM;
@@ -116,7 +115,7 @@ public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 			String passAuth = "098f6bcd4621d373cade4e832627b4f6";
 			String prviatePass = "PzMY6G9gKK2N52wfH7aANg==";
 			SnmpAuth snmpAuth = new SnmpAuth();
-			snmpAuth.withVersion(version).withSecurityLevel(securityLevel).withSecurityModel(securityModel)
+			snmpAuth.withSecurityLevel(securityLevel).withSecurityModel(securityModel)
 					.withCommunity(community)
 					.withUserName(userName).withPassAuth(passAuth).withPrivatePass(prviatePass);
 

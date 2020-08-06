@@ -14,7 +14,7 @@ public class SnmpAuth implements Serializable {
 
 	//版本，[SnmpConstants.version1, SnmpConstants.version2c, SnmpConstants.version3]
 	private int version;
-	//共同体
+	//团体名
 	private String community;
 	//认证模式,见org.snmp4j.security.SecurityModel
 	private int securityModel;

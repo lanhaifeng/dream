@@ -34,13 +34,15 @@ public class SnmpTrapSender extends AbstractSnmp {
 	public void initComm(SnmpAuth snmpAuth) throws IOException {
 		TransportMapping<? extends Address> transport = new DefaultUdpTransportMapping();
 		snmp = new Snmp(transport);
-		USM usm = snmp.getUSM();
-		if(Objects.isNull(usm)){
-			usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
+		if(snmpAuth.getVersion() == SnmpConstants.version3){
+			USM usm = snmp.getUSM();
+			if(Objects.isNull(usm)){
+				usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
+			}
+			SecurityModels.getInstance().addSecurityModel(usm);
+			usm.addUser(buildUsmUser(SecurityLevel.get(snmpAuth.getSecurityLevel()),
+					snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivatePass()));
 		}
-		SecurityModels.getInstance().addSecurityModel(usm);
-		usm.addUser(buildUsmUser(SecurityLevel.get(snmpAuth.getSecurityLevel()),
-				snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivatePass()));
 		transport.listen();
 	}
 
@@ -72,23 +74,20 @@ public class SnmpTrapSender extends AbstractSnmp {
 		Target target = null;
 
 		int version = snmpAuth.getVersion();
-		if(version == SnmpConstants.version1){
-			target = new CommunityTarget();
-		}
-		if(version == SnmpConstants.version2c){
-			target = new CommunityTarget();
-			// 共同体
-			((CommunityTarget)target).setCommunity(new OctetString(snmpAuth.getCommunity()));
+		//版本1和2c基于团体名验证
+		if(version == SnmpConstants.version1 || version == SnmpConstants.version2c){
+			// 目标地址和团体名
+			target = new CommunityTarget(targetAddress, new OctetString(snmpAuth.getCommunity()));
 		}
 		if(version == SnmpConstants.version3){
 			target = new UserTarget();
 			target.setSecurityName(new OctetString(snmpAuth.getUserName()));
 			target.setSecurityLevel(snmpAuth.getSecurityLevel());
 			target.setSecurityModel(snmpAuth.getSecurityModel());
+			//设置目标地址
+			target.setAddress(targetAddress);
 		}
 
-		//设置目标地址
-		target.setAddress(targetAddress);
 		// 通信不成功时的重试次数
 		target.setRetries(2);
 		// 超时时间
@@ -132,7 +131,7 @@ public class SnmpTrapSender extends AbstractSnmp {
 		Target target = buildCommunityTarget(snmpAuth, address);
 
 		// 创建 PDU
-		PDU pdu = new PDUv1();
+		PDU pdu = null;
 		if(version == SnmpConstants.version1){
 			pdu = new PDUv1();
 		}
@@ -177,27 +176,39 @@ public class SnmpTrapSender extends AbstractSnmp {
 		return datas;
 	}
 
+	public static void testSendTrap(String ip, int port, int version, String community,
+									 Integer securityLevel, Integer securityModel,
+									 String userName, String passAuth, String prviatePass) throws IOException {
+		SnmpAuth snmpAuth = new SnmpAuth();
+		snmpAuth.withVersion(version).withCommunity(community);
+		SnmpTrapSender sender = new SnmpTrapSender();
+		sender.initComm(snmpAuth);
+		if(version == SnmpConstants.version3){
+			snmpAuth.withSecurityLevel(securityLevel).withSecurityModel(securityModel)
+					.withUserName(userName).withPassAuth(passAuth).withPrivatePass(prviatePass);
+		}
+
+		sender.sendPDU(ip, port, snmpAuth);
+	}
 
 	public static void main(String[] args) {
 		try {
-			String ip = "192.168.230.211";
+			String ip = "192.168.230.206";
 			int port = 162;
-
-			int version = SnmpConstants.version2c;
 			String community = "hzmc+Ra2$yuL";
 			int securityLevel = SecurityLevel.AUTH_PRIV;
 			int securityModel = SecurityModel.SECURITY_MODEL_USM;
 			String userName = "test";
 			String passAuth = "098f6bcd4621d373cade4e832627b4f6";
 			String prviatePass = "PzMY6G9gKK2N52wfH7aANg==";
-			SnmpAuth snmpAuth = new SnmpAuth();
-			snmpAuth.withVersion(version).withSecurityLevel(securityLevel).withSecurityModel(securityModel)
-					.withCommunity(community)
-					.withUserName(userName).withPassAuth(passAuth).withPrivatePass(prviatePass);
 
-			SnmpTrapSender sender = new SnmpTrapSender();
-			sender.initComm(snmpAuth);
-			sender.sendPDU(ip, port, snmpAuth);
+			//test trap1
+			//ip = "192.168.61.47";
+			testSendTrap(ip, port, SnmpConstants.version1, community, null, null, null, null, null);
+			//test trap2c
+			testSendTrap(ip, port, SnmpConstants.version2c, community, null, null, null, null, null);
+			//test trap3
+			testSendTrap(ip, port, SnmpConstants.version3, community, securityLevel, securityModel, userName, passAuth, prviatePass);
 		} catch (Exception e) {
 			log.error("发送trap失败，错误：" + ExceptionUtils.getFullStackTrace(e));
 		}
