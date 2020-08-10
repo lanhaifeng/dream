@@ -146,8 +146,14 @@ public class SnmpTrapSender extends AbstractSnmp {
 			pdu = new ScopedPDU();
 			pdu.setType(PDU.NOTIFICATION);
 		}
+
+		List<VariableBinding> datas = buildSendData();
+		if(version == SnmpConstants.version2c || version == SnmpConstants.version3){
+			datas.add(new VariableBinding(SnmpConstants.snmpTrapOID, SnmpConstants.linkDown));
+		}
+
 		//构造数据
-		pdu.addAll(buildSendData());
+		pdu.addAll(datas);
 
 		// 向Agent发送PDU，并接收Response
 		ResponseEvent respEvnt = snmp.send(pdu, target);
@@ -172,6 +178,7 @@ public class SnmpTrapSender extends AbstractSnmp {
 
 			datas.add(new VariableBinding(new OID(".1.3.6.1.6.3.1.1.4.6.1.0"), sqlText));
 			datas.add(new VariableBinding(new OID(".1.3.6.1.6.3.1.1.4.6.1.0"), new OctetString("SnmpTrap2")));
+			datas.add(new VariableBinding(new OID(".1.3.6.1.6.3.1.1.5.2.0"), new OctetString("SnmpTrap3")));
 		} catch (Exception e) {
 			log.error("构建发送数据失败，错误：" + ExceptionUtils.getFullStackTrace(e));
 		}
