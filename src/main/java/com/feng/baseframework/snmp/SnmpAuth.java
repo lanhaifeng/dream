@@ -1,6 +1,10 @@
 package com.feng.baseframework.snmp;
 
+import org.apache.commons.lang.StringUtils;
+import org.snmp4j.mp.SnmpConstants;
+
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * baseframework
@@ -26,6 +30,24 @@ public class SnmpAuth implements Serializable {
 	private String passAuth;
 	//snmpv3使用，加密密码，是否需要传值由securityLevel决定
 	private String privatePass;
+
+	//snmp服务端ip
+	private String ip;
+	//snmp服务端端口
+	private int port;
+
+	public boolean validate(){
+		boolean validateResult = true;
+		if(StringUtils.isBlank(getIp()) || getPort() < 1 || getPort() > 65535
+				|| !Arrays.asList(SnmpConstants.version1, SnmpConstants.version2c, SnmpConstants.version3).contains(getVersion())){
+			validateResult = false;
+		}
+		if ((getVersion() == SnmpConstants.version1 || getVersion() == SnmpConstants.version2c) && StringUtils.isBlank(getCommunity())) {
+			validateResult = false;
+		}
+
+		return validateResult;
+	}
 
 	public SnmpAuth withVersion(int version){
 		this.version = version;
@@ -59,6 +81,16 @@ public class SnmpAuth implements Serializable {
 
 	public SnmpAuth withPrivatePass(String privatePass){
 		this.privatePass = privatePass;
+		return this;
+	}
+
+	public SnmpAuth withIp(String ip){
+		this.ip = ip;
+		return this;
+	}
+
+	public SnmpAuth withPort(int port){
+		this.port = port;
 		return this;
 	}
 
@@ -116,5 +148,21 @@ public class SnmpAuth implements Serializable {
 
 	public void setPrivatePass(String privatePass) {
 		this.privatePass = privatePass;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

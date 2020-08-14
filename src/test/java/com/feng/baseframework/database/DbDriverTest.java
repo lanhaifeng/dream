@@ -3,6 +3,7 @@ package com.feng.baseframework.database;
 import com.feng.baseframework.common.MockitoBaseTest;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.*;
@@ -24,6 +25,7 @@ public class DbDriverTest extends MockitoBaseTest {
 	private static final String password = "hzmc321#";
 
 	@Test
+	@Ignore
 	public void test() throws SQLException {
 		try {
 			Class.forName(driverName);
