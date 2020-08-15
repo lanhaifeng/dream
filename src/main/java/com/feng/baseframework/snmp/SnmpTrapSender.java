@@ -11,10 +11,7 @@ import org.snmp4j.security.SecurityLevel;
 import org.snmp4j.security.SecurityModels;
 import org.snmp4j.security.SecurityProtocols;
 import org.snmp4j.security.USM;
-import org.snmp4j.smi.Address;
-import org.snmp4j.smi.GenericAddress;
-import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.VariableBinding;
+import org.snmp4j.smi.*;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import java.io.IOException;
@@ -128,10 +125,11 @@ public class SnmpTrapSender extends AbstractSnmp {
 	 *
 	 * @param snmpAuth
 	 * @param datas
+	 * @param notification
 	 * @return void
 	 * @author lanhaifeng
 	 */
-	public void sendPDU(SnmpAuth snmpAuth, List<VariableBinding> datas) throws IOException {
+	public void sendPDU(SnmpAuth snmpAuth, List<VariableBinding> datas, String notification) throws IOException {
 		Address address = buildAddress(snmpAuth.getIp(), snmpAuth.getPort());
 		int version = snmpAuth.getVersion();
 		Target target = buildCommunityTarget(snmpAuth, address);
@@ -156,8 +154,9 @@ public class SnmpTrapSender extends AbstractSnmp {
 
 		//define snmp trap OID
 		//解决问题：Cannot find TrapOID in TRAP2 PDU
+        //trap2时需要传oid为SnmpConstants.snmpTrapOID，值为发送trap的oid
 		if (version == SnmpConstants.version2c || version == SnmpConstants.version3) {
-			datas.add(new VariableBinding(SnmpConstants.snmpTrapOID, SnmpConstants.coldStart));
+			datas.add(new VariableBinding(SnmpConstants.snmpTrapOID, new OID(notification)));
 		}
 
 		//构造数据

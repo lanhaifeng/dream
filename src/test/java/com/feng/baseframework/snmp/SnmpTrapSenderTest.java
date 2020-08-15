@@ -29,6 +29,7 @@ public class SnmpTrapSenderTest extends MockitoBaseTest {
 	private String userName;
 	private String passAuth;
 	private String prviatePass;
+	private String notification;
 
 	@Before
 	public void setUp() throws Exception {
@@ -40,6 +41,7 @@ public class SnmpTrapSenderTest extends MockitoBaseTest {
 		userName = "test";
 		passAuth = "098f6bcd4621d373cade4e832627b4f6";
 		prviatePass = "PzMY6G9gKK2N52wfH7aANg==";
+        notification = "1.3.6.1.6.3.1.1.4.8.5";
 	}
 
 	/**
@@ -67,7 +69,7 @@ public class SnmpTrapSenderTest extends MockitoBaseTest {
 
 	public void testSendTrap(String ip, int port, int version, String community,
 									Integer securityLevel, Integer securityModel,
-									String userName, String passAuth, String prviatePass) throws IOException {
+									String userName, String passAuth, String prviatePass, String notification) throws IOException {
 		SnmpAuth snmpAuth = new SnmpAuth();
 		snmpAuth.withIp(ip).withPort(port).withVersion(version).withCommunity(community);
 		SnmpTrapSender sender = new SnmpTrapSender();
@@ -77,22 +79,23 @@ public class SnmpTrapSenderTest extends MockitoBaseTest {
 		}
 		if(snmpAuth.validate()){
 			sender.initComm(snmpAuth);
-			sender.sendPDU(snmpAuth, buildSendData());
+			sender.sendPDU(snmpAuth, buildSendData(), notification);
 		}
 	}
 
 	@Test
+    //TODO 还需要调试如何传送特定的notification
 	public void testSendTrap1() throws IOException {
-		testSendTrap(ip, port, SnmpConstants.version1, community, null, null, null, null, null);
+		testSendTrap(ip, port, SnmpConstants.version1, community, null, null, null, null, null, notification);
 	}
 
 	@Test
 	public void testSendTrap2c() throws IOException {
-		testSendTrap(ip, port, SnmpConstants.version2c, community, null, null, null, null, null);
+		testSendTrap(ip, port, SnmpConstants.version2c, community, null, null, null, null, null, notification);
 	}
 
 	@Test
 	public void testSendTrap3() throws IOException {
-		testSendTrap(ip, port, SnmpConstants.version3, community, securityLevel, securityModel, userName, passAuth, prviatePass);
+		testSendTrap(ip, port, SnmpConstants.version3, community, securityLevel, securityModel, userName, passAuth, prviatePass, notification);
 	}
 }

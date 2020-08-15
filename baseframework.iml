@@ -221,5 +221,6 @@
     <orderEntry type="module" module-name="memory-calculation" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:4.0.0.Alpha8" level="project" />
+    <orderEntry type="library" name="Maven: org.snmp4j:snmp4j:2.8.4" level="project" />
   </component>
 </module>
