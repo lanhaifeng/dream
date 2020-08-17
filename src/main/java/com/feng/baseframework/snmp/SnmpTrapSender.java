@@ -152,6 +152,38 @@ public class SnmpTrapSender extends AbstractSnmp {
 			return;
 		}
 
+		//处理trap头
+		if(version == SnmpConstants.version1){
+			//snmptrap -v1 -c 'hzmc+Ra2$yuL' 0.0.0.0 SNMPv2-MIB::snmpTraps.8.2 127.0.0.1 7 0 1000 SNMPv2-MIB::snmpTraps.8.2.1 s test
+			//0.0.0.0 agentAddress
+			//7 genericTrap
+			//0 specificTrap
+			//1000指明自代理进程初始化到trap报告的事件发生所经历的时间,timestamp
+			//SNMPv2-MIB::snmpTraps.8.2 enterprise
+			//SNMPv2-MIB::snmpTraps.8.2.1
+
+			//服务端接收到的信息第一行为trap头信息：SNMPv2-MIB::snmpTrap.8.5 Enterprise Specific Trap (6) Uptime: 0:00:10.00
+			//snmpTrap.8.5对应enterprise
+			//Enterprise Specific Trap对应genericTrap
+			//(6)对应specificTrap
+			//Uptime对应上边命令中1000
+
+			//snmptrap.conf中配置traphandle需要对应genericTrap
+			//genericTrap为0，traphandle SNMPv2-MIB::coldStart /etc/snmp/lognotify
+			//genericTrap为1，traphandle SNMPv2-MIB::warmStart /etc/snmp/lognotify
+			//genericTrap为2，traphandle IF-MIB::linkDown /etc/snmp/lognotify
+			//genericTrap为3，traphandle IF-MIB::linkUp /etc/snmp/lognotify
+			//genericTrap为4，traphandle SNMPv2-MIB::authenticationFailure /etc/snmp/lognotify
+			//genericTrap为5，traphandle SNMPv2-MIB::egpNeighborLoss /etc/snmp/lognotify，
+			// 还需要在SNMPv2-MIB.txt中添加egpNeighborLoss的trap声明，可以仿照coldStart，将最后一行改为snmpTraps 6即可
+			//genericTrap为6时，mib文件中未找到对应定义，即使添加定义也无法触发对应的traphandle处理
+			((PDUv1)pdu).setGenericTrap(0);
+			((PDUv1)pdu).setSpecificTrap(0);
+			((PDUv1)pdu).setEnterprise(new OID(notification));
+			((PDUv1)pdu).setTimestamp(System.currentTimeMillis()/1000);
+		}
+
+		//处理trap头
 		//define snmp trap OID
 		//解决问题：Cannot find TrapOID in TRAP2 PDU
         //trap2时需要传oid为SnmpConstants.snmpTrapOID，值为发送trap的oid
