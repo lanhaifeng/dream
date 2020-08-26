@@ -61,7 +61,7 @@ public abstract class EntityBase {
 	public void validate(Class groupCls){
 		List<String> messageList = ValidateUtils.validate(this, groupCls);
 		List<String> customMessageList = customValidate(groupCls);
-		if(!emptyList(messageList)){
+		if(!emptyList(messageList) && !emptyList(customMessageList)){
 			messageList.addAll(customMessageList);
 		}
 		if(!emptyList(messageList)){

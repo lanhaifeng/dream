@@ -24,6 +24,7 @@ public enum ResultEnum {
     PARAM_SEARCHID_NULL(9,"参数searchId为空"),
     JACKSON_PARSE_ERROR(10,"jackson转化失败"),
     ACCESS_DENY_ERROR(11,"不允许访问"),
+    REFERER_ERROR(12,"防盗链"),
     RESPONSE_RESULT_ERROR(503, "服务当前无法处理请求")
     ;
 

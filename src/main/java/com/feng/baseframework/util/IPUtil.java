@@ -172,9 +172,29 @@ public class IPUtil {
         return ipByNi.get(0);
     }
 
-    public static void main(String[] args) throws SocketException {
+    /**
+     * 2020/8/21 17:32
+     * 获取ip
+     *
+     * @param
+     * @author lanhaifeng
+     * @return java.lang.String
+     */
+    public static String getLocalIp(){
+        try{
+            Inet4Address inet4Address = getLocalIp4Address();
+            return inet4Address != null ? inet4Address.getHostAddress() : "";
+        }catch(Exception e){
+            log.error("获取本地ip失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+            return "";
+        }
+    }
+
+    public static void main(String[] args) throws SocketException, UnknownHostException {
         System.out.println(getIpBySocket().getHostAddress());
         System.out.println("a" + null);
         System.out.println(getLocalIp4Address().getHostAddress());
+        InetAddress localhost = InetAddress.getLocalHost();
+        System.out.println(localhost.getHostAddress());
     }
 }
