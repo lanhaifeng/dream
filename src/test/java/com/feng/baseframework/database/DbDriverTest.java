@@ -2,9 +2,10 @@ package com.feng.baseframework.database;
 
 import com.feng.baseframework.common.MockitoBaseTest;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
@@ -18,7 +19,7 @@ import java.sql.*;
  **/
 public class DbDriverTest extends MockitoBaseTest {
 
-	private static Logger logger = Logger.getLogger(DbDriverTest.class);
+	private static Logger logger = LoggerFactory.getLogger(DbDriverTest.class);
 	private static final String url = "jdbc:mysql://192.168.230.206:3306/capaa";
 	private static final String driverName = "com.mysql.jdbc.Driver";
 	private static final String username = "asset";
@@ -57,7 +58,7 @@ public class DbDriverTest extends MockitoBaseTest {
 
 class SequenceThread extends Thread{
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Connection connection;
 	private Statement preparedStatement;
 	private String sql;
@@ -77,7 +78,7 @@ class SequenceThread extends Thread{
 			Thread.sleep(1000l);
 			ResultSet result = preparedStatement.executeQuery(sql);
 			if(result.next()){
-				logger.info(result.getLong(1));
+				logger.info(String.valueOf(result.getLong(1)));
 			}
 			DbDriverTest.close(connection, preparedStatement);
 			System.out.println(index);

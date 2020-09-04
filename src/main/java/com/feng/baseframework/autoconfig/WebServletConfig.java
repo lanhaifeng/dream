@@ -5,22 +5,25 @@ import com.feng.baseframework.listener.OnlineUserListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.InitParameterConfiguringServletContextInitializer;
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.WebAppRootListener;
 
 import javax.servlet.ServletContext;
-import org.springframework.web.context.WebApplicationContext;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * baseframework
@@ -94,6 +97,7 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
                         "/baseError");
                 configurableEmbeddedServletContainer.addErrorPages(errorPage400, errorPage403, errorPage404,
                         errorPage500, errorPageNull);
+                configurableEmbeddedServletContainer.addInitializers(servletContextInitializer());
             }
         };
     }
@@ -103,5 +107,11 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/img/**").addResourceLocations("classpath:/img/");
+    }
+
+    public ServletContextInitializer servletContextInitializer(){
+        Map<String, String> contextParams = new HashMap<>();
+        contextParams.put("log4jConfigLocation", "classpath:log/log4j.properties");
+        return new InitParameterConfiguringServletContextInitializer(contextParams);
     }
 }

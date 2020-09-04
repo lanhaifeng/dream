@@ -2,6 +2,7 @@ package com.feng.baseframework.ldap;
 
 import com.feng.baseframework.autoconfig.LdapFactory;
 import com.feng.baseframework.common.JunitBaseTest;
+import com.feng.baseframework.common.MockitoBaseTest;
 import com.feng.baseframework.constant.LdapPropertyConfig;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -42,7 +43,7 @@ import java.util.*;
  * @since
  **/
 @ActiveProfiles("dev")
-public class LdapTest extends JunitBaseTest {
+public class LdapTest extends MockitoBaseTest {
 
 	@Autowired
 	private LdapTemplate ldapTemplate;

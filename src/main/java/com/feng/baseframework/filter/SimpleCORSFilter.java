@@ -1,6 +1,7 @@
 package com.feng.baseframework.filter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -21,7 +22,7 @@ import java.io.IOException;
 @WebFilter(urlPatterns = { "/*" }, filterName = "simpleCORSFilter")
 public class SimpleCORSFilter implements Filter {
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         logger.info("我是过滤器simpleCORSFilter");

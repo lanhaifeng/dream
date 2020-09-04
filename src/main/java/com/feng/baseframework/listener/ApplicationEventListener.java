@@ -1,6 +1,7 @@
 package com.feng.baseframework.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.core.session.SessionCreationEvent;
@@ -19,7 +20,7 @@ import org.springframework.security.web.session.HttpSessionDestroyedEvent;
  */
 public class ApplicationEventListener implements ApplicationListener {
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {

@@ -3,8 +3,9 @@ package com.feng.baseframework.controller;
 import com.feng.baseframework.model.RuleTp;
 import com.feng.baseframework.model.User;
 import com.feng.baseframework.util.DroolsUtil;
-import org.apache.log4j.Logger;
 import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +27,7 @@ import java.util.List;
 @RestController
 public class DroolsController {
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource
 	private KieSession kieSession;

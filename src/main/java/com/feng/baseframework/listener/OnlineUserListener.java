@@ -1,6 +1,7 @@
 package com.feng.baseframework.listener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpSessionListener;
  */
 public class OnlineUserListener implements HttpSessionListener {
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {

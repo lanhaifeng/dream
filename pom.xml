@@ -33,7 +33,7 @@
 		<protobuf.version>3.4.0</protobuf.version>
 		<grpc.version>1.11.0</grpc.version>
 		<nekohtml.version>1.9.22</nekohtml.version>
-		<testcase.groups>com.feng.baseframework.common.FastTests</testcase.groups>
+		<slf4j.version>1.7.20</slf4j.version>
 	</properties>
 
 	<repositories>
@@ -51,6 +51,23 @@
 	</repositories>
 
 	<dependencies>
+		<!-- web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- slf4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 		<!-- ehcache 相关依赖  -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -83,11 +100,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-        <!-- web -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<!-- thymeleaf -->
 		<dependency>
@@ -338,12 +350,68 @@
 			<properties>
 				<testcase.groups>com.feng.baseframework.common.FastTests</testcase.groups>
 			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 		</profile>
 		<profile>
 			<id>AllTests</id>
 			<properties>
 				<testcase.groups>com.feng.baseframework.common.SlowTests,com.feng.baseframework.common.FastTests</testcase.groups>
 			</properties>
+		</profile>
+		<profile>
+			<id>jul</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+					<version>${slf4j.version}</version>
+				</dependency>
+			</dependencies>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>simple</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+					<version>${slf4j.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>jcl</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jcl</artifactId>
+					<version>${slf4j.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>log4j</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					<version>${slf4j.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>nop</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-nop</artifactId>
+					<version>${slf4j.version}</version>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
@@ -376,9 +444,9 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
-				<configuration>
+				<!--<configuration>
 					<groups>${testcase.groups}</groups>
-				</configuration>
+				</configuration>-->
 			</plugin>
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>

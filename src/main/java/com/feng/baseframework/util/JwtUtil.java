@@ -6,7 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.util.*;
@@ -20,7 +21,7 @@ import java.util.*;
  * @since
  **/
 public class JwtUtil {
-	private static final Logger logger = Logger.getLogger(JwtUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 	//过期时间
 	private static final long EXPIRE_TIME = 15*60*1000;
 	//主题

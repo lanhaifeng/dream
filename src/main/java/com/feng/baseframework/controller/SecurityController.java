@@ -5,7 +5,8 @@ import com.feng.baseframework.annotation.MethodAdvice;
 import com.feng.baseframework.annotation.MethodTimeAop;
 import com.feng.baseframework.service.RedisService;
 import com.feng.baseframework.util.JacksonUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +33,7 @@ import java.util.Map;
 @ClassLevelAdviceTag
 public class SecurityController {
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private RedisService redisService;

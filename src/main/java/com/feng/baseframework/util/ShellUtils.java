@@ -1,23 +1,25 @@
-/**
- * 版权所有：美创科技
- * 项目名称: soc
- * 创建者: mark
- * 创建日期: 2019/4/16
- * 文件说明:
- * 最近修改者：mark
- * 最近修改日期：2019/4/16
- */
 package com.feng.baseframework.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ *
+ * 2020/9/3 14:09
+ * 执行shell脚本工具类
+ *
+ *
+ * @author lanhaifeng
+ * @since
+ **/
 public class ShellUtils {
 
-    private static final Logger logger = Logger.getLogger(ShellUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShellUtils.class);
 
 
     public static final int ERR_GOT_EXCEPTION = 99999;
