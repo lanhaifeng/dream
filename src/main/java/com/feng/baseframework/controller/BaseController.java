@@ -1,8 +1,9 @@
 package com.feng.baseframework.controller;
 
 import com.feng.baseframework.model.User;
-import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -27,7 +28,7 @@ import java.util.List;
 @Validated
 public class BaseController extends ClassFilterController {
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RequestMapping(value = "/baseManage/getWebRootPath",method=RequestMethod.GET)
     @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")

@@ -1,7 +1,8 @@
 package com.feng.baseframework.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * baseframework
@@ -13,7 +14,7 @@ import org.apache.log4j.Logger;
  **/
 public class MyMethodInterceptor extends AbstractMethodInterceptor {
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public void before(MethodInvocation methodInvocation){
 		String methodName = methodInvocation.getMethod().getName();

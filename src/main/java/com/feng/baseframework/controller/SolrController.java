@@ -1,11 +1,13 @@
 package com.feng.baseframework.controller;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.common.SolrDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +26,7 @@ import java.io.IOException;
 @RestController
 public class SolrController {
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private SolrClient solrClient;
@@ -42,10 +44,10 @@ public class SolrController {
 			logger.info(coreAdminResponse.toString());
 
 			solrDocument = solrClient.getById("2","1");
-		} catch (SolrServerException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
+		} catch (SolrServerException e1) {
+			logger.error(ExceptionUtils.getFullStackTrace(e1));
+		} catch (IOException e2) {
+			logger.error(ExceptionUtils.getFullStackTrace(e2));
 		}
 
 		return solrDocument == null ? "" : solrDocument.toString();

@@ -29,6 +29,7 @@ public class DateUtil {
 
 	static DateFormat format;
 	public static String DEFAULT_FORMATE = "yyyy-MM-dd HH:mm:ss";
+	public static String STAMP_FORMATE = "yyyy-MM-dd HH:mm:ss,SSS";
 	static{
 		format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");

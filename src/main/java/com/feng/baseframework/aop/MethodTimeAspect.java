@@ -1,9 +1,10 @@
 package com.feng.baseframework.aop;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.Map;
 @Aspect
 @Component
 public class MethodTimeAspect {
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
     /**
      * 开始时间
      */

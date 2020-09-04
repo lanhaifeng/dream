@@ -1,7 +1,8 @@
 package com.feng.baseframework.util;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
  **/
 public class Base64EncryptUtil {
 
-	private static final Logger logger = Logger.getLogger(Base64EncryptUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(Base64EncryptUtil.class);
 
 	public static void main(String[] args) {
 		String sql = "SELECT T.INST_ID ||T.SID ||T.SERIAL #||T.AUDSID AS SSID FROM GV$SESSION T UNION ALL SELECT T.INST_ID ||T.SID ||T.SERIAL #||TO_CHAR ( T.LOGON_TIME , ? ) AS SSID FROM GV$SESSION T";

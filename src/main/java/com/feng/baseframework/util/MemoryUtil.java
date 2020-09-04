@@ -2,8 +2,9 @@ package com.feng.baseframework.util;
 
 import com.feng.memory.util.MemoryCalculationTool;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.lucene.util.RamUsageEstimator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -19,7 +20,7 @@ import java.lang.management.MemoryUsage;
  **/
 public class MemoryUtil {
 
-	private static final Logger logger = Logger.getLogger(MemoryUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemoryUtil.class);
 
 	public static void consoleMemoryInfo(String message){
 		MemoryMXBean memorymbean = ManagementFactory.getMemoryMXBean();
