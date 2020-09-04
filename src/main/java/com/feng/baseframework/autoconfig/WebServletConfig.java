@@ -10,6 +10,8 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -17,6 +19,8 @@ import org.springframework.web.util.WebAppRootListener;
 
 import javax.servlet.ServletContext;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.List;
 
 /**
  * baseframework
@@ -34,6 +38,7 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private WebApplicationContext webApplicationConnect;
 
+    //配置拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //添加自定义拦截器和拦截路径，此处对所有请求进行拦截，除了登录界面和登录接口
@@ -42,6 +47,13 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/login", "/user/login");
     }
 
+    //配置消息转换器
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new FormHttpMessageConverter());
+    }
+
+    //配置监听器用于获取当前项目路径
     @Bean
     public WebAppRootListener webAppRootListener(){
         //设置环境上下文
@@ -51,11 +63,13 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
         return new WebAppRootListener();
     }
 
+    //配置监听器用户监听session创建
     @Bean
     public OnlineUserListener onlineUserListener(){
         return new OnlineUserListener();
     }
 
+    //配置错误页
     @Bean
     public EmbeddedServletContainerCustomizer webServerFactoryCustomizer() {
         return new EmbeddedServletContainerCustomizer() {
