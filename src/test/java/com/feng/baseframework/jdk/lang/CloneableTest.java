@@ -21,6 +21,7 @@ import java.util.List;
 public class CloneableTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testDefaultClone() throws CloneNotSupportedException {
         Teacher t1 = new Teacher(1l,"t1",50);
         Student s1 = new Student(1,"s1",10, t1);
