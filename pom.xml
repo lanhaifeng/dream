@@ -34,6 +34,8 @@
 		<grpc.version>1.11.0</grpc.version>
 		<nekohtml.version>1.9.22</nekohtml.version>
 		<slf4j.version>1.7.20</slf4j.version>
+		<common-log.version>1.7.20</common-log.version>
+		<logback.version>1.1.7</logback.version>
 	</properties>
 
 	<repositories>
@@ -68,6 +70,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 		<!-- ehcache 相关依赖  -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -95,6 +102,12 @@
 			<groupId>com.microsoft.ews-java-api</groupId>
 			<artifactId>ews-java-api</artifactId>
 			<version>2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
         <!-- redis -->
 		<dependency>
@@ -369,9 +382,9 @@
 					<version>${slf4j.version}</version>
 				</dependency>
 			</dependencies>
-			<activation>
+			<!--<activation>
 				<activeByDefault>true</activeByDefault>
-			</activation>
+			</activation>-->
 		</profile>
 		<profile>
 			<id>simple</id>
@@ -403,6 +416,24 @@
 				</dependency>
 			</dependencies>
 		</profile>
+        <profile>
+            <id>logback</id>
+            <dependencies>
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-access</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+            </dependencies>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
 		<profile>
 			<id>nop</id>
 			<dependencies>

@@ -111,7 +111,6 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
 
     public ServletContextInitializer servletContextInitializer(){
         Map<String, String> contextParams = new HashMap<>();
-        contextParams.put("log4jConfigLocation", "classpath:log/log4j.properties");
         return new InitParameterConfiguringServletContextInitializer(contextParams);
     }
 }
