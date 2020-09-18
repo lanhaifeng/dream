@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -55,9 +57,42 @@ public class SecurityController {
 
 	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
 	@MethodTimeAop
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_TEST')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@MethodAdvice
-	public void testSession(HttpServletRequest request){
+	public void testSession1(HttpServletRequest request){
+		HttpSession session = request.getSession(false);
+		if(session != null){
+			session.invalidate();
+		}
+	}
+
+	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@MethodTimeAop
+	@PreAuthorize("authentication.principal.username=='tom'")
+	@MethodAdvice
+	public void testSession2(HttpServletRequest request){
+		HttpSession session = request.getSession(false);
+		if(session != null){
+			session.invalidate();
+		}
+	}
+
+	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@MethodTimeAop
+	@RolesAllowed({"ADMIN", "TEST"})
+	@MethodAdvice
+	public void testSession3(HttpServletRequest request){
+		HttpSession session = request.getSession(false);
+		if(session != null){
+			session.invalidate();
+		}
+	}
+
+	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@MethodTimeAop
+	@Secured({"ROLE_ADMIN", "ROLE_TEST"})
+	@MethodAdvice
+	public void testSession4(HttpServletRequest request){
 		HttpSession session = request.getSession(false);
 		if(session != null){
 			session.invalidate();

@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**     
   *
@@ -18,6 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @Category(FastTests.class)
 public class PowerMockitoBaseTest {
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Test
     public void powerMockit() {

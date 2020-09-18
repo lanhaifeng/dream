@@ -44,7 +44,10 @@ import java.util.Map;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//prePostEnabled=true启用注解@PreAuthorize
+//jsr250Enabled=true启用注解@RolesAllowed
+//securedEnabled=true启用注解@Secured
+@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
 public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyAuthenticationProvider myAuthenticationProvider;
