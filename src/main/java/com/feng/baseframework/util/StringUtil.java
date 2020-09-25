@@ -1,5 +1,8 @@
 package com.feng.baseframework.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+
 import java.util.UUID;
 
 /**
@@ -63,5 +66,28 @@ public class StringUtil {
             stringBuilder.append(hv);
         }
         return stringBuilder.toString().toUpperCase();
+    }
+
+    /**
+     * 2020/7/21 16:42
+     * 打印调试信息
+     *
+     * @param logger
+     * @param preMessage
+     * @param message
+     * @param required
+     * @author lanhaifeng
+     * @return void
+     */
+    public static void consoleDebugLog(Logger logger, String preMessage, String message, boolean required){
+        message = (preMessage != null ? preMessage : "") + (message != null ? message : "");
+        if(StringUtils.isBlank(message)) return;
+        if(logger != null && logger.isDebugEnabled()){
+            logger.debug(message);
+        }else {
+            if(required){
+                System.out.println(message);
+            }
+        }
     }
 }
