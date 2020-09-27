@@ -1,7 +1,7 @@
 package com.feng.baseframework.listener;
 
 import com.feng.baseframework.event.CustomizeApplicationEvent;
-import javafx.fxml.Initializable;
+import com.feng.baseframework.event.CustomizeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -11,13 +11,11 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.net.URL;
 import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
  * baseframework
@@ -46,19 +44,36 @@ public class CustomizeApplicationEventListener implements ApplicationContextAwar
 		});
 	}
 
+	/**
+	 * 处理比较靠后：无法处理@PostConstruct和InitializingBean
+	 * @param customizeEvent
+	 */
+	@EventListener
+	public void onApplicationEvent(CustomizeEvent customizeEvent){
+		Optional.ofNullable(customizeEvent).ifPresent(event -> {
+			logger.info("注解监听自定义事件:" + customizeEvent.getClass());
+			if(customizeEvent.getSource() instanceof String){
+				logger.info("注解事件源:" + customizeEvent.getSource());
+			}
+		});
+	}
+
 	@Override
 	public void run(ApplicationArguments applicationArguments) throws Exception {
 		applicationContext.publishEvent(new CustomizeApplicationEvent("ApplicationRunner run"));
+		applicationContext.publishEvent(new CustomizeEvent("ApplicationRunner run"));
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		applicationContext.publishEvent(new CustomizeApplicationEvent("InitializingBean afterPropertiesSet"));
+		applicationContext.publishEvent(new CustomizeEvent("InitializingBean afterPropertiesSet"));
 	}
 
 	@PostConstruct
 	public void postConstruct(){
 		applicationContext.publishEvent(new CustomizeApplicationEvent("@PostConstruct"));
+		applicationContext.publishEvent(new CustomizeEvent("@PostConstruct"));
 	}
 
 	@Override
