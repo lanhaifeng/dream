@@ -361,6 +361,11 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>20030211.134440</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -385,7 +390,7 @@
 				<testcase.groups>com.feng.baseframework.common.SlowTests,com.feng.baseframework.common.FastTests</testcase.groups>
 			</properties>
 		</profile>
-		<profile>
+		<!--<profile>
 			<id>jul</id>
 			<dependencies>
 				<dependency>
@@ -394,9 +399,6 @@
 					<version>${slf4j.version}</version>
 				</dependency>
 			</dependencies>
-			<!--<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>-->
 		</profile>
 		<profile>
 			<id>simple</id>
@@ -455,7 +457,7 @@
 					<version>${slf4j.version}</version>
 				</dependency>
 			</dependencies>
-		</profile>
+		</profile>-->
 	</profiles>
 
 	<build>
