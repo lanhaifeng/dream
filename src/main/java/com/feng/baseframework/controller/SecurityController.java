@@ -55,7 +55,7 @@ public class SecurityController {
 		return str;
 	}
 
-	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@RequestMapping(value = "/baseManage/testSession1",method= RequestMethod.GET)
 	@MethodTimeAop
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@MethodAdvice
@@ -66,7 +66,7 @@ public class SecurityController {
 		}
 	}
 
-	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@RequestMapping(value = "/baseManage/testSession2",method= RequestMethod.GET)
 	@MethodTimeAop
 	@PreAuthorize("authentication.principal.username=='tom'")
 	@MethodAdvice
@@ -77,7 +77,7 @@ public class SecurityController {
 		}
 	}
 
-	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@RequestMapping(value = "/baseManage/testSession3",method= RequestMethod.GET)
 	@MethodTimeAop
 	@RolesAllowed({"ADMIN", "TEST"})
 	@MethodAdvice
@@ -88,7 +88,7 @@ public class SecurityController {
 		}
 	}
 
-	@RequestMapping(value = "/baseManage/testSession",method= RequestMethod.GET)
+	@RequestMapping(value = "/baseManage/testSession4",method= RequestMethod.GET)
 	@MethodTimeAop
 	@Secured({"ROLE_ADMIN", "ROLE_TEST"})
 	@MethodAdvice
