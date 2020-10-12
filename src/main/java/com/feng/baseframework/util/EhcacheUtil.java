@@ -23,6 +23,10 @@ public class EhcacheUtil {
 	private CacheManager manager;
 	private static EhcacheUtil ehCache;
 
+	static {
+		System.setProperty(net.sf.ehcache.CacheManager.ENABLE_SHUTDOWN_HOOK_PROPERTY, "true");
+	}
+
 	private EhcacheUtil(String path) {
 		url = getClass().getResource(path);
 		manager = CacheManager.create(url);

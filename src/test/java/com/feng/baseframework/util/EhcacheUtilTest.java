@@ -18,4 +18,8 @@ public class EhcacheUtilTest extends MockitoBaseTest {
 		Assert.state("test".equals(EhcacheUtil.getInstance().get(EhcacheUtil.cacheName, "test")));
 	}
 
+	@Test
+	public void putEternalTest() {
+		Assert.state("test".equals(EhcacheUtil.getInstance().get(EhcacheUtil.cacheName, "test")));
+	}
 }
