@@ -3,12 +3,12 @@ package com.feng.baseframework.filter;
 import com.feng.baseframework.constant.ResultEnum;
 import com.feng.baseframework.exception.BusinessException;
 import com.feng.baseframework.util.IPUtil;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
