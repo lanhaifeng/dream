@@ -21,5 +21,6 @@
     <root>
         <level value="info" />
         <appender-ref ref="logfile" />
+        <appender-ref ref="stdout" />
     </root>
 </configuration>
