@@ -49,3 +49,23 @@ public class SettingDataInitListener implements ApplicationListener<ContextRefre
     }
 }
 ```
+
+#### 获取ServletContext
+1.HttpServletRequest
+```
+ServletContext sc = request.getServletContext();
+```
+
+2.自动注入
+```
+@Autowired
+private ServletContext servletContext;
+```
+
+3.WebApplicationContext
+```
+@Autowired
+WebApplicationContext webApplicationConnect;
+
+ServletContext servletContext = webApplicationConnect.getServletContext();
+```
