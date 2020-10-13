@@ -4,6 +4,7 @@ import com.feng.baseframework.model.User;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -29,6 +32,8 @@ import java.util.List;
 public class BaseController extends ClassFilterController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
 	@RequestMapping(value = "/baseManage/getWebRootPath",method=RequestMethod.GET)
     @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
@@ -66,5 +71,19 @@ public class BaseController extends ClassFilterController {
         String response = "true";
         System.out.println(auditId);
         return  response;
+    }
+
+    @RequestMapping(value = "/baseManage/servletContextTest1",method=RequestMethod.GET)
+    public String servletContextTest1(){
+        ServletContext servletContext = webApplicationContext.getServletContext();
+        String response = servletContext.getInitParameter("ServletContext-test");
+        return  response;
+    }
+
+    @RequestMapping(value = "/baseManage/servletContextTest2",method=RequestMethod.GET)
+    public void servletContextTest2(){
+        logger.info(logger.getClass().toGenericString());
+        logger.info("test logback log");
+        logger.info("test logback log");
     }
 }

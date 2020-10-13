@@ -109,8 +109,17 @@ public class WebServletConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/img/**").addResourceLocations("classpath:/img/");
     }
 
+    /**
+     * 配置context-param
+     * 类似web.xml中：
+     * <context-param>
+     *      <param-name>log4jRefreshInterval</param-name>
+     *      <param-value>600000</param-value>
+     * </context-param>
+     */
     public ServletContextInitializer servletContextInitializer(){
         Map<String, String> contextParams = new HashMap<>();
+        contextParams.put("ServletContext-test", "ServletContext-test");
         return new InitParameterConfiguringServletContextInitializer(contextParams);
     }
 }
