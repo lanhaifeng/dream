@@ -4,12 +4,10 @@ import com.feng.baseframework.common.MockitoBaseTest;
 import com.feng.baseframework.controller.SecurityController;
 import io.jsonwebtoken.lang.Assert;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.annotation.Jsr250MethodSecurityMetadataSource;
 import org.springframework.security.access.annotation.SecuredAnnotationSecurityMetadataSource;
@@ -20,9 +18,7 @@ import org.springframework.security.access.prepost.PrePostAnnotationSecurityMeta
 import org.springframework.security.util.SimpleMethodInvocation;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

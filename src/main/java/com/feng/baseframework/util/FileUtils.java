@@ -81,6 +81,21 @@ public class FileUtils {
 	}
 
 	/**
+	 * 2020/10/29 15:19
+	 * 获取工程目录
+	 * 1.System.getProperty("user.dir");
+	 * 2.File directory = new File("");
+	 * 	 directory.getCanonicalPath();
+	 *
+	 * @param
+	 * @author lanhaifeng
+	 * @return java.lang.String
+	 */
+	public static String getProjectPath(){
+		return System.getProperty("user.dir");
+	}
+
+	/**
 	 * 2018/9/30 17:23
 	 * 根据相对路径获取文件
 	 *

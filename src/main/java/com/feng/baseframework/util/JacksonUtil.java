@@ -108,6 +108,25 @@ public class JacksonUtil {
 
     /**
      * @author: lanhaifeng
+     * @description json 转JavaBean
+     * @date: 2018/5/16 19:28
+     * @param jsonString
+     * @param clazz
+     * @return T
+     */
+    public static <T> T json2pojo(String jsonString, TypeReference typeReference) {
+        try {
+            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return objectMapper.readValue(jsonString, typeReference);
+        } catch (IOException e) {
+            throw new BusinessException(ResultEnum.JACKSON_PARSE_ERROR,e);
+        }
+    }
+
+
+    /**
+     * @author: lanhaifeng
      * @description json字符串转换为map
      * @date: 2018/5/16 19:28
      * @param jsonString

@@ -3,6 +3,7 @@ package com.feng.baseframework.test;
 import com.alibaba.fastjson.JSON;
 import com.feng.baseframework.util.IPUtil;
 import com.feng.baseframework.util.JacksonUtil;
+import com.feng.baseframework.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
@@ -104,4 +105,9 @@ public class StringTest {
         }
     }
 
+    @Test
+    public void hexStrTest() {
+        String hexString = "E6938DE4BD9CE697A5E5BF97";
+        System.out.println(new String(StringUtil.parseHexStr2Byte(hexString)));
+    }
 }

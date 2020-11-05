@@ -1,6 +1,15 @@
 package com.feng.baseframework.util;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @ProjectName: baseframework
@@ -13,6 +22,8 @@ import java.io.*;
  * @Version: 1.0
  */
 public class BeanUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(BeanUtil.class);
 
     /**
      * 对象的深度克隆，此处的对象涉及Collection接口和Map接口下对象的深度克隆
@@ -76,5 +87,29 @@ public class BeanUtil {
         return deepClone;
     }
 
+	/**
+	 * 2020/10/30 17:14
+	 * 查找所有注解cls的类实例
+	 *
+	 * @param packages
+	 * @param cls
+	 * @author lanhaifeng
+	 * @return java.util.List<T>
+	 */
+    public static <T> List<T> getAnnotationInstances(String packages, Class<? extends Annotation> cls) {
+        List<T> annotationList = new ArrayList<>();
+        //通过注解扫描指定的包
+        Reflections reflections = new Reflections(packages);
+        //如果该包下面有被EnableFilter注解修饰的类，那么将该类的实例加入到列表中，并最终返回
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(cls);
+        for (Class annotation : annotations) {
+            try {
+                annotationList.add((T)annotation.newInstance());
+            } catch (Exception e) {
+                logger.error("获取实例失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+            }
+        }
 
+        return annotationList;
+    }
 }
