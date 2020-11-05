@@ -4,6 +4,7 @@ import com.feng.baseframework.util.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -16,7 +17,7 @@ import java.util.function.Predicate;
  * @since
  **/
 @Slf4j
-public abstract class EntityBase {
+public abstract class EntityBase implements Serializable {
 
 	/**
 	 * 当集合为空，返回true

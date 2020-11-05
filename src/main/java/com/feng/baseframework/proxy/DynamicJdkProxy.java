@@ -1,6 +1,7 @@
 package com.feng.baseframework.proxy;
 
-import org.apache.poi.ss.formula.functions.T;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.lang.reflect.Proxy;
  */
 public class DynamicJdkProxy implements InvocationHandler {
 
+    private static Logger logger = LoggerFactory.getLogger(DynamicJdkProxy.class);
     private Object target;
 
     public DynamicJdkProxy(Object target) {
@@ -30,8 +32,13 @@ public class DynamicJdkProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object object = method.invoke(target, args);
-
-        return object;
+        try {
+            logger.info("Jdk proxy before");
+            Object object = method.invoke(target, args);
+            logger.info("Jdk proxy after");
+            return object;
+        } finally {
+            logger.info("Jdk proxy after return");
+        }
     }
 }
