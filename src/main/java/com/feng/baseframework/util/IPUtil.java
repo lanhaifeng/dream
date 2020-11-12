@@ -90,12 +90,12 @@ public class IPUtil {
      * @author lanhaifeng
      * @return java.net.Inet4Address
      */
-    public static Inet4Address getIpBySocket() {
+    public static InetAddress getIpBySocket() {
         try {
             final DatagramSocket socket = new DatagramSocket();
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            if (socket.getLocalAddress() instanceof Inet4Address) {
-                return (Inet4Address) socket.getLocalAddress();
+            if (socket.getLocalAddress() instanceof Inet4Address || socket.getLocalAddress() instanceof Inet6Address) {
+                return socket.getLocalAddress();
             }
         }catch (Exception e) {
             log.error("获取ip失败，错误：" + ExceptionUtils.getFullStackTrace(e));
@@ -107,12 +107,12 @@ public class IPUtil {
      * 2019/12/9 10:09
      * 获取ip地址
      *
-     * @param
+     * @param  netType
      * @author lanhaifeng
-     * @return java.util.List<java.net.Inet4Address>
+     * @return java.util.List<java.net.InetAddress>
      */
-    public static List<Inet4Address> getLocalIp4AddressFromNetworkInterface() throws SocketException {
-        List<Inet4Address> addresses = new ArrayList<>(1);
+    public static List<InetAddress> getLocalIpAddressFromNetworkInterface(NetType netType) throws SocketException {
+        List<InetAddress> addresses = new ArrayList<>(1);
         Enumeration e = NetworkInterface.getNetworkInterfaces();
         if (e == null) {
             return addresses;
@@ -125,8 +125,11 @@ public class IPUtil {
             Enumeration ee = n.getInetAddresses();
             while (ee.hasMoreElements()) {
                 InetAddress i = (InetAddress) ee.nextElement();
-                if (isValidAddress(i)) {
+                if (netType == NetType.IPV4 && isValidInet4Address(i)) {
                     addresses.add((Inet4Address) i);
+                }
+                if (netType == NetType.IPV6 && isValidInet6Address(i)) {
+                    addresses.add((Inet6Address) i);
                 }
             }
         }
@@ -147,22 +150,29 @@ public class IPUtil {
     /**
      * 判断是否是IPv4，并且内网地址并过滤回环地址.
      */
-    private static boolean isValidAddress(InetAddress address) {
+    private static boolean isValidInet4Address(InetAddress address) {
         return address instanceof Inet4Address && address.isSiteLocalAddress() && !address.isLoopbackAddress();
+    }
+
+    /**
+     * 判断是否是IPv6，并且内网地址并过滤回环地址.
+     */
+    private static boolean isValidInet6Address(InetAddress address) {
+        return address instanceof Inet6Address && address.isSiteLocalAddress() && !address.isLoopbackAddress();
     }
 
     /**
      * 2019/12/9 10:10
      * 获取ip地址
      *
-     * @param
+     * @param  netType
      * @author lanhaifeng
      * @return java.net.Inet4Address
      */
-    public static Inet4Address getLocalIp4Address() throws SocketException {
-        final List<Inet4Address> ipByNi = getLocalIp4AddressFromNetworkInterface();
+    public static InetAddress getLocalIpAddress(NetType netType) throws SocketException {
+        final List<InetAddress> ipByNi = getLocalIpAddressFromNetworkInterface(netType);
         if (ipByNi.isEmpty() || ipByNi.size() > 1) {
-            final Inet4Address ipBySocketOpt = getIpBySocket();
+            final InetAddress ipBySocketOpt = getIpBySocket();
             if (Objects.nonNull(ipBySocketOpt)) {
                 return ipBySocketOpt;
             } else {
@@ -181,9 +191,39 @@ public class IPUtil {
      * @return java.lang.String
      */
     public static String getLocalIp(){
+       return getLocalIp4();
+    }
+
+    /**
+     * 2020/8/21 17:32
+     * 获取ip
+     *
+     * @param
+     * @author lanhaifeng
+     * @return java.lang.String
+     */
+    public static String getLocalIp4(){
         try{
-            Inet4Address inet4Address = getLocalIp4Address();
-            return inet4Address != null ? inet4Address.getHostAddress() : "";
+            InetAddress inetAddress = getLocalIpAddress(NetType.IPV4);
+            return inetAddress != null ? inetAddress.getHostAddress() : "";
+        }catch(Exception e){
+            log.error("获取本地ip失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+            return "";
+        }
+    }
+
+    /**
+     * 2020/8/21 17:32
+     * 获取ip
+     *
+     * @param
+     * @author lanhaifeng
+     * @return java.lang.String
+     */
+    public static String getLocalIp6(){
+        try{
+            InetAddress inetAddress = getLocalIpAddress(NetType.IPV6);
+            return inetAddress != null ? inetAddress.getHostAddress() : "";
         }catch(Exception e){
             log.error("获取本地ip失败，错误：" + ExceptionUtils.getFullStackTrace(e));
             return "";
@@ -193,8 +233,13 @@ public class IPUtil {
     public static void main(String[] args) throws SocketException, UnknownHostException {
         System.out.println(getIpBySocket().getHostAddress());
         System.out.println("a" + null);
-        System.out.println(getLocalIp4Address().getHostAddress());
+        System.out.println(getLocalIpAddress(NetType.IPV4).getHostAddress());
+        System.out.println(getLocalIpAddress(NetType.IPV6).getHostAddress());
         InetAddress localhost = InetAddress.getLocalHost();
         System.out.println(localhost.getHostAddress());
+    }
+
+    public  static enum NetType{
+        IPV4,IPV6
     }
 }
