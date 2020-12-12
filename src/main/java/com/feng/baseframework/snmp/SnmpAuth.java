@@ -1,6 +1,8 @@
 package com.feng.baseframework.snmp;
 
+import lombok.Builder;
 import org.apache.commons.lang.StringUtils;
+import org.snmp4j.mp.MPv3;
 import org.snmp4j.mp.SnmpConstants;
 
 import java.io.Serializable;
@@ -14,29 +16,55 @@ import java.util.Arrays;
  * @author lanhaifeng
  * @since
  **/
+@Builder(toBuilder = true)
 public class SnmpAuth implements Serializable {
 
 	//版本，[SnmpConstants.version1, SnmpConstants.version2c, SnmpConstants.version3]
 	private int version;
 	//团体名
 	private String community;
-	//认证模式,见org.snmp4j.security.SecurityModel
+	//授权模式,见org.snmp4j.security.SecurityModel
+    //SECURITY_MODEL_SNMPv1 v1
+    //SECURITY_MODEL_SNMPv2c v2c
+    //SECURITY_MODEL_USM v3  默认授权模式
+    //SECURITY_MODEL_TSM v3  用于SSH or DTLS
+    //SECURITY_MODEL_KSM v3  用于支持Kerberos
 	private int securityModel;
 	//snmpv3使用，认证级别,见org.snmp4j.security.SecurityLevel
 	private int securityLevel;
 	//snmpv3使用，认证用户，是否需要传值由securityLevel决定
 	private String userName;
+    //snmpv3使用，认证方式
+	private String authType;
 	//snmpv3使用，认证密码，是否需要传值由securityLevel决定
 	private String passAuth;
+    //snmpv3使用，加密方式
+    private String privType;
 	//snmpv3使用，加密密码，是否需要传值由securityLevel决定
-	private String privatePass;
-
+	private String privPass;
 	//snmp服务端ip
 	private String ip;
 	//snmp服务端端口
 	private int port;
 
-	public boolean validate(){
+    public SnmpAuth() {
+    }
+
+    public SnmpAuth(int version, String community, int securityModel, int securityLevel, String userName, String authType, String passAuth, String privType, String privPass, String ip, int port) {
+        this.version = version;
+        this.community = community;
+        this.securityModel = securityModel;
+        this.securityLevel = securityLevel;
+        this.userName = userName;
+        this.authType = authType;
+        this.passAuth = passAuth;
+        this.privType = privType;
+        this.privPass = privPass;
+        this.ip = ip;
+        this.port = port;
+    }
+
+    public boolean validate(){
 		boolean validateResult = true;
 		if(StringUtils.isBlank(getIp()) || getPort() < 1 || getPort() > 65535
 				|| !Arrays.asList(SnmpConstants.version1, SnmpConstants.version2c, SnmpConstants.version3).contains(getVersion())){
@@ -80,7 +108,7 @@ public class SnmpAuth implements Serializable {
 	}
 
 	public SnmpAuth withPrivatePass(String privatePass){
-		this.privatePass = privatePass;
+		this.privPass = privatePass;
 		return this;
 	}
 
@@ -142,12 +170,12 @@ public class SnmpAuth implements Serializable {
 		this.passAuth = passAuth;
 	}
 
-	public String getPrivatePass() {
-		return privatePass;
+	public String getPrivPass() {
+		return privPass;
 	}
 
-	public void setPrivatePass(String privatePass) {
-		this.privatePass = privatePass;
+	public void setPrivPass(String privPass) {
+		this.privPass = privPass;
 	}
 
 	public String getIp() {
@@ -165,4 +193,21 @@ public class SnmpAuth implements Serializable {
 	public void setPort(int port) {
 		this.port = port;
 	}
+
+    public String getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(String authType) {
+        this.authType = authType;
+    }
+
+    public String getPrivType() {
+        return privType;
+    }
+
+    public void setPrivType(String privType) {
+        this.privType = privType;
+    }
+
 }

@@ -41,8 +41,7 @@ public class SnmpTrapSender extends AbstractSnmp {
 				usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
 			}
 			SecurityModels.getInstance().addSecurityModel(usm);
-			usm.addUser(buildUsmUser(SecurityLevel.get(snmpAuth.getSecurityLevel()),
-					snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivatePass()));
+			usm.addUser(buildUsmUser(snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivPass()));
 		}
 		transport.listen();
 	}

@@ -7,7 +7,6 @@ import org.snmp4j.*;
 import org.snmp4j.mp.MPv1;
 import org.snmp4j.mp.MPv2c;
 import org.snmp4j.mp.MPv3;
-import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.*;
 import org.snmp4j.smi.*;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
@@ -59,8 +58,7 @@ public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 		USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3
 				.createLocalEngineID()), 0);
 		SecurityModels.getInstance().addSecurityModel(usm);
-		usm.addUser(buildUsmUser(SecurityLevel.get(snmpAuth.getSecurityLevel()),
-				snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivatePass()));
+		usm.addUser(buildUsmUser(snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivPass()));
 		snmp.listen();
 	}
 
