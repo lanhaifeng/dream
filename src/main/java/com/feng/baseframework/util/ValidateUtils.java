@@ -1,5 +1,7 @@
 package com.feng.baseframework.util;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -19,8 +21,19 @@ public class ValidateUtils {
 	private static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
 	public static <T> List<String> validate(T t) {
+		return validate(t, null);
+	}
+
+	public static <T> List<String> validate(T t, Class groupCls) {
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<T>> constraintViolations = validator.validate(t);
+		Set<ConstraintViolation<T>> constraintViolations = null;
+		if(Objects.nonNull(groupCls)){
+			constraintViolations = validator.validate(t, groupCls);
+		}
+		if(Objects.isNull(groupCls)){
+			constraintViolations = validator.validate(t);
+		}
+		constraintViolations = Optional.ofNullable(constraintViolations).orElse(new HashSet<>());
 
 		List<String> messageList = new ArrayList<>();
 		for (ConstraintViolation<T> constraintViolation : constraintViolations) {
@@ -29,15 +42,12 @@ public class ValidateUtils {
 		return messageList;
 	}
 
-	public static <T> List<String> validate(T t, Class groupCls) {
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<T>> constraintViolations = validator.validate(t, groupCls);
-		constraintViolations = Optional.ofNullable(constraintViolations).orElse(new HashSet<>());
-		List<String> messageList = new ArrayList<>();
-		for (ConstraintViolation<T> constraintViolation : constraintViolations) {
-			messageList.add(constraintViolation.getMessage());
-		}
-		return messageList;
+	public boolean validateResult(T t){
+		return !validate(t).isEmpty();
+	}
+
+	public boolean validateResult(T t, Class groupCls){
+		return !validate(t, groupCls).isEmpty();
 	}
 
 
