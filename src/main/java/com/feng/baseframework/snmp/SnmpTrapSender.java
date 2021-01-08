@@ -5,18 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.*;
 import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.mp.MPv3;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
-import org.snmp4j.security.SecurityModels;
-import org.snmp4j.security.SecurityProtocols;
-import org.snmp4j.security.USM;
 import org.snmp4j.smi.*;
-import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * baseframework
@@ -29,22 +23,6 @@ import java.util.Objects;
 public class SnmpTrapSender extends AbstractSnmp {
 
 	private static Logger log = LoggerFactory.getLogger(SnmpTrapSender.class);
-	private final static String ADDRESS_TEMPLATE = "udp:%s/%s";
-	private Snmp snmp = null;
-
-	public void initComm(SnmpAuth snmpAuth) throws IOException {
-		TransportMapping<? extends Address> transport = new DefaultUdpTransportMapping();
-		snmp = new Snmp(transport);
-		if (snmpAuth.getVersion() == SnmpConstants.version3) {
-			USM usm = snmp.getUSM();
-			if (Objects.isNull(usm)) {
-				usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-			}
-			SecurityModels.getInstance().addSecurityModel(usm);
-			usm.addUser(buildUsmUser(snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivPass()));
-		}
-		transport.listen();
-	}
 
 	/**
 	 * 2020/8/5 16:37
@@ -83,7 +61,7 @@ public class SnmpTrapSender extends AbstractSnmp {
 			target = new UserTarget();
 			if (snmpAuth.getSecurityLevel() == SecurityLevel.AUTH_NOPRIV
 					|| snmpAuth.getSecurityLevel() == SecurityLevel.AUTH_PRIV) {
-				target.setSecurityName(new OctetString(snmpAuth.getUserName()));
+				target.setSecurityName(new OctetString(snmpAuth.getSecurityName()));
 			}
 			target.setSecurityLevel(snmpAuth.getSecurityLevel());
 			target.setSecurityModel(snmpAuth.getSecurityModel());

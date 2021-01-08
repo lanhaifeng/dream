@@ -3,10 +3,17 @@ package com.feng.baseframework.snmp;
 import com.feng.baseframework.constant.ResultEnum;
 import com.feng.baseframework.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
+import org.snmp4j.Snmp;
+import org.snmp4j.TransportMapping;
+import org.snmp4j.mp.MPv3;
+import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.*;
+import org.snmp4j.smi.Address;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
+import org.snmp4j.transport.DefaultUdpTransportMapping;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -19,6 +26,23 @@ import java.util.function.Predicate;
  * @since
  **/
 public abstract class AbstractSnmp {
+
+	public final static String ADDRESS_TEMPLATE = "udp:%s/%s";
+	protected Snmp snmp = null;
+
+	public void initComm(SnmpAuth snmpAuth) throws IOException {
+		TransportMapping<? extends Address> transport = new DefaultUdpTransportMapping();
+		snmp = new Snmp(transport);
+		if (snmpAuth.getVersion() == SnmpConstants.version3) {
+			USM usm = snmp.getUSM();
+			if (Objects.isNull(usm)) {
+				usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
+			}
+			SecurityModels.getInstance().addSecurityModel(usm);
+			usm.addUser(buildUsmUser(snmpAuth));
+		}
+		transport.listen();
+	}
 
     /**
      * 2020/8/6 15:58
@@ -43,7 +67,7 @@ public abstract class AbstractSnmp {
         validate(securityLevel, userName, authType, authPass, privType, privPass);
         switch (securityLevel){
             case noAuthNoPriv:
-                usmUser = new UsmUser(new OctetString(String.valueOf(securityLevel.getSnmpValue())),
+                usmUser = new UsmUser(new OctetString(userName),
                         null, null, null, null);
                 break;
             case authNoPriv:
@@ -83,9 +107,9 @@ public abstract class AbstractSnmp {
      */
     public static UsmUser buildUsmUser(SnmpAuth snmpAuth){
         OID snmpV3AuthType = Optional.ofNullable(SnmpV3AuthType.get(snmpAuth.getAuthType())).map(authType->authType.oid).orElse(null);
-        OID snmpV3PrivType = Optional.ofNullable(SnmpV3PrivType.get(snmpAuth.getPrivType())).map(privType->privType.oid).orElse(null);;
+        OID snmpV3PrivType = Optional.ofNullable(SnmpV3PrivType.get(snmpAuth.getPrivType())).map(privType->privType.oid).orElse(null);
         return buildUsmUser(SecurityLevel.get(snmpAuth.getSecurityLevel()),
-                snmpAuth.getUserName(), snmpV3AuthType, snmpAuth.getPassAuth(),
+                snmpAuth.getSecurityName(), snmpV3AuthType, snmpAuth.getPassAuth(),
                 snmpV3PrivType, snmpAuth.getPrivPass());
     }
 
@@ -122,7 +146,7 @@ public abstract class AbstractSnmp {
         }
     }
 
-    static enum SnmpV3AuthType{
+    public static enum SnmpV3AuthType{
         MD5(1, AuthMD5.ID),
         SHA1(2, AuthSHA.ID),
         SHA2(3, null),
@@ -147,7 +171,7 @@ public abstract class AbstractSnmp {
         }
     }
 
-    static enum SnmpV3PrivType{
+    public static enum SnmpV3PrivType{
         DES(1, PrivDES.ID),
         AES128(2, PrivAES128.ID),
         AES192(3, PrivAES192.ID),

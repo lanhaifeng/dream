@@ -1,5 +1,6 @@
 package com.feng.baseframework.snmp;
 
+import com.feng.baseframework.constant.IpType;
 import com.feng.baseframework.constant.ResultEnum;
 import com.feng.baseframework.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +26,8 @@ import java.util.*;
  */
 public class SnmpTemplate extends AbstractSnmp {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SnmpTemplate.class);
+    private static final Logger log = LoggerFactory.getLogger(SnmpTemplate.class);
+    private String ipFormate = IP_V4_FORMATE;
     private static String IP_V4_FORMATE = "udp:%s/%s";
     private static String IP_V6_FORMATE = "udp:[%s]/%s";
     private Snmp snmp;
@@ -39,6 +41,9 @@ public class SnmpTemplate extends AbstractSnmp {
         if(Objects.isNull(snmpAuth) || !snmpAuth.validate()){
             throw new BusinessException(ResultEnum.PARAM_ILLEGAL_ERROR);
         }
+        if(snmpAuth.getIpType() == IpType.IPV6.getValue()){
+            ipFormate = IP_V6_FORMATE;
+        }
         try {
             TransportMapping transport = new DefaultUdpTransportMapping();
             snmp = new Snmp(transport);
@@ -49,17 +54,16 @@ public class SnmpTemplate extends AbstractSnmp {
                     USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
                     SecurityModels.getInstance().addSecurityModel(usm);
                     // 添加用户
-                    snmp.getUSM().addUser(new OctetString(snmpAuth.getUserName()), buildUsmUser(snmpAuth));
+                    snmp.getUSM().addUser(new OctetString(snmpAuth.getSecurityName()), buildUsmUser(snmpAuth));
                 }
-                if(snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_TSM
-                        || snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_TSM){
+                if(snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_TSM){
                     throw new BusinessException("不支持授权模式：" + snmpAuth.getSecurityModel());
                 }
             }
             // 开始监听消息
             transport.listen();
         } catch (Exception e) {
-            LOGGER.error("初始化snmp失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+            log.error("初始化snmp失败，错误：" + ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -73,9 +77,11 @@ public class SnmpTemplate extends AbstractSnmp {
         if (snmpAuth.getVersion() == SnmpConstants.version3) {
             target = new UserTarget();
             // 设置安全级别
-            ((UserTarget) target).setSecurityLevel(snmpAuth.getSecurityLevel());
-            ((UserTarget) target).setSecurityModel(snmpAuth.getSecurityModel());
-            ((UserTarget) target).setSecurityName(new OctetString(snmpAuth.getUserName()));
+            target.setSecurityLevel(snmpAuth.getSecurityLevel());
+            // 设置认证类型
+            target.setSecurityModel(snmpAuth.getSecurityModel());
+            // 设置认证名
+            target.setSecurityName(new OctetString(snmpAuth.getSecurityName()));
         } else {
             target = new CommunityTarget();
             if (snmpAuth.getVersion() == SnmpConstants.version1) {
@@ -88,7 +94,7 @@ public class SnmpTemplate extends AbstractSnmp {
         }
         target.setVersion(snmpAuth.getVersion());
         //必须指定，没有设置就会报错。
-        target.setAddress(GenericAddress.parse(String.format(IP_V4_FORMATE, snmpAuth.getIp(), snmpAuth.getPort())));
+        target.setAddress(GenericAddress.parse(String.format(ipFormate, snmpAuth.getIp(), snmpAuth.getPort())));
 //		target.setRetries(3);  //不停轮询所以无需重试
         target.setTimeout(1000);
         return target;
@@ -107,51 +113,11 @@ public class SnmpTemplate extends AbstractSnmp {
         return pdu;
     }
 
-    private static boolean checkWalkFinished(OID targetOID, PDU pdu, VariableBinding vb) {
-        boolean finished = false;
-        if (pdu.getErrorStatus() != 0) {
-            LOGGER.error("[true] responsePDU.getErrorStatus() != 0 ");
-            LOGGER.error(pdu.getErrorStatusText());
-            finished = true;
-        } else if (vb.getOid() == null) {
-            LOGGER.error("[true] vb.getOid() == null");
-            finished = true;
-        } else if (vb.getOid().size() < targetOID.size()) {
-            LOGGER.error("[true] vb.getOid().size() < targetOID.size()");
-            finished = true;
-        } else if (targetOID.leftMostCompare(targetOID.size(), vb.getOid()) != 0) {
-            //LOGGER.debug("[true] targetOID.leftMostCompare() != 0");
-            finished = true;
-        } else if (Null.isExceptionSyntax(vb.getVariable().getSyntax())) {
-            LOGGER.error("[true] Null.isExceptionSyntax(vb.getVariable().getSyntax())");
-            finished = true;
-        } else if (vb.getOid().compareTo(targetOID) <= 0) {
-            LOGGER.info(vb.toString() + " <= " + targetOID);
-            finished = true;
-        } else if(vb.getVariable().toString().equals("noSuchObject")){
-            LOGGER.error(targetOID.toString() + " noSuchObject ");
-            finished = true;
-        }
-        return finished;
-
-    }
-
-    private static boolean checkGetReponseStatu(PDU pdu, VariableBinding vb){
-        boolean illegal = false;
-        if(pdu.getErrorStatus() != 0){
-            illegal = true;
-        }else if(vb.getVariable().toString().equals("noSuchObject")){
-            illegal = true;
-        }else if(Null.isExceptionSyntax(vb.getVariable().getSyntax())){
-            illegal = true;
-        }
-
-        return illegal;
-    }
-
     public long snmpGet(String oid){
-        long count = 0;
-//		LOGGER.debug("snmpget发送PDU");
+        long count;
+        if(log.isDebugEnabled()){
+            log.debug("snmpget发送PDU");
+        }
         try {
             //1、初始化snmp,并开启监听
             //initSnmp(SnmpConstants.version2c);
@@ -162,15 +128,16 @@ public class SnmpTemplate extends AbstractSnmp {
             //4、发送报文，并获取返回结果
             ResponseEvent responseEvent = snmp.send(pdu, target);
             PDU response = responseEvent.getResponse();
-            System.out.println("snmpget返回结果：" + response);
-            if(response == null || checkGetReponseStatu(response, response.get(0))){
+            if(log.isDebugEnabled()){
+                log.debug("snmpget返回结果：" + response);
+            }
+            if(response == null || !SnmpResponseValidate.validateResponse(oid, response)){
                 return -1;
             }
             count = response.get(0).getVariable().toLong();
-//			LOGGER.debug("snmpget返回结果：" + response);
         } catch (Exception e) {
             count = -1;
-            LOGGER.error("snmpGet出现异常：" + ExceptionUtils.getFullStackTrace(e));
+            log.error("snmpGet出现异常：" + ExceptionUtils.getFullStackTrace(e));
         }
         return count;
     }
@@ -185,29 +152,32 @@ public class SnmpTemplate extends AbstractSnmp {
             //4、发送报文，并获取返回结果
             ResponseEvent responseEvent = snmp.send(pdu, target);
             PDU response = responseEvent.getResponse();
-            if(response == null || checkGetReponseStatu(response, response.get(0))){
+            if(log.isDebugEnabled()){
+                log.debug("snmpGetString返回结果：" + response);
+            }
+            if(response == null || !SnmpResponseValidate.validateResponse(oid, response)){
                 return result;
             }
             result = response.get(0).getVariable().toString();
         } catch (Exception e) {
             result = null;
-            LOGGER.error("snmpGet出现异常：" + ExceptionUtils.getFullStackTrace(e));
+            log.error("snmpGet出现异常：" + ExceptionUtils.getFullStackTrace(e));
         }
         return result;
     }
 
     public List<Entry> snmpWalk(String oid) {
         List<Entry> result = new ArrayList<>();
-        //LOGGER.debug("snmpwalk发送PDU");
+        if(log.isDebugEnabled()){
+            log.debug("snmpwalk发送PDU,oid" + oid);
+        }
         try {
-            //1、初始化snmp,并开启监听
-            //initSnmp(SnmpConstants.version2c);
-            //2、创建目标对象
+            //创建目标对象
             Target target = createTarget();
-            //3、创建报文
+            //创建报文
             PDU pdu = createPDU(PDU.GETNEXT, oid);
 
-            //4、发送报文，并获取返回结果
+            //发送报文，并获取返回结果
             boolean matched = true;
 
             while (matched) {
@@ -216,29 +186,29 @@ public class SnmpTemplate extends AbstractSnmp {
                     break;
                 }
                 PDU response = responseEvent.getResponse();
+                if(log.isDebugEnabled()){
+                    log.debug("snmpWalk返回结果：" + response);
+                }
                 String nextOid = null;
-                Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
-                for (int i = 0; i < variableBindings.size(); i++) {
-                    VariableBinding variableBinding = variableBindings.elementAt(i);
+                List<? extends VariableBinding> variableBindings = response.getVariableBindings();
+                for (VariableBinding variableBinding : variableBindings) {
                     Variable variable = variableBinding.getVariable();
                     nextOid = variableBinding.getOid().toDottedString();
                     //如果不是这个节点下的oid则终止遍历，否则会输出很多，直到整个遍历完。
-                    if (!nextOid.startsWith(oid) && checkWalkFinished(new OID(oid), pdu, variableBinding)) {
+                    if (!nextOid.startsWith(oid) && SnmpResponseValidate.checkWalkFinished(new OID(oid), pdu, variableBinding)) {
                         matched = false;
                         break;
                     }
-                    //LOGGER.debug("variable:" + variable.toString());
+                    if(log.isDebugEnabled()){
+                        log.debug("variable：" + variable.toString());
+                    }
                     result.add(new Entry(oid, nextOid, variable.toString()));
-                }
-                if (!matched) {
-                    break;
                 }
                 pdu.clear();
                 pdu.add(new VariableBinding(new OID(nextOid)));
-                //LOGGER.debug("snmpwalk返回结果：" + response);
             }
         } catch (Exception e) {
-            LOGGER.error("snmp walk失败，错误：" + ExceptionUtils.getFullStackTrace(e));
+            log.error("snmp walk失败，错误：" + ExceptionUtils.getFullStackTrace(e));
             return null;
         }
 
@@ -271,25 +241,25 @@ public class SnmpTemplate extends AbstractSnmp {
 
     public static void main(String[] args) {
         //net-snmp-create-v3-user -ro -A auth123456 -X priv123456 -a MD5 -x DES lan
-        String ip = "192.168.230.206";
+        String ip = "192.168.226.79";
         int port = 161;
         int version = SnmpConstants.version1;
         int securityLevel = SecurityLevel.AUTH_PRIV;
         int securityModel = SecurityModel.SECURITY_MODEL_SNMPv1;
         String community = "hzmc+Ra2$yuL";
-        String userName = "lan";
+        String userName = "testuser";
         String authType = SnmpV3AuthType.MD5.toString();
         String passAuth = "auth123456";
         String privType = SnmpV3PrivType.DES.toString();
         String privPass = "priv123456";
 
         version = SnmpConstants.version3;
-        securityLevel = SecurityLevel.AUTH_PRIV;
+        securityLevel = SecurityLevel.NOAUTH_NOPRIV;
         securityModel = SecurityModel.SECURITY_MODEL_USM;
 
-        SnmpAuth snmpAuth = SnmpAuth.builder().ip(ip).port(port).version(version).securityLevel(securityLevel).securityModel(securityModel)
+        SnmpAuth snmpAuth = SnmpAuth.SnmpAuthBuilder.builder().ip(ip).port(port).version(version).securityLevel(securityLevel).securityModel(securityModel)
                 .community(community)
-                .userName(userName).authType(authType).passAuth(passAuth).privType(privType).privPass(privPass)
+                .securityName(userName).authType(authType).passAuth(passAuth).privType(privType).privPass(privPass)
                 .build();
         SnmpTemplate snmpTemplate = new SnmpTemplate(snmpAuth);
 

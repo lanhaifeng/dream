@@ -28,8 +28,6 @@ import java.util.List;
 public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 
 	private static Logger log = LoggerFactory.getLogger(SnmpTrapReceiver.class);
-	private final static String ADDRESS_TEMPLATE = "udp:%s/%s";
-	private Snmp snmp = null;
 
 	public SnmpTrapReceiver() {
 	}
@@ -58,7 +56,7 @@ public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 		USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3
 				.createLocalEngineID()), 0);
 		SecurityModels.getInstance().addSecurityModel(usm);
-		usm.addUser(buildUsmUser(snmpAuth.getUserName(), snmpAuth.getPassAuth(), snmpAuth.getPrivPass()));
+		usm.addUser(buildUsmUser(snmpAuth.getSecurityName(), snmpAuth.getPassAuth(), snmpAuth.getPrivPass()));
 		snmp.listen();
 	}
 
@@ -109,13 +107,14 @@ public class SnmpTrapReceiver extends AbstractSnmp implements CommandResponder {
 			String community = "hzmc+Ra2$yuL";
 			int securityLevel = SecurityLevel.AUTH_PRIV;
 			int securityModel = SecurityModel.SECURITY_MODEL_USM;
-			String userName = "test";
+			String securityName = "test";
 			String passAuth = "098f6bcd4621d373cade4e832627b4f6";
-			String prviatePass = "PzMY6G9gKK2N52wfH7aANg==";
+			String privPass = "PzMY6G9gKK2N52wfH7aANg==";
+			SnmpAuth.SnmpAuthBuilder snmpAuthBuilder = SnmpAuth.SnmpAuthBuilder.builder();
 			SnmpAuth snmpAuth = new SnmpAuth();
-			snmpAuth.withSecurityLevel(securityLevel).withSecurityModel(securityModel)
-					.withCommunity(community)
-					.withUserName(userName).withPassAuth(passAuth).withPrivatePass(prviatePass);
+			snmpAuthBuilder.securityLevel(securityLevel).securityModel(securityModel)
+					.community(community)
+					.securityName(securityName).passAuth(passAuth).privPass(privPass);
 
 			SnmpTrapReceiver snmpTrapReceiver = new SnmpTrapReceiver();
 			snmpTrapReceiver.run(ip, port, snmpAuth);
