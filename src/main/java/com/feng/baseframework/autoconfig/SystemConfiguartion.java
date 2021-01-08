@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.*;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  *
@@ -28,11 +29,13 @@ import org.springframework.context.annotation.*;
  */
 @Configuration
 @Import({MybatisConfiguration.class, RedisConfiguration.class, RestTemplateConfiguration.class, WebSecurityConfig.class, WebServletConfig.class,
-        DroolsConfig.class, DatasourceConfiguration.class, MessageSourceConfiguration.class})
+        DroolsConfig.class, DatasourceConfiguration.class, MessageSourceConfiguration.class, KafkaConfiguration.class})
 //EnableAspectJAutoProxy注解有两个属性proxyTargetClass、exposeProxy，
 // 其中proxyTargetClass为true表示强制使用cglib动态代理，当一个类至少实现了一个接口，默认使用jdk动态代理
 // 其中exposeProxy为true，并在调用处使用类似((SecurityController)AopContext.currentProxy()).test()的方式，可以支持自调用的切面增强
 @EnableAspectJAutoProxy(exposeProxy = true)
+// 启动注解事务管理，等同于xml配置方式的 <tx:annotation-driven />
+@EnableTransactionManagement
 @ComponentScan("com.feng.baseframework")
 public class SystemConfiguartion {
 
