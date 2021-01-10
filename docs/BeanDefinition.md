@@ -18,7 +18,7 @@ org.springframework.beans.factory.support.AbstractBeanFactory #getBean
 
 https://blog.csdn.net/wkwk12345/article/details/108171620
 
-
+https://www.cnblogs.com/loongk/p/12262101.html
 
 #### 注册自定义BeanDefinition
 
