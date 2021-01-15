@@ -122,4 +122,23 @@ public class StringTest {
         Assert.state(IPAddressUtil.isIPv6LiteralAddress("2001:4860:4860::8888%mc1"));
         Assert.state(IPAddressUtil.isIPv6LiteralAddress("0001:0002:0003:0004:0005:ffff:111.112.113.114%mc"));
     }
+
+    @Test
+    public void testCompare() {
+        String time1 = "02:38:01";
+        String time2 = "18:59:02";
+        Assert.state(time1.compareTo(time2) < 0);
+
+        time1 = "02:38:01";
+        time2 = "02:38:01";
+        Assert.state(time1.compareTo(time2) == 0);
+
+        time1 = "02:52:02";
+        time2 = "02:38:01";
+        Assert.state(time1.compareTo(time2) > 0);
+
+        time1 = "2021-01-15 02:59:02";
+        time2 = "2020-01-15 02:38:01";
+        Assert.state(time1.compareTo(time2) > 0);
+    }
 }
