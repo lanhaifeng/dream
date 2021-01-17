@@ -3,6 +3,7 @@ package com.feng.baseframework.controller;
 import com.feng.baseframework.beanRegistry.Device;
 import com.feng.baseframework.beanRegistry.DeviceDelegate;
 import com.feng.baseframework.beanRegistry.WriteDevice;
+import com.feng.baseframework.groovy.MonitorBean;
 import com.feng.baseframework.util.SpringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -45,5 +46,10 @@ public class BeanRegistryController {
         //已经替换成新的实例，既WriteDevice实例，所以可以通过每次使用实例均从spring容器中取，使得我们可以动态修改实例
         Device device = SpringUtil.getBeanByNameAndType("device", Device.class);
         device.action(action);
+    }
+
+    @RequestMapping(path = "printBeans", method = RequestMethod.GET)
+    public void printBeans(){
+        MonitorBean.printBeans();
     }
 }
