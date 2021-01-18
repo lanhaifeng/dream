@@ -1,15 +1,11 @@
 package com.feng.baseframework.service.impl;
 
 import com.feng.baseframework.service.RedisService;
-import com.feng.baseframework.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.SessionCallback;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class RedisServiceImpl implements RedisService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
 
     @Override
     public void changeDb(int index) {
@@ -114,6 +112,26 @@ public class RedisServiceImpl implements RedisService {
         });
         removeNullObject(leftList);
         return leftList;
+    }
+
+    @Override
+    public void addSetMembers(String key, Object... values) {
+        redisTemplate.opsForSet().add(key, values);
+    }
+
+    @Override
+    public Set<Object> getSetMembers(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    @Override
+    public boolean isSetMember(String key, Object value) {
+        return redisTemplate.opsForSet().isMember(key, value);
+    }
+
+    @Override
+    public boolean deleteSetMembers(String key, Object... values) {
+        return redisTemplate.opsForSet().remove(key, values) == values.length;
     }
 
     @Override

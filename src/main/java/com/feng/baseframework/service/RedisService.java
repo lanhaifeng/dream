@@ -1,9 +1,6 @@
 package com.feng.baseframework.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * baseframework
@@ -84,6 +81,52 @@ public interface RedisService {
      * @return java.util.List<java.lang.Object>
      */
     public List<Object> getLeftListMultValueAfterDel(String key, long count);
+
+    /**
+     * 2021/1/14 16:15
+     * 往set集合添加数组
+     * redis判断是否重复数据与实例的equal和hashCode方法无关，与redis序列化的结果是否一致有关
+     *
+     * @param key
+     * @param values
+     * @author lanhaifeng
+     * @return void
+     */
+    public void addSetMembers(String key, Object... values);
+
+    /**
+     * 2021/1/14 16:27
+     * 获取set集合元素
+     *
+     * @param key
+     * @author lanhaifeng
+     * @return java.util.Set<java.lang.Object>
+     */
+    public Set<Object> getSetMembers(String key);
+
+    /**
+     * 2021/1/14 16:17
+     * 判断是否set集合元素
+     * redis判断是否重复数据与实例的equal方法无关，与redis序列化的结果是否一致有关
+     *
+     * @param key
+     * @param value
+     * @author lanhaifeng
+     * @return boolean
+     */
+    public boolean isSetMember(String key, Object value);
+
+    /**
+     * 2021/1/14 16:17
+     * 删除集合元素
+     *
+     * @param key
+     * @param values
+     * @author lanhaifeng
+     * @return boolean
+     */
+    public boolean deleteSetMembers(String key, Object... values);
+
 
     /**
      * 2018/8/20 17:05

@@ -1,7 +1,8 @@
 package com.feng.baseframework.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.feng.baseframework.test.BaseFrameworkApplicationTest;
+import com.feng.baseframework.common.JunitBaseTest;
+import com.feng.baseframework.model.Role;
 import com.feng.baseframework.util.StringUtil;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -12,7 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class RedisServiceTest extends BaseFrameworkApplicationTest {
+public class RedisServiceTest extends JunitBaseTest {
 
     @Autowired
     private RedisService redisService;
@@ -505,5 +506,59 @@ public class RedisServiceTest extends BaseFrameworkApplicationTest {
                 }
             }
         }).start();
+    }
+
+    @Test
+    public void addSetMembers() {
+        String key = "set_test";
+        redisService.remove(key);
+        redisService.addSetMembers(key, "test1", "test2", "test1");
+
+        Set<Object> results = redisService.getSetMembers(key);
+        Assert.assertTrue(results.toString().equals("[test2, test1]"));
+
+        redisService.addSetMembers(key, "test1", "test2", "test1");
+        results = redisService.getSetMembers(key);
+        Assert.assertTrue(results.toString().equals("[test2, test1]"));
+
+        String roleKey = "role_set_test";
+        redisService.remove(roleKey);
+        Role roleOne = new Role(1, "test", "test1");
+        Role roleTwo = new Role(1, "test", "test2");
+        redisService.addSetMembers(roleKey, roleOne, roleTwo);
+
+        redisService.addSetMembers(roleKey, roleTwo);
+        Set<Object> roles = redisService.getSetMembers(roleKey);
+        Assert.assertTrue(roles.size() == 1);
+    }
+
+    @Test
+    public void isSetMember() {
+        String key = "set_test";
+        redisService.remove(key);
+        redisService.addSetMembers(key, "test1", "test2", "test1");
+
+        Assert.assertTrue(redisService.isSetMember(key, "test1"));
+        Assert.assertTrue(redisService.isSetMember(key, "test2"));
+
+        Role roleOne = new Role(1, "test", "test1");
+        Role roleTwo = new Role(1, "test", "test2");
+
+        Assert.assertTrue(roleOne.equals(roleTwo));
+
+        String roleKey = "role_set_test";
+        redisService.remove(roleKey);
+        redisService.addSetMembers(roleKey, roleOne);
+        Assert.assertTrue(!redisService.isSetMember(roleKey, roleTwo));
+
+        redisService.addSetMembers(roleKey, roleTwo);
+
+        Assert.assertTrue(redisService.isSetMember(roleKey, roleOne));
+
+    }
+
+    @Test
+    public void deleteSetMembers() {
+
     }
 }
