@@ -5,6 +5,8 @@ import com.feng.baseframework.model.User;
 import com.feng.baseframework.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -25,6 +27,7 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private UserMapper userMapper;
 
     @Override
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Integer id) {
-
+        logger.info("deleteUser");
     }
 
     @Override
