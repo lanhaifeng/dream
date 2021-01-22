@@ -79,3 +79,6 @@
     ```
     compile
     ```
+    
+4. groovy-maven-plugin
+https://blog.csdn.net/iteye_7754/article/details/82551394
