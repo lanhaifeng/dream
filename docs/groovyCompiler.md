@@ -80,5 +80,28 @@
     compile
     ```
     
-4. groovy-maven-plugin
-https://blog.csdn.net/iteye_7754/article/details/82551394
+4. groovy-maven-plugin   
+    source内置groovy脚本
+    ```
+        <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.0</version>
+           <configuration>
+               <source>
+                   println 'i can run groovy within maven!'
+               </source>
+           </configuration>
+        </plugin>
+    ```
+    指定groovy脚本
+    ```
+        <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.0</version>
+           <configuration>
+               <source>${project.basedir}/src/main/groovy/hi.groovy</source>
+           </configuration>
+        </plugin>
+    ```
