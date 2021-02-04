@@ -40,11 +40,11 @@ public class ValidateUtils {
 		return messageList;
 	}
 
-	public boolean validateResult(Object obj){
+	public static boolean validateResult(Object obj){
 		return !validate(obj).isEmpty();
 	}
 
-	public boolean validateResult(Object obj, Class groupCls){
+	public static boolean validateResult(Object obj, Class groupCls){
 		return !validate(obj, groupCls).isEmpty();
 	}
 
