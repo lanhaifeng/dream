@@ -1,7 +1,5 @@
 package com.feng.baseframework.util;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -42,12 +40,12 @@ public class ValidateUtils {
 		return messageList;
 	}
 
-	public boolean validateResult(T t){
-		return !validate(t).isEmpty();
+	public boolean validateResult(Object obj){
+		return !validate(obj).isEmpty();
 	}
 
-	public boolean validateResult(T t, Class groupCls){
-		return !validate(t, groupCls).isEmpty();
+	public boolean validateResult(Object obj, Class groupCls){
+		return !validate(obj, groupCls).isEmpty();
 	}
 
 
