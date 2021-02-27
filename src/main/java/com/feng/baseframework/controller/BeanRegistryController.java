@@ -5,6 +5,8 @@ import com.feng.baseframework.beanRegistry.DeviceDelegate;
 import com.feng.baseframework.beanRegistry.WriteDevice;
 import com.feng.baseframework.groovy.MonitorBean;
 import com.feng.baseframework.util.SpringUtil;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -52,4 +54,16 @@ public class BeanRegistryController {
     public void printBeans(){
         MonitorBean.printBeans();
     }
+
+    @RequestMapping(path = "printBeansGroovyClassLoader", method = RequestMethod.GET)
+    public void printBeansGroovyClassLoader() throws IllegalAccessException, InstantiationException {
+        GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
+        String hello = "package com.feng.baseframework.util\n" + "\n" + "class GroovyHello {\n" + "    String sayHello(String name) {\n"
+                + "        print 'GroovyHello call '\n" + "        name\n" + "    }\n" + "}";
+        Class aClass = groovyClassLoader.parseClass(hello);
+        GroovyObject object = (GroovyObject) aClass.newInstance();
+        Object o = object.invokeMethod("sayHello", "zhangsan");
+        System.out.println(o.toString());
+    }
+
 }
