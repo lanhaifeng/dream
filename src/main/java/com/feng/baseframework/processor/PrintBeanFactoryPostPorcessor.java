@@ -1,6 +1,7 @@
 package com.feng.baseframework.processor;
 
 import com.feng.baseframework.annotation.CustomOnProfileCondition;
+import com.feng.baseframework.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -31,29 +32,24 @@ public class PrintBeanFactoryPostPorcessor implements BeanFactoryPostProcessor {
 		Iterator<String> beanNames = configurableListableBeanFactory.getBeanNamesIterator();
 		while (beanNames.hasNext()){
 			String beanName = beanNames.next();
-			if(logger.isDebugEnabled()){
-				logger.debug("beanName：" + beanName);
-			}else {
-				System.out.println("beanName：" + beanName);
-			}
+
+			StringUtil.consoleDebugLog(logger, "beanName：", beanName, true);
+
 			if(configurableListableBeanFactory.containsBeanDefinition(beanName)){
 				BeanDefinition beanDefinition = configurableListableBeanFactory.getBeanDefinition(beanName);
+				StringUtil.consoleDebugLog(logger, "beanDefinition：", beanDefinition.getClass().toString(), true);
+
 				if(beanDefinition.getBeanClassName() != null){
-					if(logger.isDebugEnabled()) {
-						logger.debug("beanClassName：" + beanDefinition.getBeanClassName());
-					}else {
-						System.out.println("beanClassName：" + beanDefinition.getBeanClassName());
-					}
+					StringUtil.consoleDebugLog(logger, "beanClassName：", beanDefinition.getBeanClassName(), true);
 				}else {
-					if(logger.isDebugEnabled()){
-						logger.debug("factoryBeanName：" + beanDefinition.getFactoryBeanName() + ",factoryMethodName："
-								+ beanDefinition.getFactoryMethodName());
-					}else {
-						System.out.println("factoryBeanName：" + beanDefinition.getFactoryBeanName() + ",factoryMethodName："
-								+ beanDefinition.getFactoryMethodName());
-					}
+					StringUtil.consoleDebugLog(logger, "factoryBeanName：",
+							beanDefinition.getFactoryBeanName() + ",factoryMethodName："
+							+ beanDefinition.getFactoryMethodName(), true);
+
 				}
+				StringUtil.consoleDebugLog(logger, "", "-------------------------", true);
 			}
 		}
 	}
+
 }
