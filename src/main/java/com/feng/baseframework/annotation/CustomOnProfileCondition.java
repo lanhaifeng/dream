@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Documented
 @Conditional(ProfileCondition.class)
+@Inherited
 public @interface CustomOnProfileCondition {
 
 	/**
