@@ -1,18 +1,17 @@
-1. ValidateUtils
-2. 扩展validation-api注解，解决不同情形校验：如集合和自定义方法
-3. 结合AOP，实现service参数列表校验
-4. validation框架支持嵌套验证，即验证对象中的对象   
-    除了外层使用@Valid或@Validated，还是需要在属性上加上@Valid注解，见[@Validated和@Valid区别](wiz://open_document?guid=1de1f05e-bf29-488f-a18f-3762a151bb49&kbguid=&private_kbguid=20266744-3f73-4d15-9eac-279901c14de8)
-5. validation框架注解支持在方法上使用，但是只能用于getter方法上才起作用
+package com.feng.baseframework.annotation.validate;
 
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
+import java.lang.annotation.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
-#### 自定义验证注解
-1. 声明注解
-```java
 @Documented
 @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-//指明验证处理器IPV4Validator
 @Constraint(validatedBy = IP.IPV4Validator.class)
 public @interface IP {
 
@@ -25,12 +24,8 @@ public @interface IP {
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
-}
-```
 
-2. 验证实现
-```java
-class IPV4Validator implements ConstraintValidator<IP, String> {
+	class IPV4Validator implements ConstraintValidator<IP, String> {
 
 		//IPV4
 		public static final String IPV4 = "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$";
@@ -70,5 +65,5 @@ class IPV4Validator implements ConstraintValidator<IP, String> {
 		private boolean isIPV6(String ip) {
 			return Pattern.matches(IPV6, Optional.ofNullable(ip).orElse(""));
 		}
+	}
 }
-```
