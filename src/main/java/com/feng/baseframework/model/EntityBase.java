@@ -42,7 +42,7 @@ public abstract class EntityBase implements Serializable {
 	 * @return
 	 */
 	public void validate(){
-		List<String> messageList = ValidateUtils.validate(this);
+		List<String> messageList = ValidateUtils.validateMessages(this);
 		List<String> customMessageList = customValidate(null);
 		if(!emptyList(customMessageList)){
 			messageList.addAll(customMessageList);
@@ -60,7 +60,7 @@ public abstract class EntityBase implements Serializable {
 	 * @return
 	 */
 	public void validate(Class groupCls){
-		List<String> messageList = ValidateUtils.validate(this, groupCls);
+		List<String> messageList = ValidateUtils.validateMessages(this, groupCls);
 		List<String> customMessageList = customValidate(groupCls);
 		if(!emptyList(messageList) && !emptyList(customMessageList)){
 			messageList.addAll(customMessageList);

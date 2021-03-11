@@ -1,10 +1,16 @@
 package com.feng.baseframework.util;
 
+import com.feng.baseframework.constant.LdapPropertyConfig;
+import org.apache.poi.ss.formula.functions.T;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,13 +23,17 @@ import java.util.regex.Pattern;
  **/
 public class ValidateUtils {
 	private static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+	private final static String MESSAGE_FORMATE = "[%s:%s]";
 
-	public static <T> List<String> validate(T t) {
+	public static <T> List<ConstraintViolation> validate(T t) {
 		return validate(t, null);
 	}
 
-	public static <T> List<String> validate(T t, Class groupCls) {
+	public static <T> List<ConstraintViolation> validate(T t, Class groupCls) {
 		Validator validator = factory.getValidator();
+
+		List<ConstraintViolation> results = new ArrayList<>();
+
 		Set<ConstraintViolation<T>> constraintViolations = null;
 		if(Objects.nonNull(groupCls)){
 			constraintViolations = validator.validate(t, groupCls);
@@ -31,11 +41,22 @@ public class ValidateUtils {
 		if(Objects.isNull(groupCls)){
 			constraintViolations = validator.validate(t);
 		}
-		constraintViolations = Optional.ofNullable(constraintViolations).orElse(new HashSet<>());
+		if(Objects.nonNull(constraintViolations)){
+			results.addAll(constraintViolations);
+		}
 
+		return results;
+	}
+
+	public static <T> List<String> validateMessages(T t) {
+		return validateMessages(t, null);
+	}
+
+	public static <T> List<String> validateMessages(T t, Class groupCls) {
+		List<ConstraintViolation> constraintViolations = validate(t, groupCls);
 		List<String> messageList = new ArrayList<>();
-		for (ConstraintViolation<T> constraintViolation : constraintViolations) {
-			messageList.add(constraintViolation.getMessage());
+		for (ConstraintViolation constraintViolation : constraintViolations) {
+			messageList.add(String.format(MESSAGE_FORMATE, constraintViolation.getPropertyPath(), constraintViolation.getMessage()));
 		}
 		return messageList;
 	}
