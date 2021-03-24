@@ -1,0 +1,217 @@
+##### 位移的应用  
+
+使用 AtomicInteger 类型的 ctl 变量，同时记录线程池的运行状态以及已用线程池的容量。  
+
+  > 高三位用来存储线程池运行状态，状态分为RUNNING状态，SHUTDOWN 状态，STOP状态，TIDYING 状态，TERMINATED 状态
+
+  > 剩余29位表示已用容量
+
+常量  
+```
+@Native public static final int SIZE = 32;
+private static final int COUNT_BITS = Integer.SIZE - 3;
+```
+
+1.ctl剩余29位表示已用容量  
+```
+private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
+```
+此处即CAPACITY等于2的29次幂减去1  
+
+2.ctl高三位表示状态
+```
+    // runState is stored in the high-order bits
+    private static final int RUNNING    = -1 << COUNT_BITS;
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;
+    private static final int STOP       =  1 << COUNT_BITS;
+    private static final int TIDYING    =  2 << COUNT_BITS;
+    private static final int TERMINATED =  3 << COUNT_BITS;
+```
+二进制表示如下，高三位表示状态
+```
+RUNNING:    11100000000000000000000000000000
+SHUTDOWN:   00000000000000000000000000000000
+STOP:       00100000000000000000000000000000
+TIDYING:    01000000000000000000000000000000
+TERMINATED: 01100000000000000000000000000000
+```
+
+3.ctl如何获取状态和容量  
+
+3.1runStateOf：由ctl获取状态
+```
+ private static int runStateOf(int c)     { return c & ~CAPACITY; }
+```
+c：ctl.get()，高三位是状态位，后29位已用容量位   
+~：取反操作  
+~CAPACITY：11100000000000000000000000000000  
+&：与操作，两者都为1则为1，否则为0  
+c与~CAPACITY的结果：高三位由原状态位决定，后29位刚好为0  
+
+3.2workerCountOf：由ctl获取已用容量
+```
+private static int workerCountOf(int c)  { return c & CAPACITY; }
+``` 
+CAPACITY：00011111111111111111111111111111  
+c & CAPACITY的结果：高三位刚好为0，后29位由已用容量位决定  
+
+3.3ctlOf：由状态和容量生产ctl
+```
+private static int ctlOf(int rs, int wc) { return rs | wc; }
+```
+rs：状态高三位有值，后29位为0
+wc：工作线程数量
+|：或操作，有一个为1，则为1，否则为0
+rs | wc的结果：刚好高三位由状态决定，后29位由已用容量决定
+
+
+##### 状态
+RUNNIN状态
+
++ 在该状态下，线程池接受新任务并会处理阻塞队列中的任务
++ 其二进制表示的，高三位值是 111
+
+SHUTDOWN 状态
+
++ 在该状态下，线程池不接受新任务，但会处理阻塞队列中的任务
++ 其二进制的高三位为： 000
+
+STOP 状态
+
++ 在该状态下，线程池不接受新的任务且不会处理阻塞队列中的任务，并且会中断正在执行的任务
++ 其二进制的高三位为： 010。
+
+TIDYING状态
+
++ 所有任务都执行完成，且工作线程数为0，将要调用terminated方法
++ 其二进制的高三位为： 010
+
+TERMINATED状态
+
++ 最终状态，为执行terminated()方法后的状态
++ 二进制的高三位为110
+
+其状态的转换关系如下：
+
++ 当调用：shutdown() 方法时，其状态由 RUNNING 状态 转换为 SHUTDOWN (状态)
+
++ 当调用：shutdownNow() 方法是，其状态由 (RUNNING or SHUTDOWN) 转换为 STOP
+
++ 当阻塞队列与线程池两者均为空时，状态由 SHUTDOWN 转换为 TIDYING
+
++ 当线程池任务为空时，状态由 STOP 转换为 TIDYING 
+
++ 当 terminated() 方法执行完成后，状态由 TIDYING 转换为 TERMIN
+
+
+##### 构造器
+构造方法有四个，以参数最多的构造器解释其参数
+```
+public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler) {
+        if (corePoolSize < 0 ||
+            maximumPoolSize <= 0 ||
+            maximumPoolSize < corePoolSize ||
+            keepAliveTime < 0)
+            throw new IllegalArgumentException();
+        if (workQueue == null || threadFactory == null || handler == null)
+            throw new NullPointerException();
+        this.corePoolSize = corePoolSize;
+        this.maximumPoolSize = maximumPoolSize;
+        this.workQueue = workQueue;
+        this.keepAliveTime = unit.toNanos(keepAliveTime);
+        this.threadFactory = threadFactory;
+        this.handler = handler;
+    }
+```
+
+| 序号 | 名称 | 类型 | 含义 |   
+| ---- | ---- | ---- | ---- |  
+| 1 | corePoolSize | int | 核心线程池大小 |  
+| 2 | maximumPoolSize | int | 最大线程池大小 | 
+| 3 | keepAliveTime | long | 线程最大空闲时间 | 
+| 4 | unit | TimeUnit | 时间单位 | 
+| 5 | workQueue | BlockingQueue<Runnable> | 线程等待队列 | 
+| 6 | threadFactory | ThreadFactory | 线程创建工厂 | 
+| 7 | handler | RejectedExecutionHandler | 拒绝策略 | 
+
+创建线程池工具类：java.util.concurrent.Executors
+
+##### 核心逻辑
+1.execute
+```
+public void execute(Runnable command) {
+    if (command == null)
+        throw new NullPointerException();
+    /*
+     * Proceed in 3 steps:
+     *
+     * 1. If fewer than corePoolSize threads are running, try to
+     * start a new thread with the given command as its first
+     * task.  The call to addWorker atomically checks runState and
+     * workerCount, and so prevents false alarms that would add
+     * threads when it shouldn't, by returning false.
+     *
+     * 2. If a task can be successfully queued, then we still need
+     * to double-check whether we should have added a thread
+     * (because existing ones died since last checking) or that
+     * the pool shut down since entry into this method. So we
+     * recheck state and if necessary roll back the enqueuing if
+     * stopped, or start a new thread if there are none.
+     *
+     * 3. If we cannot queue task, then we try to add a new
+     * thread.  If it fails, we know we are shut down or saturated
+     * and so reject the task.
+     */
+    int c = ctl.get();
+    //情况1
+    if (workerCountOf(c) < corePoolSize) {
+        if (addWorker(command, true))
+            return;
+        c = ctl.get();
+    }
+    //情况2
+    if (isRunning(c) && workQueue.offer(command)) {
+        int recheck = ctl.get();
+        if (! isRunning(recheck) && remove(command))
+            reject(command);
+        else if (workerCountOf(recheck) == 0)
+            addWorker(null, false);
+    }
+    //情况3
+    else if (!addWorker(command, false))
+        reject(command);
+}
+```
++ 第一种情况  
+> 线程池的线程数量小于corePoolSize核心线程数量，开启核心线程执行任务
+
++ 第二种情况  
+> 线程池的线程数量不小于corePoolSize核心线程数量，或者开启核心线程失败，尝试将任务以非阻塞的方式添加到任务队列
+  重新检测一次线程池状态，当状态不为running时，将任务从任务队列移除，并调用拒绝方法处理；或线程池数量等于0，创建一个非核心线程处理任务
+
++ 第三种情况
+> 任务队列已满导致添加任务失败，开启新的非核心线程执行任务，开启非核心线程失败，调用拒绝方法处理
+
+2.reject  
+```
+final void reject(Runnable command) {
+        handler.rejectedExecution(command, this);
+}
+```
+RejectedExecutionHandler：任务拒绝策略，当运行线程数已达到maximumPoolSize，队列也已经装满时会调用该参数拒绝任务，
+默认情况下是AbortPolicy，表示无法处理新任务时抛出异常。以下是JDK1.5提供的四种策略。  
+
++ AbortPolicy：直接抛出异常。
++ CallerRunsPolicy：只用调用者所在线程来运行任务。
++ DiscardOldestPolicy：丢弃队列里最老的一个任务，并执行当前任务。
++ DiscardPolicy：不处理，丢弃掉。
++ 当然也可以根据应用场景需要来实现RejectedExecutionHandler接口自定义策略。如记录日志或持久化不能处理的任务。
+
+
+3.addWorker/runWorker
