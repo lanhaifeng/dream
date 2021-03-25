@@ -9,13 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.*;
 import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.mp.MPv3;
 import org.snmp4j.mp.SnmpConstants;
-import org.snmp4j.security.*;
+import org.snmp4j.security.SecurityModel;
+import org.snmp4j.security.SecurityModels;
+import org.snmp4j.security.SecurityProtocols;
+import org.snmp4j.security.USM;
 import org.snmp4j.smi.*;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * baseframework
@@ -48,14 +52,6 @@ public class SnmpTemplate extends AbstractSnmp {
             TransportMapping transport = new DefaultUdpTransportMapping();
             snmp = new Snmp(transport);
             if (snmpAuth.getVersion() == SnmpConstants.version3) {
-                // 设置安全模式
-                //USM模式
-                if(snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_USM){
-                    USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-                    SecurityModels.getInstance().addSecurityModel(usm);
-                    // 添加用户
-                    snmp.getUSM().addUser(new OctetString(snmpAuth.getSecurityName()), buildUsmUser(snmpAuth));
-                }
                 if(snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_TSM){
                     throw new BusinessException("不支持授权模式：" + snmpAuth.getSecurityModel());
                 }
@@ -82,6 +78,14 @@ public class SnmpTemplate extends AbstractSnmp {
             target.setSecurityModel(snmpAuth.getSecurityModel());
             // 设置认证名
             target.setSecurityName(new OctetString(snmpAuth.getSecurityName()));
+            // 设置安全模式
+            //USM模式
+            if(snmpAuth.getSecurityModel() == SecurityModel.SECURITY_MODEL_USM){
+                USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(localEngineID), 0);
+                SecurityModels.getInstance().addSecurityModel(usm);
+                // 添加用户，用户需要在每次发送请求时指定，否则两个不同主机认证名相同，密码不同时会报错
+                snmp.getUSM().addUser(new OctetString(snmpAuth.getSecurityName()), buildUsmUser(snmpAuth));
+            }
         } else {
             target = new CommunityTarget();
             if (snmpAuth.getVersion() == SnmpConstants.version1) {
@@ -237,41 +241,5 @@ public class SnmpTemplate extends AbstractSnmp {
 
             this.index = index;
         }
-    }
-
-    public static void main(String[] args) {
-        //net-snmp-create-v3-user -ro -A auth123456 -X priv123456 -a MD5 -x DES lan
-        String ip = "192.168.226.79";
-        int port = 161;
-        int version = SnmpConstants.version1;
-        int securityLevel = SecurityLevel.AUTH_PRIV;
-        int securityModel = SecurityModel.SECURITY_MODEL_SNMPv1;
-        String community = "hzmc+Ra2$yuL";
-        String userName = "testuser";
-        String authType = SnmpV3AuthType.MD5.toString();
-        String passAuth = "auth123456";
-        String privType = SnmpV3PrivType.DES.toString();
-        String privPass = "priv123456";
-
-        version = SnmpConstants.version3;
-        securityLevel = SecurityLevel.NOAUTH_NOPRIV;
-        securityModel = SecurityModel.SECURITY_MODEL_USM;
-
-        SnmpAuth snmpAuth = SnmpAuth.SnmpAuthBuilder.builder().ip(ip).port(port).version(version).securityLevel(securityLevel).securityModel(securityModel)
-                .community(community)
-                .securityName(userName).authType(authType).passAuth(passAuth).privType(privType).privPass(privPass)
-                .build();
-        SnmpTemplate snmpTemplate = new SnmpTemplate(snmpAuth);
-
-        Long now = new Date().getTime();
-        System.out.println("now:" + now);
-
-        long count = snmpTemplate.snmpGet("1.3.6.1.4.1.2021.11.11.0");
-        System.out.println(String.format("idle cpu:%s", (count)) + "%");
-        System.out.println(String.format("used cpu:%s", (100 - count)) + "%");
-
-        SnmpTemplate snmpTemplate1 = new SnmpTemplate(snmpAuth);
-        count = snmpTemplate1.snmpGet("1.3.6.1.4.1.2021.4.5.0");
-        System.out.println(String.format("total memory:%s", (count/1024.0/1024)));
     }
 }

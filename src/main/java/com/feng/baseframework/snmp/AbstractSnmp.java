@@ -27,6 +27,12 @@ import java.util.function.Predicate;
  **/
 public abstract class AbstractSnmp {
 
+    protected static byte[] localEngineID;
+
+    static {
+        localEngineID = MPv3.createLocalEngineID();
+    }
+
 	public final static String ADDRESS_TEMPLATE = "udp:%s/%s";
 	protected Snmp snmp = null;
 
