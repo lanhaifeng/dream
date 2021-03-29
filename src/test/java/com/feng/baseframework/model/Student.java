@@ -1,11 +1,14 @@
 package com.feng.baseframework.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.feng.baseframework.jackson.CustomStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Optional;
 
 @Data
+@JsonSerialize(using = CustomStringSerializer.class)
 public class Student implements Serializable, Cloneable {
     private Integer id;
     private String name;

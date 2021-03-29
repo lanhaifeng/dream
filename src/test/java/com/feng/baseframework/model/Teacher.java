@@ -1,10 +1,11 @@
 package com.feng.baseframework.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.feng.baseframework.jackson.CustomStringSerializer;
 import lombok.Data;
 import org.assertj.core.util.Lists;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Data
+@JsonSerialize(using = CustomStringSerializer.class)
 public class Teacher implements Serializable, Cloneable{
     private Long id;
     private String name;

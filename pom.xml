@@ -366,6 +366,12 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.10</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>reflectasm</artifactId>
+			<version>1.11.3</version>
+		</dependency>
 		<!-- logback -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
