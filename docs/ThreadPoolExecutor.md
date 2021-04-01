@@ -214,4 +214,91 @@ RejectedExecutionHandler：任务拒绝策略，当运行线程数已达到maxim
 + 当然也可以根据应用场景需要来实现RejectedExecutionHandler接口自定义策略。如记录日志或持久化不能处理的任务。
 
 
-3.addWorker/runWorker
+3.addWorker方法/Worker类
+1.addWorker
+```
+private boolean addWorker(Runnable firstTask, boolean core) {
+        //标号
+        retry:
+        /**
+        *   使用CAS机制轮询线程池的状态
+        *   1.如果线程池处于SHUTDOWN并且任务不为空或工作队列为空则拒绝执行任务
+        *   2.如果线程池大于SHUTDOWN状态则拒绝执行任务
+        **/
+        for (;;) {
+            int c = ctl.get();
+            int rs = runStateOf(c);
+
+            // Check if queue empty only if necessary.
+            if (rs >= SHUTDOWN &&
+                ! (rs == SHUTDOWN &&
+                   firstTask == null &&
+                   ! workQueue.isEmpty()))
+                return false;
+
+            //使用CAS机制尝试将当前线程数+1
+            //如果是核心线程当前线程数必须小于corePoolSize 
+            //如果是非核心线程则当前线程数必须小于maximumPoolSize
+            //如果当前线程数不小于线程池支持的最大线程数CAPACITY 也会返回失败
+            //如果线程状态发生改变CAS失败继续外层循环
+            for (;;) {
+                int wc = workerCountOf(c);
+                if (wc >= CAPACITY ||
+                    wc >= (core ? corePoolSize : maximumPoolSize))
+                    return false;
+                if (compareAndIncrementWorkerCount(c))
+                    break retry;
+                c = ctl.get();  // Re-read ctl
+                if (runStateOf(c) != rs)
+                    continue retry;
+                // else CAS failed due to workerCount change; retry inner loop
+            }
+        }
+
+        //成功执行了CAS操作将线程池数量+1，下面创建线程
+        boolean workerStarted = false;
+        boolean workerAdded = false;
+        Worker w = null;
+        try {
+            w = new Worker(firstTask);
+            final Thread t = w.thread;
+            if (t != null) {
+                final ReentrantLock mainLock = this.mainLock;
+                mainLock.lock();
+                try {
+                    // Recheck while holding lock.
+                    // Back out on ThreadFactory failure or if
+                    // shut down before lock acquired.
+                    int rs = runStateOf(ctl.get());
+
+                    if (rs < SHUTDOWN ||
+                        (rs == SHUTDOWN && firstTask == null)) {
+                        // 校验线程是否处于处于活跃状态
+                        if (t.isAlive()) // precheck that t is startable
+                            throw new IllegalThreadStateException();
+                        // 将 worker 添加到线程池中，其实现为：HashSet<Worker> workers = new HashSet<Worker>();
+                        workers.add(w);
+                        int s = workers.size();
+                        if (s > largestPoolSize)
+                            largestPoolSize = s;
+                        workerAdded = true;
+                    }
+                } finally {
+                    mainLock.unlock();
+                }
+                // 添加成功时，则调用start进行执行
+                if (workerAdded) {
+                    t.start();
+                    workerStarted = true;
+                }
+            }
+        } finally {
+            // 如果线程未启动成功，则执行addWorkerFailed方法。
+            if (! workerStarted)
+                addWorkerFailed(w);
+        }
+        return workerStarted;
+    }
+```
+
+2.
