@@ -141,6 +141,69 @@ public ThreadPoolExecutor(int corePoolSize,
 | 7 | handler | RejectedExecutionHandler | 拒绝策略 | 
 
 创建线程池工具类：java.util.concurrent.Executors
+1.FixedThreadPool
+```
+    public static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());
+    }
+```
+
+> corePoolSize与maximumPoolSize相等，即其线程全为核心线程，是一个固定大小的线程池，是其优势；  
+> keepAliveTime = 0 该参数默认对核心线程无效，而FixedThreadPool全部为核心线程；  
+> workQueue 为LinkedBlockingQueue（无界阻塞队列），队列最大值为Integer.MAX_VALUE。
+如果任务提交速度持续大余任务处理速度，会造成队列大量阻塞。因为队列很大，很有可能在拒绝策略前，内存溢出。是其劣势；
+> FixedThreadPool的任务执行是无序的；
+
+适用场景：可用于Web服务瞬时高峰，但需注意长时间持续高峰情况造成的队列阻塞。
+
+2.CachedThreadPool
+```
+     public static ExecutorService newCachedThreadPool() {
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                      60L, TimeUnit.SECONDS,
+                                      new SynchronousQueue<Runnable>());
+    }
+```
+
+> corePoolSize = 0，maximumPoolSize = Integer.MAX_VALUE，即线程数量几乎无限制；
+> keepAliveTime = 60s，线程空闲60s后自动结束。
+> workQueue 为 SynchronousQueue 同步队列，这个队列类似于一个接力棒，入队出队必须同时传递，
+因为CachedThreadPool线程创建无限制，不会有队列等待，所以使用SynchronousQueue；
+适用场景：快速处理大量耗时较短的任务，如Netty的NIO接受请求时，可使用CachedThreadPool
+
+3.SingleThreadExecutor
+```
+    public static ExecutorService newSingleThreadExecutor() {
+        return new FinalizableDelegatedExecutorService
+            (new ThreadPoolExecutor(1, 1,
+                                    0L, TimeUnit.MILLISECONDS,
+                                    new LinkedBlockingQueue<Runnable>()));
+    }
+```
+
+> FixedThreadPool可以向下转型为ThreadPoolExecutor，并对其线程池进行配置，
+而SingleThreadExecutor被包装后，无法成功向下转型。因此，SingleThreadExecutor被定以后，
+无法修改，做到了真正的Single
+
+4.ScheduledThreadPool
+```
+    public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) {
+        return new ScheduledThreadPoolExecutor(corePoolSize);
+    }
+```
+
+> newScheduledThreadPool调用的是ScheduledThreadPoolExecutor的构造方法，
+而ScheduledThreadPoolExecutor继承了ThreadPoolExecutor，构造是还是调用了其父类的构造方法。
+```
+    public ScheduledThreadPoolExecutor(int corePoolSize) {
+        super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+              new DelayedWorkQueue());
+    }
+```
+
+
 
 ##### 核心逻辑
 1.execute
@@ -301,4 +364,121 @@ private boolean addWorker(Runnable firstTask, boolean core) {
     }
 ```
 
-2.
+2.Worker类
+```
+Worker(Runnable firstTask) {
+    setState(-1); // inhibit interrupts until runWorker
+    this.firstTask = firstTask;
+    //通过ThreadFactory()工厂创建线程
+    this.thread = getThreadFactory().newThread(this);
+}
+
+//实现了Runable接口，在调用start()方法候，实际执行的是run方法，委托给外边的runWorker方法
+/** Delegates main run loop to outer runWorker  */
+public void run() {
+    runWorker(this);
+}
+```
+runWorker方法
+```
+final void runWorker(Worker w) {
+    Thread wt = Thread.currentThread();
+    Runnable task = w.firstTask;
+    w.firstTask = null;
+    w.unlock(); // allow interrupts
+    boolean completedAbruptly = true;
+    try
+        while (task != null || (task = getTask()) != null) {
+            w.lock();
+            //如果线程池状态大于等于stop状态，确保线程是中断
+            //如果线程池状态小于stop状态，确保线程未中断
+            if ((runStateAtLeast(ctl.get(), STOP) ||
+                 (Thread.interrupted() &&
+                  runStateAtLeast(ctl.get(), STOP))) &&
+                !wt.isInterrupted())
+                wt.interrupt();
+            try {
+                //执行前的操作方法，空实现。可根据需求进行实现。
+                beforeExecute(wt, task);
+                Throwable thrown = null;
+                try {
+                    //任务执行
+                    task.run();
+                } catch (RuntimeException x) {
+                    thrown = x; throw x;
+                } catch (Error x) {
+                    thrown = x; throw x;
+                } catch (Throwable x) {
+                    thrown = x; throw new Error(x);
+                } finally {
+                   // 执行后方法，空实现。可根据实际需求进行实现。
+                    afterExecute(task, thrown);
+                }
+            } finally {
+                //这里设为null，也就是循环体再执行的时候会调用getTask方法
+                task = null;
+                w.completedTasks++;
+                w.unlock();
+            }
+        }
+        completedAbruptly = false;
+    } finally {
+        //当指定任务执行完成，阻塞队列中也取不到可执行任务时，会进入这里，做一些善后工作
+        //比如在corePoolSize跟maximumPoolSize之间的woker会进行回收
+        processWorkerExit(w, completedAbruptly);
+    }
+}
+```
+getTask方法
+```
+private Runnable getTask() {
+    boolean timedOut = false; // Did the last poll() time out?
+
+    for (;;) {
+        int c = ctl.get();
+        int rs = runStateOf(c);
+
+        // Check if queue empty only if necessary.
+        if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
+            decrementWorkerCount();
+            return null;
+        }
+
+        int wc = workerCountOf(c);
+
+        // Are workers subject to culling?
+        boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+
+        if ((wc > maximumPoolSize || (timed && timedOut))
+            && (wc > 1 || workQueue.isEmpty())) {
+            if (compareAndDecrementWorkerCount(c))
+                return null;
+            continue;
+        }
+
+        try {
+            //根据超时配置有两种方法取出任务
+            Runnable r = timed ?
+                workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+                workQueue.take();
+            if (r != null)
+                return r;
+            timedOut = true;
+        } catch (InterruptedException retry) {
+            timedOut = false;
+        }
+    }
+}
+```
+这里getTask()方法是要重点说明的，它的实现跟我们构造参数keepAliveTime存活时间有关。我们都知道
+keepAliveTime代表了线程池中的线程（即woker线程）的存活时间，如果到期则回收woker线程，
+这个逻辑的实现就在getTask中。
+
+getTask()方法就是去阻塞队列中取任务，用户设置的存活时间，就是从这个阻塞队列中取任务等待的最大时
+间，如果getTask返回null，意思就是woker等待了指定时间仍然没有取到任务，此时就会跳过循环体，
+进入woker线程的销毁逻辑。
+
+这个getTask()方法通过一个循环不断轮询任务队列有没有任务到来，首先判断线程池是否处于正常运行状态，根据超时配置有两种方法取出任务：
+
+- BlockingQueue.poll 阻塞指定的时间尝试获取任务，如果超过指定的时间还未获取到任务就返回null。
+- BlockingQueue.take 这种方法会在取到任务前一直阻塞。
