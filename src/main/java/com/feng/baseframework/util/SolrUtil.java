@@ -88,7 +88,7 @@ public class SolrUtil {
 		try {
 			return solrClient.getById(collection, id);
 		} catch (Exception e) {
-			logger.error("获取索引文档失败,", ExceptionUtils.getFullStackTrace(e));
+			logger.error("获取索引文档失败,{}", ExceptionUtils.getFullStackTrace(e));
 			return null;
 		}
 	}
@@ -208,5 +208,17 @@ public class SolrUtil {
 		}
 
 		return result;
+	}
+
+	/**
+	 * 2021/4/9 11:15
+	 * 关闭连接
+	 *
+	 * @param
+	 * @author lanhaifeng
+	 * @return void
+	 */
+	public static void close() throws IOException {
+		solrClient.close();
 	}
 }

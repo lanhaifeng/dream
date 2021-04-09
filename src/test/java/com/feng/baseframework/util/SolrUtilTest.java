@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.util.*;
 
 @ActiveProfiles("dev")
@@ -28,7 +29,7 @@ public class SolrUtilTest extends JunitBaseTest {
 	@Before
 	public void setUp() {
 		collection = "13";
-		auditId = "e87e60d5-376a-478c-91c6-8d230ebceed6";
+		auditId = "5f845581-50c3-49c6-837a-947aa3b774ef";
 		solrUpdateLogs = new ArrayList<>();
 		DATEFORMAT_SOLR = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	}
@@ -73,8 +74,12 @@ public class SolrUtilTest extends JunitBaseTest {
 	}
 
 	@Test
-	public void getDoc() {
+	public void getDoc() throws IOException {
 		SolrDocument doc = SolrUtil.getDoc(collection, auditId);
+		System.out.println(doc.toString());
+
+		SolrUtil.close();
+		doc = SolrUtil.getDoc(collection, auditId);
 		System.out.println(doc.toString());
 	}
 
