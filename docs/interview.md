@@ -1,10 +1,68 @@
 1.java基础
 集合：Set、List、Map
-Set:HashSet、LinkedHashSet
-List:ArrayList、LinkedList
-Map:HashMap、LinkedHashMap、Hashtable
+Set:HashSet、LinkedHashSet、TreeSet、CopyOnWriteArraySet、SynchronizedSet
+List:ArrayList、LinkedList、Vector、Stack、CopyOnWriteArrayList、SynchronizedList
+Map:HashMap、LinkedHashMap、TreeMap、Hashtable、ConcurrentHashMap
 
+HashSet:非线程安全，无序，底层包装了一个HashMap去实现的
+1.采用HashCode算法(既使用元素作为key)来存取集合中的元素，因此具有比较好的读取和查找功能
+2.它不允许出现重复元素，不保证集合中的元素的顺序，允许包含值为null的元素，但最多只能有null元素
+
+TreeSet：非线程安全，可排序，实现了SortedSet接口，底层使用TreeMap实现的，本质上是一个红黑树原理
+1.它在将对象元素添加到集合中会自动按照某种比较规则将其插入到有序的对象
+序列中，并保证该集合元素组成的读序列按照升序排列
+2.排序分为两种类型，一种是自然排序，另一种是定制排序
+
+CopyOnWriteArraySet：线程安全，底层通过CopyOnWriteArrayList属性实现，利用addIfAbsent方法确保不重复
+
+SynchronizedSet：线程安全，通过synchronized代码块儿，将传入的set变为线程安全
+
+LinkedHashSet：非线程安全，有序，底层包装了一个LinkedHashMap去实现的
+
+ArrayList：非线程安全，有序，长度可变的数组，可以对元素进行随机的访问，向ArrayList中插入与删除元素的速度慢
+
+LinkedList：非线程安全，有序，采用链表数据结构，插入和删除速度快，但访问速度慢。
+
+Vector：线程安全，长度可变的数组,方法上加synchronized关键字
+
+Stack：线程安全，长度可变的数组,方法上加synchronized关键字
+
+CopyOnWriteArrayList：线程安全，通过可变数组实现，写的时候通过ReentrantLock加锁，读的时候无锁
+
+SynchronizedList：线程安全，通过synchronized代码块儿，将传入的list变为线程安全
+
+Hashtable：线程安全，效率比较低，线程安全是通过在方法上加synchronized关键字
+
+HashMap：非线程安全，底层是基于数组实现，每个数组元素又是单向链表或红黑树，
+无序
 HashMap扩容
+1.map数据个数超过容量*0.75(默认)扩容
+2.单一链表数据个数超过8个，而总容量小于64扩容
+3.单一链表数据个数超过8个，而总容量超过64将当且链表转为TreeNode(红黑树)
+
+LinkedHashMap：线程不安全的，继承于HashMap，是基于HashMap和双向链表来实现的
+1.有序，可分为插入顺序和访问顺序两种
+2.访问顺序，那put和get操作已存在的Entry时，都会把Entry移动到双向链表的
+表尾(其实是先删除再插入)
+
+TreeMap：线程不安全的，所有的元素都保持着某种固定的顺序,基于红黑树实现,
+1.没有调优选项，因为该树总处于平衡状态
+2.适用于按自然顺序或自定义顺序遍历键
+
+jdk1.7ConcurrentHashMap：线程安全，由一个Segment数组构成，一个Segment
+由一个HashEntry数组构成，HashEntry元素又组成一个单向链表
+1.ConcurrentHashMap是一个二级哈希表，在一个总的哈希表下面，有若干个子哈希表
+2.采用了锁分段技术，每一个Segment就好比一个自治区，读写操作高度自治，Segment之间互不影响
+3.操作先得到hash值，再通过hash值得到Segment，再通过hash与长度减1得到
+Segment中HashEntry，再遍历HashEntry链表找到对应的值
+
+jdk1.8ConcurrentHashMap：线程安全，底层是基于数组实现，每个数组元素又是
+单向链表或红黑树包装类，进行过优化，效率比较高
+1.通过可见sizeCtl标识位无锁CAS保证初始化线程安全
+2.空链表时，通过unsafe初始化表头
+3.对于同一个数组元素的操作，通过synchronized代码块实现，put可能会很频繁，
+如果自旋一直不成功，将会一直占用CPU，而且数组中其他的元素是可以正常访问的
+
 
 字符串：String、StringBuilder、StringBuffer
 
@@ -115,7 +173,19 @@ CAS的ABA问题：
 1.比如说线程一从数据库中取出库存数 3，这时候线程二也从数据库中取出库存数 3，并且线程二进行了一些操作变成了 2。
 2.然后线程二又将库存数变成 3，这时候线程一进行CAS操作发现数据库中仍然是 3，然后线程一操作成功。
 3.尽管线程一的 CAS 操作成功，但是不代表这个过程就是没有问题的
-一个比较好的解决办法，就是通过一个单独的可以顺序递增的version字段
+一个比较好的解决办法，就是通过一个单独的可以顺序递增的version字段或时间戳，如AtomicStampedReference
+
+CAS消耗资源：
+多个线程争夺同一个资源时，如果自旋一直不成功，将会一直占用CPU
+解决方法：破坏掉for死循环，当超过一定时间或者一定次数时，return退出。
+JDK8新增的LongAddr,和ConcurrentHashMap类似的方法。当多个线程竞争时，
+将粒度变小，将一个变量拆分为多个变量，达到多个线程访问多个资源的效果，
+最后再调用sum把它合起来。
+
+CAS多变量共享一致性问题：
+解决方法： CAS操作是针对一个变量的，如果对多个变量操作，
+1)可以加锁来解决。
+2)封装成对象类解决。
 
 
 AQS原理
