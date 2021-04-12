@@ -74,13 +74,17 @@ public class SolrUtilTest extends JunitBaseTest {
 	}
 
 	@Test
-	public void getDoc() throws IOException {
+	public void getDoc() {
 		SolrDocument doc = SolrUtil.getDoc(collection, auditId);
 		System.out.println(doc.toString());
+	}
 
+	@Test
+	public void ping() throws IOException {
+		Assert.state(SolrUtil.ping(collection), "ping失败");
 		SolrUtil.close();
-		doc = SolrUtil.getDoc(collection, auditId);
-		System.out.println(doc.toString());
+
+		Assert.state(!SolrUtil.ping(collection), "ping失败");
 	}
 
 	@Test

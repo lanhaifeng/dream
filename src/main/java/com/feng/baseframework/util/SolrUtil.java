@@ -7,8 +7,10 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.client.solrj.request.CoreStatus;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CoreAdminParams;
@@ -35,7 +37,7 @@ import java.util.Optional;
 public class SolrUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(SolrUtil.class);
-	private static SolrClient solrClient = SpringUtil.getBeanByType(SolrClient.class);
+	public static SolrClient solrClient = SpringUtil.getBeanByType(SolrClient.class);
 
 	public static boolean addDoc(String collection, SolrInputDocument doc){
 		List<SolrInputDocument> docs = new ArrayList<>();
@@ -220,5 +222,26 @@ public class SolrUtil {
 	 */
 	public static void close() throws IOException {
 		solrClient.close();
+	}
+
+	/**
+	 * 2021/4/12 10:43
+	 * ping数据
+	 *
+	 * @param collection
+	 * @author lanhaifeng
+	 * @return boolean
+	 */
+	public static boolean ping(String collection) {
+		try {
+			CoreAdminResponse coreAdminResponse = CoreAdminRequest.getStatus(collection, solrClient);
+			if (coreAdminResponse != null && coreAdminResponse.getCoreStatus(collection) != null
+					&& coreAdminResponse.getCoreStatus(collection).size() > 1) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error("ping错误：" + ExceptionUtils.getFullStackTrace(e));
+		}
+		return false;
 	}
 }
