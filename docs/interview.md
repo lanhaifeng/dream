@@ -196,7 +196,6 @@ AQS原理
 
 
 Synchronized原理、优化、锁膨胀
-
 原理
 JVM 是通过进入、退出对象监视器(Monitor)来实现对方法、同步块的同步的，而对象监视器的本质依赖于底层
 操作系统的互斥锁(Mutex Lock)实现。
@@ -220,6 +219,23 @@ Synchronized属性
 
 https://blog.csdn.net/weixin_36759405/article/details/83034386
 
+
+多线程返回结果
+Runnable、Callable、Future、FutureTask、CompletionService
+
+CountDownLatch是一个同步辅助类，它允许一个或多个线程一直等待直到其他线程执行完毕才开始执行。
+用给定的计数初始化CountDownLatch，其含义是要被等待执行完的线程个数。
+每次调用CountDown()，计数减1
+主程序执行到await()函数会阻塞等待线程的执行，直到计数为0
+计数器通过使用锁（共享锁、排它锁AQS）实现
+
+
+https://blog.csdn.net/jdsjlzx/article/details/52912701
+
+单核、多核CPU的原子操作
+软件级别的原子操作是依赖于硬件支持的
+
+https://www.cnblogs.com/javaleon/p/4292656.html
 
 5.高并发
 垂直扩展：提升单机处理能力
