@@ -280,6 +280,17 @@ cpu瓶颈：索引优化sql、单表数据太大水平分表
 
 https://zhuanlan.zhihu.com/p/137368446
 
+中间层代理类中间件
+部署一台代理服务器伪装成 MySQL 服务器，代理服务器负责与真实 MySQL 节点的对接，应用程序只和代理服务器对接
+远程代理：MyCat
+
+应用层依赖类中间件
+这类分库分表中间件的特点就是和应用强耦合，需要应用显示依赖相应的jar包，对代码有侵入性
+jdbc分布分表：shardingsphere、Sharding-JDBC
+
+https://blog.csdn.net/fly910905/article/details/87101059
+
+
 9.http、https、证书、对称加密、非对称加密
 + 私钥加密、签名，公钥解密、验证签名
 + 证书可靠性保证：
