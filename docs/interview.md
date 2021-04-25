@@ -345,6 +345,30 @@ https://blog.csdn.net/fly910905/article/details/87101059
 数据先写入Page Cache中，在定时刷磁盘，减少IO
 集群方式保证机器异常写失败
 
+生产者如何保证只生产一次
++ kafka在初始化期间，kafka会给生产者生成一个唯一的ID称为Producer ID或PID。
+ PID和序列号与消息捆绑在一起，然后发送给Broker。由于序列号从零开始并且单
+ 调递增，因此，仅当消息的序列号比该PID/TopicPartition对中最后提交的消
+ 息正好大1时，Broker才会接受该消息。如果不是这种情况，则Broker认定是生产
+ 者重新发送该消息。
+
++ kafka局限
+producer重启-重新向broker申请pid
+不同的Partition具有不同的主键
+
+kafka分区策略
++ 指明partition的情况下，使用指定的partition
+
++ 没有指明partition，有key的情况下，将key的hash值与topic的partition数进
+行取余得到partition值
+
++ 既没有指定partition，也没有key的情况下，第一次调用时随机生成一个整数
+（后面每次调用在这个整数上自增），将这个值与topic可用的partition数取余
+得到partition值，也就是常说的round-robin算法
+
+
+
+
 消息只消费一次
 + 保证生产者等幂性
 雪花算法为消息生成全局ID，维护已投递消息ID映射，已存在只保留一条
@@ -484,3 +508,92 @@ https://www.cnblogs.com/mydomain/archive/2010/09/23/1833369.html
 + epoll
 
 https://www.cnblogs.com/zwt1990/p/8821185.html
+
+16.分布式事务
+事务是恢复和并发控制的基本单位
+
+特性
++ 原子性（atomicity）：一个事务是一个不可分割的工作单位，事务中包括
+的操作要么都做，要么都不做
+
++ 一致性（consistency）：事务必须是使数据库从一个一致性状态变到另一个
+一致性状态。一致性与原子性是密切相关的。
+
++ 隔离性（isolation）：一个事务的执行不能被其他事务干扰。即一个事务内
+部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间
+不能互相干扰。
+
++ 持久性（durability）：持久性也称永久性（permanence），指一个事务一旦
+提交，它对数据库中数据的改变就应该是永久性的。接下来的其他操作或故障不应
+该对其有任何影响
+
+事务分类
++ 2pc（两段式提交）
++ 3pc（三段式提交）
++ TCC（Try、Confirm、Cancel）
++ 最大努力通知
++ XA
++ 本地消息表（ebay研发出的）
++ 半消息/最终一致性（RocketMQ）
+
+
+https://www.codercto.com/a/75285.html
+https://www.cnblogs.com/cxxjohnson/p/9145548.html
+
+
+17.kafka
+基本概念
+
+分区中的所有副本统称为AR（Assigned Replicas）。所有与leader副本保持一定
+程度同步的副本（包括leader）组成ISR（in-sync replicas）。而与leader副本
+同步滞后过多的副本（不包括leader），组成OSR（out-sync replicas），所以，
+AR = ISR + OSR。在正常情况下，所有的follower副本都应该与leader副本保持一
+定程度的同步，即AR = ISR，OSR集合为空
+
+leader副本负责维护和跟踪ISR中所有follower的滞后状态，当follower落后太多
+或者长时间没有向leader发起同步请求，leader副本就会认为它出问题了，会把它
+从ISR中移除，这时候这个follower就会放入OSR集合中，直到某个时候这个
+follower同步跟上了leader，然后这个副本又会被加入到ISR中。此外，当leader
+副本挂了，只有ISR中的follower副本才有资格成为leader，OSR中的则没有资格
+
+
++ Consumer : 消息和数据的消费者，订阅数据（Topic）并且处理其发布的消息的
+进程、代码或服务；
+
++ Consumer Group : 逻辑概念，对于同一个topic，会广播给不同的group，一个
+group中，只有一个consumer可以消费该消息；
+
++ Broker : 物理概念，Kafka集群中的每个Kafka节点；
+
++ Topic : 逻辑概念，Kafka消息的类别，对数据进行区分、隔离；
+
++ Partition : 物理概念，Kafka下数据存储的基本单位，一个Topic数据会被分散
+存储在多个Partition中，每个Partition中的消息是有序的；
+
++ Replication : 同一个Partition可能会有多个Replia，多个Replica之间数据
+一般是一样的；
+
++ Replication Leader : 一个Partition的多个Replica上，需要一个Leader负责
+该Partition上与Producer和Consumer交互；
+
++ Follower：Follower跟随Leader，所有写请求都通过Leader路由，数据变更会广
+播给所有Follower，Follower与Leader保持数据同步。如果Leader失效，则从
+Follower中选举出一个新的Leader。当Follower与Leader挂掉、卡住或者同步太
+慢，leader会把这个follower从“in sync replicas”（ISR）列表中删除，重新
+创建一个Follower
+
++ Replication Manager : 负责管理当前broker所有分区和副本的信息，处理
+KafkaController发起的一些请求，副本状态的切换、添加/读取消息等。
+
+
+ACK应答机制
++ 0:producer不等待broker的ack，这一操作提供了一个最低的延迟，broker一
+接收到还没写入磁盘就已经返回，当broker故障时可能丢失数据
+
++ 1:producer等待leader的ack，partition的leader落盘成功后返回ack，如果
+在follower同步成功之前leader故障，那么将会丢失数据
+
++ -1(all):producer等待broker的ack，partition的leader和ISR里的follower全
+部落盘成功后才返回ack。但是如果在follower同步完成后，broker发送ack之前，
+leader发生故障，那么会造成重复数据。（极端情况下也有可能丢数据：ISR中只
+有一个Leader时，相当于1的情况）
