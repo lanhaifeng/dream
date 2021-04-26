@@ -32,6 +32,18 @@ public class FileUtils {
 	 */
 	public static void readToBuffer(StringBuffer buffer, String filePath) throws IOException {
 		InputStream is = new FileInputStream(filePath);
+		readToBuffer(buffer, is);
+	}
+
+	/**
+	 * 将文本文件中的内容读入到buffer中
+	 * @param buffer buffer
+	 * @param is 文件流
+	 * @throws IOException 异常
+	 * @author cn.outofmemory
+	 * @date 2013-1-7
+	 */
+	public static void readToBuffer(StringBuffer buffer, InputStream is) throws IOException {
 		//用来保存每行读取的内容
 		String line;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -180,6 +192,24 @@ public class FileUtils {
 		Assert.state(StringUtils.isNotBlank(filePath), "filePath参数不能为空");
 		ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(filePath));
 		objOut.writeObject(t);
+	}
+
+	public static String getFileName(String fullName) {
+		if (StringUtils.isBlank(fullName)) {
+			return "";
+		} else {
+			int index = -1;
+			int target;
+			if ((target = fullName.lastIndexOf("/")) != -1) {
+				index = target;
+			}
+
+			if ((target = fullName.lastIndexOf("\\")) != -1 && target > index) {
+				index = target;
+			}
+
+			return fullName.substring(index + 1);
+		}
 	}
 
 

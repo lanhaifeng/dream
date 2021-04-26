@@ -1,14 +1,19 @@
 package com.feng.baseframework.spring;
 
 import com.feng.baseframework.common.JunitBaseTest;
+import com.feng.baseframework.util.FileUtils;
 import com.feng.baseframework.util.SpringUtil;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @ProjectName: baseframework
@@ -57,5 +62,42 @@ public class SpringTest extends JunitBaseTest {
         Assert.assertTrue("国际化失败，实际：" + str1, "测试".equals(str1) );
         Assert.assertTrue( "国际化失败，实际：" + str2, "test".equals(str2));
 
+    }
+
+    @Test
+    public void testResourcePatternResolver() throws IOException {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        List<Resource> resources = new ArrayList<>();
+        String sqlLocation = "classpath*:sql-script/**.sql";
+        try {
+            Resource[] mappers = resourceResolver.getResources(sqlLocation);
+            resources.addAll(Arrays.asList(mappers));
+        } catch (IOException e) {
+            logger.error("解析xml文件失败，错误：", ExceptionUtils.getFullStackTrace(e));
+        }
+
+        Iterator<Resource> iterator = resources.iterator();
+        Resource resource;
+        while (iterator.hasNext()){
+            resource = iterator.next();
+            System.out.println(resource.getDescription());
+            System.out.println(resource.getURI());
+            if(!resource.getFilename().endsWith("sql")){
+                iterator.remove();
+            }
+        }
+        resources.sort(Comparator.comparing(o -> FileUtils.getFileName(o.getFilename())));
+
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Resource resource1 : resources) {
+            FileUtils.readToBuffer(stringBuffer, resource1.getInputStream());
+            System.out.println(stringBuffer.toString());
+            stringBuffer.setLength(0);
+        }
+
+        String fileName = FileUtils.getFileName(resources.get(resources.size() - 1).getFilename());
+        System.out.println(fileName.substring(0, fileName.lastIndexOf("sql") - 1));
+        System.out.println("0.0.1".compareTo("1.0.0"));
+        System.out.println("0.0.2".compareTo("0.0.1"));
     }
 }
