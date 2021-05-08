@@ -75,4 +75,22 @@ public class KeyStoreParam extends BaseSecretKeyParam implements Serializable {
 		keyStoreParam.setValidity(365);
 		return keyStoreParam;
 	}
+
+	@Override
+	public String toString() {
+		return "KeyStoreParam{" +
+				"filePath='" + filePath + '\'' +
+				", storePassword='" + storePassword + '\'' +
+				", keyPassword='" + keyPassword + '\'' +
+				", alias='" + alias + '\'' +
+				", storeType='" + storeType + '\'' +
+				", commonName='" + commonName + '\'' +
+				", organizationalUnit='" + organizationalUnit + '\'' +
+				", organization='" + organization + '\'' +
+				", city='" + city + '\'' +
+				", province='" + province + '\'' +
+				", country='" + country + '\'' +
+				", validity=" + validity +
+				'}';
+	}
 }
