@@ -1,5 +1,6 @@
 package com.feng.baseframework.util;
 
+import com.feng.baseframework.model.ProcessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -27,12 +29,16 @@ public class ShellUtils {
     /**
      * 数组元素中不为""即为执行结果
      * @param cmd
-     * @return
+     * @return com.baseframework.utils.domain.ProcessResult
      */
-    public static String[] execShell(String cmd){
+    public static ProcessResult execShell(String cmd){
         logger.info("execute shell cmd:" + cmd);
-        String results[] = new String[3];
-        String cmds[] = new String[]{"/bin/sh","-c",cmd};
+        ProcessResult processResult = new ProcessResult();
+
+        String cmds[] = new String[]{"/bin/sh", "-c", cmd};
+        if (isWindows()) {
+            cmds = new String[]{"cmd", "/c", cmd};
+        }
         Process process = null;
         BufferedReader br = null;
         BufferedReader brErr = null;
@@ -45,10 +51,14 @@ public class ShellUtils {
 
             int exitValue = process.exitValue();
             logger.info("cmd: " + cmd + ", exitValue: " + exitValue);
-            results[0] = String.valueOf(exitValue);
+            processResult.setExitValue(exitValue);
 
-            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            brErr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            Charset charset = Charset.forName("UTF-8");
+            if(isWindows()){
+                charset = Charset.forName("GBK");
+            }
+            br = new BufferedReader(new InputStreamReader(process.getInputStream(), charset));
+            brErr = new BufferedReader(new InputStreamReader(process.getErrorStream(), charset));
 
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -58,13 +68,13 @@ public class ShellUtils {
                 resultErr.append(line).append('\n');
             }
 
-            results[1] = result.toString();
-            results[2] = resultErr.toString();
+            processResult.setResult(result.toString());
+            processResult.setErrorMessage(resultErr.toString());
         } catch (Exception e) {
             logger.error("Execute failed due exception:" + e.getMessage());
-            results[0] = String.valueOf(ERR_GOT_EXCEPTION);
-            results[2] = e.getMessage();
-            return results;
+            processResult.setExitValue(ERR_GOT_EXCEPTION);
+            processResult.setErrorMessage(e.getMessage());
+            return processResult;
         } finally {
             closeStream(br);
             closeStream(brErr);
@@ -72,7 +82,7 @@ public class ShellUtils {
                 process.destroy();
             }
         }
-        return results;
+        return processResult;
     }
 
     private static void closeStream(Closeable stream){
@@ -83,5 +93,13 @@ public class ShellUtils {
                 logger.error(e.getMessage());
             }
         }
+    }
+
+    public static Boolean isWindows(){
+        return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
+    public static Boolean isLinux() {
+        return System.getProperty("os.name").toLowerCase().contains("linux");
     }
 }

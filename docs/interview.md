@@ -212,7 +212,7 @@ CAS多变量共享一致性问题：
 
 
 AQS原理
-
+https://blog.csdn.net/weixin_44624375/article/details/110133306
 
 Synchronized原理、优化、锁膨胀
 原理
@@ -494,6 +494,7 @@ UDP 头部包含了以下几个数据：
 整个数据报文的检验和（IPv4 可选 字段），该字段用于发现头部信息和数据中的错误
 因此 UDP 的头部开销小，只有八字节，相比 TCP 的至少二十字节要少得多，在传输数据报文时是很高效的
 
+https://www.cnblogs.com/gotodsp/p/6366163.html
 
 14.进程间通讯
 + 管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，
@@ -640,3 +641,5 @@ CORBA、RMI、Web Services、RESTful Web Services
 二进制序列化：thrift、protobuf、avro、java序列化、Multiplexed
 https://www.jianshu.com/p/ed53a09b4720
 
+19. 事件监听模式
+https://www.cnblogs.com/takumicx/p/9972461.html
